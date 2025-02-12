@@ -1,0 +1,312 @@
+.get-started-now {
+    position: relative;
+    font-weight: 500;
+}
+.get-started-now-wrapper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 52.5px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    font-size: 32px;
+}
+.name-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.enter-your-name-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+.frame-wrapper {
+    width: 404px;
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    height: 32px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 10px 0px 10px 10px;
+    font-size: 10px;
+    color: #d9d9d9;
+}
+.frame-group {
+    position: absolute;
+    top: 110.53px;
+    left: 0px;
+    width: 404px;
+    height: 58px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.frame-div {
+    width: 404px;
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    height: 32px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 0px 10px 10px;
+    font-size: 10px;
+    color: #d9d9d9;
+}
+.frame-container {
+    position: absolute;
+    top: 188.23px;
+    left: 0px;
+    width: 404px;
+    height: 58px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.frame-parent1 {
+    position: absolute;
+    top: 265.92px;
+    left: 0px;
+    width: 404px;
+    height: 58px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.frame-child {
+    position: absolute;
+    top: 8px;
+    left: -1px;
+    border-top: 2px solid #f5f5f5;
+    box-sizing: border-box;
+    width: 402px;
+    height: 2px;
+}
+.or-wrapper {
+    position: absolute;
+    top: 0px;
+    left: 190px;
+    background-color: #fff;
+    width: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 3px;
+    box-sizing: border-box;
+}
+.line-parent {
+    position: absolute;
+    top: 482.6px;
+    left: 3px;
+    width: 400px;
+    height: 15.3px;
+    font-size: 9px;
+}
+.i-agree-to {
+    position: absolute;
+    top: 0px;
+    left: 15px;
+    font-weight: 500;
+    display: inline-block;
+    width: 128px;
+    height: 15.3px;
+}
+.group-child {
+    position: absolute;
+    top: 2.19px;
+    left: 0px;
+    border-radius: 2px;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 9px;
+    height: 9.8px;
+}
+.i-agree-to-the-terms-policy-parent {
+    position: absolute;
+    top: 343.62px;
+    left: 0px;
+    width: 143px;
+    height: 15.3px;
+    text-align: center;
+    font-size: 9px;
+}
+.masz-konto {
+    white-space: pre-wrap;
+}
+.zaloguj-si {
+    color: #0f3dde;
+}
+.have-an-account-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    font-weight: 500;
+}
+.have-an-account-sign-in-wrapper {
+    width: 170px;
+    position: relative;
+    height: 21px;
+}
+.group-wrapper {
+    position: absolute;
+    top: 615.02px;
+    left: 113px;
+    height: 23px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.frame-item {
+    width: 31px;
+    height: 15px;
+}
+.frame-wrapper3 {
+    width: 404px;
+    border-radius: 10px;
+    background-color: #fe8400;
+    border: 1px solid #fe8400;
+    box-sizing: border-box;
+    height: 32px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 0px 10px 10px;
+}
+.frame-wrapper2 {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 404px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.login {
+    position: absolute;
+    top: 6px;
+    left: 161px;
+}
+.instance-parent {
+    position: absolute;
+    top: 388.49px;
+    left: 0px;
+    background-color: #edf2f7;
+    width: 404px;
+    height: 35px;
+    text-align: center;
+    font-size: 13px;
+    color: #fff;
+}
+.icons8-google-1 {
+    width: 24px;
+    position: relative;
+    height: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.icons8-google-1-parent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+.frame-wrapper4 {
+    position: absolute;
+    top: 560px;
+    left: 0px;
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 4px 20px;
+    font-size: 12px;
+}
+.icons8-apple-logo-1-parent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.frame-wrapper5 {
+    position: absolute;
+    top: 558px;
+    left: 213px;
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    width: 190px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 20px;
+    font-size: 12px;
+}
+.frame-parent {
+    width: 404px;
+    position: relative;
+    height: 638px;
+}
+.sign-up-inner {
+    position: absolute;
+    top: 202px;
+    left: 189px;
+    height: 638px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0px 0px 64px;
+    box-sizing: border-box;
+}
+.chris-lee-70l1tdai6rm-unsplash-icon {
+    position: absolute;
+    top: 0px;
+    left: 754px;
+    border-radius: 45px 0px 0px 45px;
+    width: 781.5px;
+    height: 1042px;
+    object-fit: cover;
+}
+.sign-up {
+    width: 100%;
+    position: relative;
+    background-color: #fff;
+    height: 1042px;
+    overflow: hidden;
+    text-align: left;
+    font-size: 14px;
+    color: #000;
+    font-family: Poppins;
+}
+

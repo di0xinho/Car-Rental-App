@@ -1,0 +1,323 @@
+.witamy-ponownie {
+    position: relative;
+    font-weight: 500;
+}
+.witamy-ponownie-wrapper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 53.1px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    font-size: 32px;
+}
+.wprowad-swoje-dane {
+    position: absolute;
+    top: 53.1px;
+    left: 0px;
+    font-size: 16px;
+    font-weight: 500;
+    display: inline-block;
+    width: 372px;
+    height: 26.6px;
+}
+.name-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.frame-child {
+    width: 404px;
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    height: 32px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.frame-group {
+    position: absolute;
+    top: 111.73px;
+    left: 0px;
+    width: 404px;
+    height: 57.5px;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    font-size: 13px;
+}
+.name-frame {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+.frame-wrapper {
+    width: 404px;
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    height: 32px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 0px 10px 10px;
+    font-size: 10px;
+    color: #d9d9d9;
+}
+.frame-container {
+    position: absolute;
+    top: 139.39px;
+    left: 0px;
+    width: 404px;
+    height: 58.6px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.frame-div {
+    position: absolute;
+    top: 217.93px;
+    left: 0px;
+    width: 404px;
+    height: 58.6px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.zapamitaj-na-30 {
+    position: absolute;
+    top: 0px;
+    left: 15px;
+    font-weight: 500;
+    display: inline-block;
+    width: 104px;
+    height: 15.5px;
+}
+.group-child {
+    position: absolute;
+    top: 2.21px;
+    left: 0px;
+    border-radius: 2px;
+    border: 1px solid #000;
+    box-sizing: border-box;
+    width: 9px;
+    height: 10px;
+}
+.zapamitaj-na-30-dni-parent {
+    position: absolute;
+    top: 296.48px;
+    left: 0px;
+    width: 119px;
+    height: 15.5px;
+    font-size: 9px;
+}
+.nie-masz-konta {
+    white-space: pre-wrap;
+}
+.zaloguj-si {
+    color: #0f3dde;
+}
+.nie-masz-konta-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    font-weight: 500;
+    display: inline-block;
+    width: 229px;
+    height: 23.2px;
+}
+.nie-masz-konta-zaloguj-si-wrapper {
+    position: absolute;
+    top: 559.77px;
+    left: 93px;
+    width: 229px;
+    height: 23.2px;
+}
+.frame-item {
+    width: 31px;
+    height: 15px;
+}
+.frame-wrapper3 {
+    width: 404px;
+    border-radius: 10px;
+    background-color: #fe8400;
+    border: 1px solid #fe8400;
+    box-sizing: border-box;
+    height: 32px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 0px 10px 10px;
+}
+.frame-wrapper2 {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 404px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.login {
+    position: absolute;
+    top: 6px;
+    left: 185px;
+}
+.instance-parent {
+    position: absolute;
+    top: 331.88px;
+    left: 0px;
+    width: 404px;
+    height: 35.4px;
+    font-size: 13px;
+    color: #fff;
+}
+.icons8-google-1 {
+    width: 24px;
+    position: relative;
+    height: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.icons8-google-1-parent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+.frame-wrapper4 {
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 4px 20px;
+}
+.icons8-apple-logo-1-parent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.frame-wrapper5 {
+    width: 190px;
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 20px;
+}
+.frame-parent1 {
+    position: absolute;
+    top: 505px;
+    left: 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 23px;
+    font-size: 12px;
+}
+.zapomniaem-hasa {
+    position: absolute;
+    top: 218px;
+    left: 286px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #0c2a92;
+    display: inline-block;
+    width: 114px;
+    height: 17px;
+}
+.frame-parent {
+    width: 404px;
+    position: relative;
+    height: 583px;
+}
+.log-in-inner {
+    position: absolute;
+    top: 230px;
+    left: 175px;
+    height: 583px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.frame-inner {
+    position: absolute;
+    top: 8px;
+    left: -1px;
+    border-top: 2px solid #f5f5f5;
+    box-sizing: border-box;
+    width: 402px;
+    height: 2px;
+}
+.or-wrapper {
+    position: absolute;
+    top: 0px;
+    left: 191px;
+    background-color: #fff;
+    width: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 3px;
+    box-sizing: border-box;
+}
+.line-parent {
+    position: absolute;
+    top: 632px;
+    left: 175px;
+    width: 400px;
+    height: 14px;
+    font-size: 9px;
+}
+.chris-lee-70l1tdai6rm-unsplash-icon {
+    position: absolute;
+    top: 0px;
+    left: 754px;
+    border-radius: 45px 0px 0px 45px;
+    width: 781.5px;
+    height: 1042px;
+    object-fit: cover;
+}
+.log-in {
+    width: 100%;
+    position: relative;
+    background-color: #fff;
+    height: 1042px;
+    overflow: hidden;
+    text-align: left;
+    font-size: 14px;
+    color: #000;
+    font-family: Poppins;
+}
+
+
+
