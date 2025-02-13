@@ -7,6 +7,8 @@ const app = express();
 // Wczytujemy zmienne środowiskowe z pliku .env 
 require("dotenv").config();
 
+const dbConfig = require("./db/connection");
+
 // Definiujemy port, na którym nasłuchuje serwer (domyślnie jest to to port 8000); w przeciwnym wypadku będzie to port 5000
 const port = process.env.PORT || 5000;
 
