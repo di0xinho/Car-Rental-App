@@ -1,0 +1,30 @@
+const mongoose = require("mongoose");
+
+// Definiujemy schemat dla modelu Booking
+const bookingSchema = new mongoose.Schema(
+  {
+    car: { type: mongoose.Schema.Types.ObjectID, ref: "cars" }, // Referencja do wynajmowanego auta
+    user: { type: mongoose.Schema.Types.ObjectID, ref: "users" }, // Referencja do użytkownika, który wynajął auto
+    // Data wynajmu pojazu
+    bookedTimeSlots: {
+      from: { type: String }, // Wynajem od
+      to: { type: String }, // Wynajem do
+    },
+    totalHours: { type: Number }, // Liczba godzin wynajmu
+    totalPrice: { type: Number }, // Kwota do zapłaty
+    transactionId: { type: String }, // Numer transakcji
+    driver: { type: Boolean }, // Czy wynajem obejmuje ofertę z kierowcą
+    isPaid: { type: Boolean }, // Czy wynajem został już opłacony
+  },
+
+   // Ustawiamy timestamps na 'true', by móc podejrzeć datę utworzenia i modyfikacji dokumentu
+  {
+    timestamps: true,
+  }
+);
+
+// Utworzenie modelu Booking na podstawie schematu
+const bookingModel = mongoose.model("bookings", bookingSchema);
+
+// Eksportujemy model, aby mógł być używany w innych częściach aplikacji
+module.exports = bookingModel;
