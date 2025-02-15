@@ -1,23 +1,24 @@
 // Importujemy mongoose do obsługi MongoDB 
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
-// Wyłączenie strictQuery
-mongoose.set('strictQuery', false);
+// Metoda służąca do nawiązania połączenia z bazą danych
+const connection = (mongo_url, database_name) => {
+    
+    // Wyłączenie strictQuery
+    mongoose.set('strictQuery', false);
 
-// Połączenie z bazą danych MongoDB, adres pobierany oczywiście ze zmiennych środowiskowych 
-mongoose.connect(process.env.MONGO_URL);
+    // Połączenie z bazą danych MongoDB, adres i nazwę bazy danych pobierany oczywiście ze zmiennych środowiskowych 
+    mongoose.connect(mongo_url, {dbName: database_name});
 
-// Tworzymy uchwyt do połączenia
-const connection = mongoose.connection;
+    // Zdarzenie zostanie wywołane tylko raz w przypadku połączenia
+    mongoose.connection.once("connected", () => {
+        console.log("Połączono się z bazą MongoDB")
+    });
 
-// Zdarzenie zostanie wywołane tylko raz w przypadku połączenia
-connection.once("connected", () => {
-    console.log("Połączono się z bazą MongoDB")
-});
+    // Zdarzenie wykona się za każdym razem, gdy wystąpi problem z połączeniem
+    mongoose.connection.on("error", (error) =>{
+        console.log("Nie udało się połączyć z bazą MongoDB", error);
+    });
+}
 
-// Zdarzenie wykona się za każdym razem, gdy wystąpi problem z połączeniem
-connection.on("error", (error) =>{
-    console.log("Nie udało się połączyć z bazą MongoDB", error);
-});
-
-module.exports = mongoose;
+export default connection;
