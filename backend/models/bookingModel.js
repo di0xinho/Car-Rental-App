@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose'
 
 // Definiujemy schemat dla modelu Booking
 const bookingSchema = new mongoose.Schema(
@@ -23,8 +23,5 @@ const bookingSchema = new mongoose.Schema(
   }
 );
 
-// Utworzenie modelu Booking na podstawie schematu
-const bookingModel = mongoose.model("bookings", bookingSchema);
-
-// Eksportujemy model, aby mógł być używany w innych częściach aplikacji
-module.exports = bookingModel;
+// Utworzenie modelu Booking na podstawie schematu i jego eksportacja, aby mógł być używany w innych częściach aplikacji
+export default mongoose.model("bookings", bookingSchema)

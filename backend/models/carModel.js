@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose'
 
 // Definiujemy schemat dla modelu Car
 const carSchema = new mongoose.Schema(
@@ -29,8 +29,5 @@ const carSchema = new mongoose.Schema(
       }
 );
 
-// Utworzenie modelu Car na podstawie schematu
-const carModel = mongoose.model("cars", carSchema);
-
-// Eksportujemy model, aby mógł być używany w innych częściach aplikacji
-module.exports = carModel;
+// Utworzenie modelu Car na podstawie schematu i jego eksportacja, aby mógł być używany w innych częściach aplikacji
+export default mongoose.model("cars", carSchema)

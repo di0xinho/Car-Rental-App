@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose'
 
 // Definicja schematu dla modelu User
 const userSchema = new mongoose.Schema(
@@ -66,8 +66,5 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Utworzenie modelu User na podstawie schematu
-const userModel = mongoose.model("users", userSchema);
-
-// Eksportujemy model, aby mógł być używany w innych częściach aplikacji
-module.exports = userModel;
+// Utworzenie modelu User na podstawie schematu i jego eksportacja, aby mógł być używany w innych częściach aplikacji
+export default mongoose.model("users", userSchema)
