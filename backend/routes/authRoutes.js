@@ -2,7 +2,7 @@ import express, { Router } from "express";
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import User from "../models/userModel.js";
-import { emailSchema, passwordSchema, validateField } from "../utils/validateFields.js";
+import { emailSchema, usernameSchema, passwordSchema, validateField } from "../utils/validateFields.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
@@ -15,8 +15,15 @@ router.get("/", (req, res) => {
 router.post("/register", async(req, res) => {
 
     try{
-        // Pobieramy email z ciała zapytania
-        const email = req.body.email;
+        // Pobieramy wszystkie dane z ciała zapytania
+        const { username, email, password } = req.body;
+
+        // W ciele zapytania należy umieścić wszystkie potrzebne wartości, czyli nazwę użytkownika, adres email oraz hasło
+        // W przeciwnym wypadku serwer zwróci następującą odpowiedź...
+        if (!username || !email || !password) {
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json({message: "Ciało zapytania nie zawiera wszystkich wartości", success: false});
+        }
 
         // Na początku sprawdzamy, czy użytkownik o podanym adresie email posiada już konto w aplikacji
         const userExists = await User.findOne({email: email});
@@ -29,13 +36,17 @@ router.post("/register", async(req, res) => {
 
         // W przeciwnym wypadku...
 
-        // Pobieramy hasło z ciała zapytania
-        const password = req.body.password;
-
         // Sprawdzamy, czy adres email i hasło spełniają warunki walidacji
-        const passwordValidation = validateField(password, passwordSchema);
         const emailValidation = validateField(email, emailSchema);
+        const usernameValidation = validateField(username, usernameSchema);
+        const passwordValidation = validateField(password, passwordSchema);
 
+        // Jeśli nazwa użytkownika nie spełnia warunków, wtedy zwracamy odpowiednią odpowiedź
+        if( !usernameValidation.isValid ){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json( {message: "Nazwa użytkownika nie spełnia warunków walidacji", errors: usernameValidation.errors, success: false} );
+        }
+        
         // Jeśli adres email nie spełnia warunków, wtedy zwracamy odpowiednią odpowiedź
         if( !emailValidation.isValid ){
             return res.status(StatusCodes.BAD_REQUEST)
@@ -81,8 +92,21 @@ router.post("/register", async(req, res) => {
     }
 });
 
+// Endpoint obsługujący logowanie użytkownika 
 // router.post("/login", async(req, res) => {
 
+//     try{
+
+
+
+//     } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+//     catch(error){
+
+//         console.log(error);
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+//         .json({ message: "Błąd podczas logowania się użytkownika do aplikacji", success: false, error });
+
+//     }
 // });
 
 export default router;
