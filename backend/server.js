@@ -16,11 +16,15 @@ import connection from "./db/connection.js";
 // Middleware do parsowania JSON-ów w przychodzących żądaniach HTTP
 app.use(express.json());
 
-// Importujemy router dla endpointów związanych z samochodami
+// Importujemy routery dla endpointów związanych z samochodami i procesami związanymi z autentykacją użytkownika 
 import carRoutes from "./routes/carRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
-// Rejestrujemy ścieżkę API dla operacji na samochodach 
+// Rejestrujemy ścieżkę API dla operacji na samochodach  
 app.use("/api/cars", carRoutes);
+
+// Robimy to samo dla innych ścieżek API...
+app.use("/api/auth", authRoutes); // do autentykacji użytkownika
 
 // Definiujemy port, na którym nasłuchuje serwer (domyślnie jest to port 8000); w przeciwnym wypadku będzie to port 5000
 const port = process.env.PORT || 5000;
