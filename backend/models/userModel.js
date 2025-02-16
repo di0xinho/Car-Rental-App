@@ -4,9 +4,9 @@ import mongoose from 'mongoose'
 const userSchema = new mongoose.Schema(
   { 
     // Nazwa użytkownika
-    name: {
+    username: {
       type: String,
-      required: false,
+      required: true,
     },
     // Adres email
     email: {
