@@ -3,6 +3,7 @@ const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import User from "../models/userModel.js";
 import { emailSchema, usernameSchema, passwordSchema, validateField } from "../utils/validateFields.js";
+import { createJWT, attachCookie } from "../utils/authFunctions.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
@@ -93,20 +94,55 @@ router.post("/register", async(req, res) => {
 });
 
 // Endpoint obsługujący logowanie użytkownika 
-// router.post("/login", async(req, res) => {
+router.post("/login", async(req, res) => {
 
-//     try{
+    try{
+        // Pobieramy wszystkie dane z ciała zapytania
+        const { email, password } = req.body;
 
+        // W ciele zapytania należy umieścić wszystkie potrzebne wartości, czyli adres email oraz hasło
+        // W przeciwnym wypadku serwer zwróci następującą odpowiedź...
+        if (!email || !password) {
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json({message: "Ciało zapytania nie zawiera wszystkich wartości", success: false});
+        }
 
+        // Szukamy użytkownika w bazie wykorzystując do tego podany adres email
+        const user = await User.findOne({ email: email });
 
-//     } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
-//     catch(error){
+        console.log(user);
 
-//         console.log(error);
-//         res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-//         .json({ message: "Błąd podczas logowania się użytkownika do aplikacji", success: false, error });
+        // Jeśli użytkownik nie istnieje w bazie danych, to zwracamy odpowiedź, w której informujemy użytkownika o tym, że dane są niepoprawne
+        // (Z przyczyn bezpieczeństwa nie informujemy o tym, że podany użytkownik znajduje się bądź nie znajduje w bazie danych)
+        if(!user){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json({message: "Wprowadzono niepoprawne dane", success: false});
+        }
 
-//     }
-// });
+        // Porównujemy hasło znajdujące się w ciele zapytania z hasłem zapisanym w bazie (kolejno pierwszy i drugi parametr metody)
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        // W sytuacji, gdy hasła są inne zwracamy następującą odpowiedź
+        if(!isMatch){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json({message: "Wprowadzono niepoprawne dane", success: false});
+        }
+        
+        // Tworzymy token JWT
+        const token = createJWT(user);
+
+        // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
+        res.status(StatusCodes.OK)
+        .json({ message: "Logowanie przebiegło pomyślnie", data: token, success: true });
+        
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch(error){
+
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Błąd podczas logowania się użytkownika do aplikacji", success: false, error });
+
+    }
+});
 
 export default router;
