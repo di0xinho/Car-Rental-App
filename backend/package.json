@@ -10,5 +10,8 @@
     "mongoose": "^8.10.0",
     "nodemon": "^3.1.9"
   },
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "server": "nodemon server.js"
+  }
 }
