@@ -1,0 +1,9 @@
+<template>
+  <header>
+    <h1>DEFAULT_LAYOUT</h1>
+  </header>
+  <main>
+    <slot/>
+  </main>
+  <footer>DEFAULT_LAYOUT_FOOTER</footer>
+</template>
