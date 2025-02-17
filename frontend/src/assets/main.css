@@ -19,4 +19,5 @@ html, body {
 
 @theme {
   --font-roboto: "Roboto", sans-serif;
+  --color-glow: #fe8400;
 }

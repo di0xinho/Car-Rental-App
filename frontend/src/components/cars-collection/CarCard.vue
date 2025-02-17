@@ -36,7 +36,7 @@
         <h6>Klimatyzacja</h6>
       </div>
     </div>
-    <RouterLink :to="{name: 'car-model', params: {model: id}}" class="m-4">
+    <RouterLink :to="{name: 'car-model', params: {model: id}}" class="m-4 p-2 rounded-lg bg-glow text-center">
       Zobacz szczegóły
     </RouterLink>
   </section>

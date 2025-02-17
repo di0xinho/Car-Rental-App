@@ -3,8 +3,8 @@
 </script>
 
 <template>
-    <header class="flex justify-between p-8 ">
-      <h1>CARENT</h1>
+    <header class="flex justify-between items-center">
+      <h1 class="w-2/5 bg-neutral-900 py-8 px-16 text-glow">CARENT</h1>
       <nav>
         <ul class="flex gap-8">
           <li>
