@@ -7,11 +7,6 @@ import { createJWT, attachCookie } from "../utils/authFunctions.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-// Prosty endpoint sprawdzający czy wszystko działa
-router.get("/", (req, res) => {
-    res.status(StatusCodes.OK).send("Hello from auth!");
-});
-
 // Endpoint obsługujący rejestrację użytkownika 
 router.post("/register", async(req, res) => {
 

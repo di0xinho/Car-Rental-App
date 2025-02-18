@@ -3,12 +3,6 @@ const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import Car from "../models/carModel.js";
 
-// Prosty endpoint sprawdzający czy wszystko działa
-router.get("/", (req, res) => {
-    res.status(StatusCodes.OK)
-    .send("Hello world!");
-});
-
 // Endpoint zwracający wszystkie pojazdy
 router.get("/get-all-cars", async(req, res) => {
 
