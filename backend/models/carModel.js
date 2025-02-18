@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+// Pola: make, model, capacity, year, color, bodyType, gearboxType, mileage, fuelType, hourlyPrice, imageUrl, description, bookedTimeSlots, isAvailable, createdBy
+
 // Definiujemy schemat dla modelu Car
 const carSchema = new mongoose.Schema(
     {
@@ -21,7 +23,8 @@ const carSchema = new mongoose.Schema(
             to: { type: String, required: true }, // Data i godzina zakończenia rezerwacji
           },
         ],
-        isAvailable: { type: Boolean, required: true, default: true }, // Czy samochód jest dostępny do wynajmu (zmienna boolowska)
+        isAvailable: { type: Boolean, required: true, default: true }, // Czy samochód jest dostępny do wynajmu (zmienna boolowska) 
+        createdBy: { type: mongoose.Types.ObjectId, ref: 'users', required: true }, // Identyfikator twórcy oferty
       },
     
       {

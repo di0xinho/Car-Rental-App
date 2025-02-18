@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+// Pola: username, email, password, isAdmin, resetPasswordToken, resetPasswordExpires, firstName, surname, phoneNumber, dateOfBirth, gender, favorites
+
 // Definicja schematu dla modelu User
 const userSchema = new mongoose.Schema(
   { 
