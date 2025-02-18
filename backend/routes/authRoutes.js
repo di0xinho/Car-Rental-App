@@ -105,8 +105,6 @@ router.post("/login", async(req, res) => {
         // Szukamy użytkownika w bazie wykorzystując do tego podany adres email
         const user = await User.findOne({ email: email });
 
-        console.log(user);
-
         // Jeśli użytkownik nie istnieje w bazie danych, to zwracamy odpowiedź, w której informujemy użytkownika o tym, że dane są niepoprawne
         // (Z przyczyn bezpieczeństwa nie informujemy o tym, że podany użytkownik znajduje się bądź nie znajduje w bazie danych)
         if(!user){
@@ -126,9 +124,17 @@ router.post("/login", async(req, res) => {
         // Tworzymy token JWT
         const token = createJWT(user);
 
+        // W odpowiedzi serwera będzie dołączony token JWT
+        attachCookie({ res, token });
+
+        // W odpowiedzi serwera będziemy chcieli też zwrócić dane użytkownika i dlatego należy nie ujawniać hasła
+        // Mimo, że hasło jest w postaci zaszyfrowanej (hasło haszujemy z dodatkiem soli przy pomocy 'bcryptjs' - przypomnienie),
+        // to nigdy nie należy go ujawniać
+        user.password = undefined;
+
         // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
         res.status(StatusCodes.OK)
-        .json({ message: "Logowanie przebiegło pomyślnie", data: token, success: true });
+        .json({ message: "Logowanie przebiegło pomyślnie", data: user, success: true });
         
     } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
     catch(error){
