@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+// Pola: car, user, bookedTimeSlots, totalHours, totalPrice, transactionId, driver, isPaid
+
 // Definiujemy schemat dla modelu Booking
 const bookingSchema = new mongoose.Schema(
   {
