@@ -4,20 +4,27 @@
 # Do tego celu posłuży polecenie "pip install -r requirements.txt"
 # Następnie pozostało już nam tylko uruchomić skrypt poleceniem "python mocking_script.py <ścieżka do pliku> <liczba rekordów>"
 
+import os
 import random
 import json
-import argparse
+from dotenv import load_dotenv
 from faker import Faker
+from description_generator import DescriptionGenerator
+from translator import Translator
+from Car_Data import CarData
 
 # Tworzymy klasę generatora danych, gdzie w konstruktorze przyjmować będziemy ścieżkę do pliku, z którego pobierać będziemy adresy URL do zdjęć
 # wykorzystywanych przy tworzeniu sztucznych danych oraz liczbę rekordów sztucznych samochodów jakie będziemy generować 
 class MockDataGenerator:
 
     # Konstruktor
-    def __init__(self, image_file, count):
+    def __init__(self, image_file, count, model_name, task, translation_from, translation_to):
         
-        # Tworzymy obiekt Faker, który posłuży do generowania sztucznych danych
+        # Tworzymy obiekt Faker, który posłuży do generowania sztucznych danych 
         self.fake = Faker()
+
+        # Tworzymy także obiekt translatora, który tłumaczyć będzie opisy samochodów
+        self.translator = Translator()
 
         # Poniżej znajdują się zmienne, w których przechowywane są wartości z jakich będziemy tworzyć atrapy danych
         # Są to: marka samochodu, model, kolor, karoseria, skrzynia biegów, rodzaj paliwa, cena wypożyczenia (za godzinę),
@@ -32,20 +39,30 @@ class MockDataGenerator:
             'Toyota': ['Corolla', 'Camry', 'RAV4'],
             'Volkswagen': ['Golf', 'Passat', 'Polo']
         }
-        self.colors = ['czarny', 'biały', 'niebieski', 'szary', 'czerwony', 'granatowy']
+        self.colors = ['Czarny', 'Biały', 'Niebieski', 'Szary', 'Czerwony', 'Granatowy']
         self.body_types = ['Sedan', 'Coupe', 'Hatchback', 'SUV', 'Crossover']
         self.gearbox_types = ['Manualna', 'Automatyczna']
-        self.fuel_types = ['Benzyna', 'Diesel', 'Elektryk', 'Hybryda']
-        self.hourly_prices = [25, 40, 50, 60, 70, 80, 90, 100, 120]
+        self.fuel_types = ['Benzyna', 'Diesel', 'Elektryk', 'Hybryda', 'Gaz']
         self.image_urls = self.load_image_urls(image_file)
-        self.description = "Idealny samochód na każdą okazję."
         self.booked_time_slots = []
         self.is_available = True
         self.count = count
 
+        # Parametry dla modelu językowego (pod generowanie opisu samochodu)
+        self.model_name = model_name
+        self.task = task
+
+        # Wczytujemy zmienne z pliku .env i wczytujemy je do translatora
+        load_dotenv()
+        self.translator.init_main_params(os.getenv("TRANSLATOR_API_KEY"), os.getenv("LOCATION"))
+
+        # Przypisujemy do zmiennych języki w ramach, których ma przebiegać tłumaczenie
+        self.translation_from = translation_from
+        self.translation_to = translation_to
+
     # Metoda wczytująca ścieżkę do pliku z adresami URL, adresy są potem przetrzymywane w tablicy "image_urls" w obiekcie generatora
     def load_image_urls(self, filename):
-        with open(filename, 'r', encoding='utf-8') as file:
+        with open(filename, 'r', encoding = 'utf-8') as file:
             return [line.strip() for line in file.readlines() if line.strip()]
     
     # Metoda generująca Generuje listę sztucznych danych o pojazdach
@@ -54,46 +71,72 @@ class MockDataGenerator:
         for _ in range(self.count):
             make = random.choice(list(self.make_and_model.keys()))
             model = random.choice(self.make_and_model[make])
+            capacity = self.fake.random_element(elements=(4, 5, 7))
+            year = self.fake.random_int(min = 1995, max = 2022)
+            color = random.choice(self.colors)
+            bodyType = random.choice(self.body_types)
+            gearboxType = random.choice(self.gearbox_types)
+            mileage = self.fake.random_int(min = 75000, max = 350000)
+            fuelType = random.choice(self.fuel_types)
+            hourlyPrices = self.fake.random_int(min = 25, max = 120)
+            imageUrl = random.choice(self.image_urls)
+
+            color_dictionary =	{ "Czarny": "black", "Biały": "white", "Niebieski": "blue", "Szary": "grey", "Granatowy": "purple", "Czerwony": "red" }
+            gearbox_dictionary = { "Manualna": "manual", "Automatyczna": "automatic" }
+            fuel_dictionary = { "Benzyna": "petrol", "Diesel": "diesel", "Elektryk": "electric", "Hybryda": "hybrid", "Gaz": "gas" }
+
+            # Funkcja lambda do translacji
+            translate = lambda dictionary, value: dictionary.get(value, value)
+
+            # Użycie funkcji lambda do tłumaczenia wartości
+            color_en = translate(color_dictionary, color)
+            gearbox_en = translate(gearbox_dictionary, gearboxType)
+            fuel_en = translate(fuel_dictionary, fuelType)
+
+            # Tworzenie obiektu z danymi auta
+            car_info = CarData(
+                car_make=make,
+                car_model=model,
+                color=color_en,
+                year=year,
+                gearboxType=gearbox_en,
+                fuel=fuel_en,
+                hourlyPrice=hourlyPrices
+            )
+
+            # Inicjalizacja generatora (jako framework używamy tutaj PyTorcha)
+            generator = DescriptionGenerator(model_name="distilgpt2", framework="pt", max_new_tokens=200)
+
+            # Generowanie opisu
+            description_en = generator.generate_description(car_info)
+
+            # Tłumaczenie opisu przez tłumacza
+            description = self.translator.send_request(self.translation_from, self.translation_to, description_en)
+
+            # Wszystkie dane o samochodzie zbieramy do rekordu
             record = {
                 "make": make,
                 "model": model,
-                "capacity": self.fake.random_element(elements=(4, 5, 7)),
-                "year": self.fake.random_int(min=1995, max=2022),
-                "color": random.choice(self.colors),
-                "bodyType": random.choice(self.body_types),
-                "gearboxType": random.choice(self.gearbox_types),
-                "mileage": self.fake.random_int(min=75000, max=350000),
-                "fuelType": random.choice(self.fuel_types),
-                "hourlyPrice": random.choice(self.hourly_prices),
-                "imageUrl": random.choice(self.image_urls),
-                "description": self.description,
+                "capacity": capacity,
+                "year": year,
+                "color": color ,
+                "bodyType": bodyType,
+                "gearboxType": gearboxType,
+                "mileage": mileage,
+                "fuelType": fuelType,
+                "hourlyPrice": hourlyPrices,
+                "imageUrl": imageUrl,
+                "description": description,
                 "bookedTimeSlots": self.booked_time_slots,
                 "isAvailable": self.is_available
             }
+
+            # Utworzony rekord dodajemy do naszej kolekcji
             data.append(record)
+
         return data
 
     # Metoda zapisująca dane do pliku JSON
     def save_to_json(self, filename, data):
-        with open(filename, 'w', encoding='utf-8') as outfile:
-            json.dump(data, outfile, indent=4, ensure_ascii=False)
-
-if __name__ == "__main__":
-    # Tworzenie parsera argumentów dla linii poleceń
-    parser = argparse.ArgumentParser(description="Pobieranie dwóch argumentów: ścieżki do pliku z adresami url zdjęć samochodów oraz liczby sztucznych danych do wygenerowania")
-    parser.add_argument("file_path", type=str, help="Ścieżka do pliku z adresami url zdjęć samochodów")
-    parser.add_argument("count", type=int, help="Liczba sztucznych danych do wygenerowania")
-
-    # Paroswanie przyjętych z linii poleceń argumentów
-    args = parser.parse_args()
-    
-    # Tworzenie generatora danych
-    generator = MockDataGenerator(args.file_path, args.count)
-    
-    # Generowanie danych
-    mock_data = generator.generate_mock_data()
-    
-    # Zapisywanie danych do pliku JSON
-    generator.save_to_json("Mock_Data.json", mock_data)
-    
-    print(f"Wygenerowano dane (liczba pojazdów: {args.count}) i zapisano do Mock_Data.json")
+        with open(filename, 'w', encoding = 'utf-8') as outfile:
+            json.dump(data, outfile, indent = 4, ensure_ascii = False)
