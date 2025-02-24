@@ -1,1 +1,5 @@
-faker==36.1.0
+Faker==36.1.0
+python-dotenv==1.0.1
+Requests==2.32.3
+tenacity==9.0.0
+transformers==4.49.0
