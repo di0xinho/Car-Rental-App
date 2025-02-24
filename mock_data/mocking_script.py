@@ -109,7 +109,7 @@ class MockDataGenerator:
         )
 
         # Inicjalizacja generatora (jako framework używamy tutaj PyTorcha)
-        generator = DescriptionGenerator(model_name="distilgpt2", framework="pt", max_new_tokens=200)
+        generator = DescriptionGenerator(model_name=self.model_name, framework="pt", max_new_tokens=200)
 
         # Generowanie opisu
         description_en = generator.generate_description(car_info)

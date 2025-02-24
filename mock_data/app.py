@@ -4,7 +4,7 @@ from mocking_script import MockDataGenerator
 if __name__ == "__main__":
 
     # Wybór odpowiednich parametrów dla modelu językowego
-    model_name = "flax-community/papuGaPT2" # Nazwa modelu
+    model_name = "distilgpt2" # Nazwa modelu
     task = "text-generation" # Zadanie do wykonania
 
     # Wybór opcji tłumaczenia opisów samochodów
