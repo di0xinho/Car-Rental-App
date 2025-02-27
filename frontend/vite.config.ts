@@ -17,4 +17,21 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  build: {
+    rollupOptions: {
+      // splitting javascript bundle into chunks:
+      // https://router.vuejs.org/guide/advanced/lazy-loading.html
+      output: {
+        manualChunks: {
+          'user-group': [
+            './src/views/user/UserMainView',
+            './src/views/user/UserOrdersView',
+            './src/views/user/UserAnaliticsView',
+            './src/views/user/UserRentView',
+            './src/views/user/UserSettingsView',
+          ],
+        },
+      },
+    },
+  },
 })

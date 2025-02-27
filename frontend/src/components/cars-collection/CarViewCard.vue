@@ -9,9 +9,9 @@
 </script>
 
 <template>
-  <section class="flex flex-col bg-neutral-100 rounded-2xl">
+  <section class="flex flex-col bg-neutral-100 rounded-medium overflow-hidden">
     <img 
-      :src="`/images/cars/car_img_placeholder_${(index % 2) + 1}.svg`"
+      :src="`/cars/car_img_placeholder_${(index % 2) + 1}.svg`"
       alt="car in our offer"
       class="w-full"
     >
@@ -36,7 +36,7 @@
         <h6>Klimatyzacja</h6>
       </div>
     </div>
-    <RouterLink :to="{name: 'car-model', params: {model: id}}" class="m-4 p-2 rounded-lg bg-glow text-center">
+    <RouterLink :to="{name: 'cars-model', params: {model: id}}" class="m-4 p-2 rounded-lg bg-dominant-primary text-center">
       Zobacz szczegóły
     </RouterLink>
   </section>

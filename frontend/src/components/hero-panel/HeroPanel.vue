@@ -17,13 +17,13 @@
           najlepsze doświadczenie w zakresie<br>
           wynajmu samochodów.
         </p>
-        <RouterLink to="/login" class="py-3 px-6 bg-glow text-center">Zaloguj się | Zarejestruj się</RouterLink>
+        <RouterLink :to="{name: 'login'}" class="py-3 px-6 bg-dominant-primary text-center">Zarejestruj się</RouterLink>
       </article>
     </div>
     <img 
-      src="/images/hero/car_img_placeholder_1.svg"
+      src="/images/common/aaron-huber-8qYE6LGHW-c-unsplash.webp"
       alt="samochód do wynajęcia z oferty Carent"
-      class="w-2/3 absolute right-0 top-1/2 -translate-y-1/2"
+      class="w-2/3 absolute right-0 top-0"
     >
   </div>
 </template>

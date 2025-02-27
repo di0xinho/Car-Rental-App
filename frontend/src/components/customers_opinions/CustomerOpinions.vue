@@ -18,7 +18,7 @@
 </script>
 
 <template>
-  <div class="flex p-8 gap-8">
+  <div class="flex gap-8">
     <div v-for="(opinion, index) in customerOpinions" class="min-w-xs basis-xs grow-1">
       <OpinionCard :author="opinion.author">
         {{ opinion.content }}
