@@ -4,7 +4,7 @@ from mocking_script import MockDataGenerator
 if __name__ == "__main__":
 
     # Wybór odpowiednich parametrów dla modelu językowego
-    model_name = "flax-community/papuGaPT2" # Nazwa modelu
+    model_name = "distilgpt2" # Nazwa modelu
     task = "text-generation" # Zadanie do wykonania
 
     # Wybór opcji tłumaczenia opisów samochodów
@@ -23,7 +23,12 @@ if __name__ == "__main__":
     generator = MockDataGenerator(args.file_path, args.count, model_name, task, translation_from, translation_to)
     
     # Generowanie danych
-    mock_data = generator.generate_mock_data()
+
+    # Poprzednio generowanie danych było robione w sposób liniowy (jednowątkowo)
+    # mock_data = generator.generate_mock_data()  
+
+    # Teraz udało nam się zastosować równoległość do generowania atrap samochodów
+    mock_data = generator.generate_mock_data_parallel()
     
     # Zapisywanie danych do pliku JSON
     generator.save_to_json("Mock_Data.json", mock_data)
