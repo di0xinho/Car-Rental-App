@@ -1,5 +1,6 @@
 // Importujemy moduł Express.js 
 import express from "express";
+import cors from "cors";
 
 // Tworzymy instancję aplikacji Express
 const app = express();
@@ -15,6 +16,8 @@ import connection from "./db/connection.js";
 
 // Middleware do parsowania JSON-ów w przychodzących żądaniach HTTP
 app.use(express.json());
+
+app.use(cors());
 
 // Importujemy routery dla endpointów związanych z samochodami i procesami związanymi z autentykacją użytkownika 
 import carRoutes from "./routes/carRoutes.js";

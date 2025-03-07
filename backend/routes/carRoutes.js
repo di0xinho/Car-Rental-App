@@ -1,4 +1,6 @@
 import express from "express";
+import axios from "axios";
+import { spawn } from "child_process";
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import Car from "../models/carModel.js";
@@ -27,6 +29,61 @@ router.get("/get-all-cars", async(req, res) => {
 
         res.status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+    }
+
+})
+
+// Endpoint odpowiedzialny za utworzenie nowej oferty z samochodem
+router.post("/create-car", async(req, res) => {
+
+    try{
+        // Pobieramy wszystkie dane z ciała zapytania
+        const { make, model, capacity, year, color, bodyType, gearboxType, mileage, fuelType, hourlyPrice, imageUrl, description } = req.body;
+
+        // Sprawdzamy, czy którykolwiek z wymaganych pól jest pusty lub undefined
+        if ([make, model, capacity, year, color, bodyType, gearboxType, mileage, fuelType, hourlyPrice, imageUrl, description].some(value => value === undefined || value === "")) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie wszystkie pola zostały uzupełnione przez użytkownika", success: false });
+        }
+
+        // Gdy jest gites
+        res.status(StatusCodes.OK)
+        .json({ message: "Jak narazie wszystko git", success: true});
+
+
+        // Wrócimy do tego potem...
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch(error){
+
+        console.log(error);
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
+
+// Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
+router.post("/predict-cluster", async(req, res) => {
+    try{
+        // Tworzymy URL, aby dostać się do ścieżki odpowiadającej za przewidywanie modelu
+        const URL = process.env.FLASK_API_URL + "/predict";
+        
+        // Wysyłamy żądanie do serwera obsługującego model rekomendacji; wynik zapisujemy do zmiennej 'response'
+        const response = await axios.post(URL, req.body);
+
+        // W postaci pliku jsonowego przedstawiona zostanie odpowiedź serwera
+        res.json(response.data);
+    }
+    // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch(error){
+
+        console.log(error);
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
     }
 
 })

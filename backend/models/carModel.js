@@ -15,7 +15,7 @@ const carSchema = new mongoose.Schema(
         mileage: { type: Number, required: true }, // Przebieg (w km)
         fuelType: { type: String, required: true }, // Rodzaj Paliwa
         hourlyPrice: { type: Number, required: true }, // Cena wynajmu za godzinę
-        imageUrl: { type: String }, // adres URL do zdjęcia samochodu
+        imageUrl: { type: String }, // Adres URL do zdjęcia samochodu
         description: { type: String }, // Opis samochodu
         bookedTimeSlots: [ // Lista rezerwacji w postaci przedziałów czasowych
           {
