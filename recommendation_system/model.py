@@ -25,6 +25,9 @@ class Model:
             columns=["make", "model", "color", "imageUrl", "description", "bookedTimeSlots", "isAvailable"]
         )
 
+        # Informacja o liczbie rekordów danych wykorzystywanych w procesie uczenia modelu
+        print(f"\nModel uczony na {data.shape[0]} rekordach danych")
+
     # Statyczna metoda do pobierania DataFrame z pliku JSON
     @staticmethod
     def get_data_frame_from_path(file_path: str):
@@ -72,7 +75,7 @@ class Model:
             raise ValueError("Model KMeans nie został jeszcze zbudowany! Użyj metody build_model().")
 
         score = silhouette_score(self.data_frame_encoded, self.kmeans.labels_)
-        print("Silhouette Score:", score)
+        print("Silhouette Score (wskaźnik sylwetki - jako miara jakości modelu):", score)
         return score
 
     # Metoda odpowiedzialna za budowanie modelu (domyślna liczba centrów to 5)
@@ -113,3 +116,15 @@ class Model:
 
         # Na koniec zwracanie odpowiedniego klastra wykorzystując metodę 'predict' w modelu kmeans
         return self.kmeans.predict(observation_encoded)
+    
+    # Metoda ta zwraca kolekcję samochodów, jakie należą do danego klastra
+    def get_observations_by_cluster(self, cluster_id: int):
+        if self.kmeans is None:
+            raise ValueError("Model KMeans nie został jeszcze zbudowany! Użyj metody build_model().")
+        
+        if "cluster" not in self.data_frame_encoded.columns:
+            raise ValueError("Brak kolumny 'cluster'. Upewnij się, że model został wytrenowany.")
+        
+        # Pobieranie obserwacji należących do wskazanego klastra
+        cluster_observations = self.data_frame[self.data_frame_encoded["cluster"] == cluster_id]
+        return cluster_observations

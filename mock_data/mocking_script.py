@@ -70,6 +70,51 @@ class MockDataGenerator:
     def load_image_urls(self, filename):
         with open(filename, 'r', encoding = 'utf-8') as file:
             return [line.strip() for line in file.readlines() if line.strip()]
+        
+    # Poniżej znajdują się metody, które gwarantować będą większą realistyczność danych
+
+    # Metoda określająca przebieg samochodu na podstawie jego wieku.
+    # Starsze samochody mają większy przebieg, podczas gdy nowe mają niski.
+    def determine_mileage(self, year):
+        current_year = 2025
+        age = current_year - year
+        if age < 3:
+            return random.randint(5000, 40000)
+        elif age < 7:
+            return random.randint(30000, 100000)
+        elif age < 12:
+            return random.randint(80000, 250000)
+        elif age < 20:
+            return random.randint(250000, 400000)
+        else:
+            return random.randint(350000, 550000)
+    
+    # Metoda określająca typ skrzyni biegów i paliwa na podstawie marki, modelu i roku produkcji.
+    # Ogranicza wybór napędów i skrzyni dla starszych modeli, np. brak automatycznej skrzyni w Passacie przed 2010 rokiem.
+    def determine_gearbox_and_fuel(self, make, model, year):
+        if make == 'Volkswagen' and model == 'Passat' and year < 2010:
+            return 'Manualna', random.choice(['Benzyna', 'Diesel'])
+        if year < 2005:
+            return 'Manualna', random.choice(['Benzyna', 'Diesel', 'Gaz'])
+        if year < 2010:
+            return random.choice(['Manualna', 'Automatyczna']), random.choice(['Benzyna', 'Diesel', 'Hybryda'])
+        return random.choice(self.gearbox_types), random.choice(self.fuel_types)
+    
+    # Metoda określająca cenę wynajmu za godzinę na podstawie wieku pojazdu.
+    # Nowe samochody są droższe, a starsze tańsze.
+    def determine_hourly_price(self, year):
+        current_year = 2024
+        age = current_year - year
+        if age < 3:
+            return random.randint(100, 140)
+        elif age < 7:
+            return random.randint(80, 120)
+        elif age < 12:
+            return random.randint(60, 100)
+        elif age < 20:
+            return random.randint(40, 80)
+        else:
+            return random.randint(25, 50)
     
     # Metoda generująca i zwracająca pojedynczy rekord 
     def generate_single_record(self, _):
@@ -79,10 +124,9 @@ class MockDataGenerator:
         year = self.fake.random_int(min=1995, max=2022)
         color = random.choice(self.colors)
         bodyType = random.choice(self.body_types)
-        gearboxType = random.choice(self.gearbox_types)
-        mileage = self.fake.random_int(min=75000, max=350000)
-        fuelType = random.choice(self.fuel_types)
-        hourlyPrices = self.fake.random_int(min=25, max=120)
+        gearboxType, fuelType = self.determine_gearbox_and_fuel(make, model, year)
+        mileage = self.determine_mileage(year)
+        hourlyPrices = self.determine_hourly_price(year)
         imageUrl = random.choice(self.image_urls)
 
         color_dictionary = { "Czarny": "black", "Biały": "white", "Niebieski": "blue", "Szary": "grey", "Granatowy": "purple", "Czerwony": "red" }

@@ -69,7 +69,7 @@ router.post("/predict-cluster", async(req, res) => {
     try{
         // Tworzymy URL, aby dostać się do ścieżki odpowiadającej za przewidywanie modelu
         const URL = process.env.FLASK_API_URL + "/predict";
-        
+                
         // Wysyłamy żądanie do serwera obsługującego model rekomendacji; wynik zapisujemy do zmiennej 'response'
         const response = await axios.post(URL, req.body);
 
@@ -87,6 +87,34 @@ router.post("/predict-cluster", async(req, res) => {
     }
 
 })
+
+// Endpoint odpowiedzialny za zwrócenie kolekcji samochodów należących do danego klastra
+router.get("/get-cars-from-cluster", async(req, res) => {
+    try{
+        // Z parametru zapytania pobieramy id klastra
+        const cluster_id = req.query.cluster_id;
+
+        // Tworzymy URL, aby dostać się do ścieżki odpowiadającej za zwracanie kolekcji samochodów należących do danego klastra
+        const URL = process.env.FLASK_API_URL + "/get-cars-from-cluster/" + cluster_id;
+
+        // Wysyłamy żądanie do serwera obsługującego model rekomendacji; wynik zapisujemy do zmiennej 'response'
+        const response = await axios.get(URL);
+
+        // W postaci pliku jsonowego przedstawiona zostanie odpowiedź serwera (kolekcja samochodów należących do danego klastra - centrum)
+        res.json(response.data);
+
+    }// W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch(error){
+
+        console.log(error);
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+})
+
+
 
 export default router;
 
