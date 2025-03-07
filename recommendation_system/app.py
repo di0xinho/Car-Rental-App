@@ -14,6 +14,7 @@ if __name__ == "__main__":
     model = Model(data_frame)
     model.prepare_data()
     model.build_model(k=5)
+    score = model.check_silhouette_score()
     model.save_model()
 
     # Wczytanie modelu i predykcja
@@ -34,4 +35,12 @@ if __name__ == "__main__":
     predicted_cluster = model_2.predict_cluster(new_observation)
 
     # Wyświetlamy wynik predykcji
-    print(f"Przewidziany klaster: {predicted_cluster[0]}")
+    print(f"\nPrzewidziany klaster: {predicted_cluster[0]}")
+
+    # Pobieramy kolekcję samochodów podlegających pod klaster, który przewidział model
+    cars = model_2.get_observations_by_cluster(predicted_cluster[0])
+
+    # Wyświetlamy pierwsze 3 samochody z rekomendacji
+    N = 3
+    first_three_cars = cars[:N]
+    print(f"\nTrzy pierwsze samochody z rekomendacji:\n\n{first_three_cars}")

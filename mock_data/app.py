@@ -32,5 +32,6 @@ if __name__ == "__main__":
     
     # Zapisywanie danych do pliku JSON
     generator.save_to_json("Mock_Data.json", mock_data)
+    generator.save_to_json("../recommendation_system/train_data/train_data.json", mock_data) # Zapisywanie danych katalogu z modelem rekomendacji w celu późniejszego uczenia modelu
     
     print(f"Wygenerowano dane (liczba pojazdów: {args.count}) i zapisano do Mock_Data.json")
