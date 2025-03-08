@@ -77,6 +77,16 @@ router.post("/create-car", authMiddleware, async(req, res) => {
 router.patch("/update-car/:carId", authMiddleware, async(req, res) => {
 
     try{
+        // Pobranie ID samochodu z parametru ścieżki
+        const carId = req.params.carId; 
+
+        // Wyszukiwanie samochodu po numerze id
+        const foundCar = await Car.findById(carId);
+
+        // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
+        if(!foundCar){
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie znaleziono samochodu o takim numerze id", success: false });
+        }
 
         // Pobieramy wszystkie dane z ciała zapytania
         const { make, model, capacity, year, color, bodyType, gearboxType, mileage, fuelType, hourlyPrice, imageUrl, description } = req.body;
@@ -86,23 +96,46 @@ router.patch("/update-car/:carId", authMiddleware, async(req, res) => {
             return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie wszystkie pola zostały uzupełnione przez użytkownika", success: false });
         }
         
+        // Mając numer id samochodu znajdujemy go w bazie i aktualizujemy dokument
+        const updatedCar = await Car.findOneAndUpdate({ _id: carId }, req.body, {
+            new: true, // zwracamy zaktualizowany zasób
+            runValidators: true, // aktywacja zdefiniowanych w schemacie Mongoose walidatorów 
+          });
+        
+        // W przypadku znalezienia utworzenia rekordu w bazie, wynik jest zwracany w odpowiedzi
+        res.status(StatusCodes.OK)
+        .json({ message: "Wybrany zasób został zaktualizowany", data: updatedCar, success: true});
+
+    }
+    catch (error) {
+
+        console.log(error);
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
+
+// Endpoint odpowiedzialny za usunięcie wybranego pojazdu z bazy danych
+router.delete("/delete-car/:carId", authMiddleware, async(req, res) => {
+
+    try{
         // Pobranie ID samochodu z parametru ścieżki
         const carId = req.params.carId; 
 
-        console.log(carId);
-        
         // Wyszukiwanie samochodu po numerze id
-        const foundCar = await Car.findById(carId);
+        const deletedCar = await Car.findOneAndDelete({ _id: carId });
 
         // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
-        if(!foundCar){
+        if(!deletedCar){
             return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie znaleziono samochodu o takim numerze id", success: false });
         }
 
-        
-
-
-
+        // W przypadku pomyślnego usunięcia zasobu z bazy danych, wyświetlamy następujący komunikat
+        res.status(StatusCodes.OK)
+        .json({ message: "Wybrany zasób został usunięty z bazy danych", data: deletedCar, success: true});
 
     }
     catch (error) {
