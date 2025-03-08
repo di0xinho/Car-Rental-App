@@ -1,5 +1,6 @@
 import express from "express";
 import axios from "axios";
+import authMiddleware from "../middleware/authMiddleware.js"
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import Car from "../models/carModel.js";
@@ -33,7 +34,7 @@ router.get("/get-all-cars", async(req, res) => {
 })
 
 // Endpoint odpowiedzialny za utworzenie nowej oferty z samochodem
-router.post("/create-car", async(req, res) => {
+router.post("/create-car", authMiddleware, async(req, res) => {
 
     try{
         // Pobieramy wszystkie dane z ciała zapytania
@@ -44,12 +45,21 @@ router.post("/create-car", async(req, res) => {
             return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie wszystkie pola zostały uzupełnione przez użytkownika", success: false });
         }
 
-        // Gdy jest gites
+        // Dodanie pola z informacją przez kogo została utworzona oferta oraz przez kogo została zmodyfikowana (utworzenie zasobu to też modyfikacja - jest to pierwsza modyfikacja)
+        req.body.createdBy = req.user.userId;
+
+        // Pole 'modifiedBy' składać się będzie z id modyfikacji, id użytkownika modyfikującego zasób i daty modyfikacji
+        req.body.modifiedBy = { userId: req.user.userId, modifiedAt: new Date() }; 
+        
+        // Tworzymy nowy rekord (nową ofertę samochodu)
+        const newCar = new Car(req.body)
+
+        // Zapisanie rekordu w bazie
+        await newCar.save();
+
+        // W przypadku znalezienia utworzenia rekordu w bazie, wynik jest zwracany w odpowiedzi
         res.status(StatusCodes.OK)
-        .json({ message: "Jak narazie wszystko git", success: true});
-
-
-        // Wrócimy do tego potem...
+        .json({ message: "Dodawanie nowej oferty zakończyło się powodzeniem", data: newCar, success: true});
 
     } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
     catch(error){
@@ -62,6 +72,26 @@ router.post("/create-car", async(req, res) => {
     }
 
 })
+
+// router.patch("/update-car", async(req, res) => {
+
+//     try{
+        
+//         const { id: carId } = req.params;
+
+
+
+//     }
+//     catch (error) {
+
+//         console.log(error);
+
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+//         .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+//     }
+
+// })
 
 // Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
 router.post("/predict-cluster", async(req, res) => {

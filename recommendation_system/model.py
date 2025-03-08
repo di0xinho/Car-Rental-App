@@ -20,11 +20,6 @@ class Model:
         self.feature_names = ["capacity", "year", "mileage", "hourlyPrice", "fuelType", "gearboxType", "bodyType"]
         self.scaler = MinMaxScaler()
 
-        # Usuwamy zbędne kolumny, które nie będą brane pod uwagę w czasie uczenia modelu
-        self.data_frame = self.data_frame.drop(
-            columns=["make", "model", "color", "imageUrl", "description", "bookedTimeSlots", "isAvailable"]
-        )
-
         # Informacja o liczbie rekordów danych wykorzystywanych w procesie uczenia modelu
         print(f"\nModel uczony na {data.shape[0]} rekordach danych")
 
@@ -57,7 +52,12 @@ class Model:
 
     # Metoda przygotowująca dane do procesu uczenia (wywołuje w swoim ciele metody odpowiedzialne za normalizację oraz one-hot-encoding)
     def prepare_data(self):
-        self.data_frame_encoded = self.data_frame.copy()
+
+        # Usuwamy zbędne kolumny, które nie będą brane pod uwagę w czasie uczenia modelu
+        self.data_frame_encoded = self.data_frame.drop(
+            columns=["make", "model", "color", "imageUrl", "description", "bookedTimeSlots", "isAvailable"]
+        )
+
         self.normalize_data(["capacity", "year", "mileage", "hourlyPrice"])
         self.one_hot_encode_data(["fuelType", "gearboxType", "bodyType"])
 
@@ -128,3 +128,13 @@ class Model:
         # Pobieranie obserwacji należących do wskazanego klastra
         cluster_observations = self.data_frame[self.data_frame_encoded["cluster"] == cluster_id]
         return cluster_observations
+    
+    # Metoda dodająca do oryginalnej ramki danych kolumnę 'cluster'
+    def add_cluster_column(self):
+        if self.kmeans is None:
+            raise ValueError("Model KMeans nie został jeszcze zbudowany! Użyj metody build_model().")
+        
+        # Dodajemy kolumnę 'cluster' do ramki danych sprzed stanu ich przygotowania do procesu uczenia
+        self.data_frame["cluster"] = self.kmeans.labels_
+        return self.data_frame
+

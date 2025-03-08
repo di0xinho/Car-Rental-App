@@ -1,9 +1,13 @@
 // Importujemy moduł Express.js 
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 // Tworzymy instancję aplikacji Express
 const app = express();
+
+// Dodajemy obsługę ciasteczek
+app.use(cookieParser());
 
 // Importujemy moduł "dotenv" do obsługi zmiennych środowiskowych 
 import dotenv from 'dotenv';
