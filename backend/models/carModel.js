@@ -30,10 +30,10 @@ const carSchema = new mongoose.Schema(
               userId: { type: mongoose.Types.ObjectId, ref: 'users' }, // Id użytkownika
               modifiedAt: { type: Date, default: Date.now } // Data modyfikacji
           }
-      ]
+      ],
+      cluster: { type: Number, required: false } // Wartość 'cluster' jest wyznaczana przez model rekomendacji (grupuje się na jej podstawie podobne samochody)
       },
       
-    
       {
         timestamps: true, // Ustawiamy timestamps na 'true', by móc podejrzeć datę utworzenia i modyfikacji dokumentu
       }
