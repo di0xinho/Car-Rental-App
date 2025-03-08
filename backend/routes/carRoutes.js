@@ -1,6 +1,5 @@
 import express from "express";
 import axios from "axios";
-import { spawn } from "child_process";
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import Car from "../models/carModel.js";

@@ -4,7 +4,6 @@ import { StatusCodes } from "http-status-codes";
 import User from "../models/userModel.js";
 import { emailSchema, usernameSchema, passwordSchema, validateField } from "../utils/validateFields.js";
 import { createJWT, attachCookie } from "../utils/authFunctions.js";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 // Endpoint obsługujący rejestrację użytkownika 
