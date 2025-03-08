@@ -7,9 +7,9 @@ Model rekomendacji dla wypożyczalni samochodów wykorzystuje algorytm k-średni
 ## Struktura projektu
 
 Projekt składa się z trzech głównych plików:
-1. **`model.py`** – zawiera definicję klasy `Model`, która implementuje logikę trenowania, przechowywania i przewidywania w modelu k-średnich.
-2. **`app.py`** – plik obrazujący, jak używać modelu do trenowania, predykcji oraz zapisywania i ładowania modelu.
-3. **`server.py`** – implementacja serwera Flask, który umożliwia korzystanie z modelu w aplikacji webowej, udostępniając API do predykcji oraz pobierania rekomendowanych samochodów.
+1. **`model.py`** – zawiera definicję klasy `Model`, która implementuje logikę trenowania, przechowywania, przewidywania w modelu k-średnich oraz zapisu oznaczonych danych do pliku JSON.
+2. **`app.py`** – plik obrazujący, jak używać modelu do trenowania, predykcji oraz zapisywania i ładowania modelu oraz zapisu oznaczonych danych do pliku JSON.
+3. **`server.py`** – implementacja serwera Flask, który umożliwia korzystanie z modelu w aplikacji webowej, udostępniając API do predykcji.
 
 ## 1. **`model.py`**
 
@@ -20,7 +20,8 @@ W pliku **`model.py`** znajduje się klasa `Model`, która odpowiedzialna jest z
 - Budowanie i trenowanie modelu k-średnich,
 - Zapis i wczytywanie wytrenowanego modelu,
 - Predykcję klastra dla nowych danych,
-- Uzyskiwanie samochodów przypisanych do konkretnego klastra.
+- Uzyskiwanie samochodów przypisanych do konkretnego klastra,
+- Dodanie kolumny 'cluster' do oryginalnej ramki danych w celu oznaczenia rekordów (etykietowanie danych).
 
 ### Klasa `Model` – Metody:
 
@@ -36,6 +37,7 @@ W pliku **`model.py`** znajduje się klasa `Model`, która odpowiedzialna jest z
 - **`train_model(k=5)`** – Trenuje model i zapisuje go do pliku.
 - **`predict_cluster(new_data: pd.DataFrame)`** – Przewiduje klaster dla nowej próbki danych.
 - **`get_observations_by_cluster(cluster_id: int)`** – Zwraca samochody należące do danego klastra.
+- **`add_cluster_column()`** – Dodaje do oryginalnej ramki danych kolumnę 'cluster', która przyporządkowuje każdy rekord danych do danego klastra.
 
 ## 2. **`app.py`**
 
@@ -46,7 +48,8 @@ Plik **`app.py`** demonstruje użycie klasy `Model`. Pozwala na:
 - Przygotowanie danych i trenowanie modelu,
 - Sprawdzenie jakości modelu,
 - Predykcję klastra dla nowej obserwacji,
-- Uzyskanie rekomendacji dla użytkownika.
+- Uzyskanie rekomendacji dla użytkownika,
+- Zapis oznaczonych rekordów danych do pliku JSON.
 
 ### Przykład użycia:
 
@@ -79,15 +82,37 @@ predicted_cluster = model_2.predict_cluster(new_observation)
 
 # Wyświetlanie wyników
 print(f"Przewidziany klaster: {predicted_cluster[0]}")
+
+# Pobranie kolekcji samochodów należących pod przewidziany klaster
+cars = model_2.get_observations_by_cluster(predicted_cluster[0])
+
+# Wyświetlamy pierwsze 3 samochody z rekomendacji
+N = 3
+first_three_cars = cars[:N]
+print(f"\nTrzy pierwsze samochody z rekomendacji:\n\n{first_three_cars}")
+
+# Dodanie do ramki danych kolumny 'cluster'
+labeled_data = model_2.add_cluster_column()
+
+# Pobranie ścieżki do zapisu pogrupowanych danych
+output_filepath = os.getenv("OUTPUT_FILEPATH")
+  
+# Zapis ramki danych do formatu JSON jako tablica rekordów
+records = labeled_data.to_dict(orient='records')
+
+# Zapisanie danych do pliku JSON
+with open(output_filepath, 'w') as f:
+    json.dump(records, f, indent=2)
+
+print(f"Ukończono proces grupowania danych. Lokalizacja pliku: {output_filepath}\n")
 ```
 
 ## 3. **`server.py`**
 
 ### Opis
 
-Plik **`server.py`** implementuje prostą aplikację webową przy użyciu Flask. Serwer udostępnia dwa główne endpointy:
+Plik **`server.py`** implementuje prostą aplikację webową przy użyciu Flask. Serwer udostępnia jeden endpoint:
 - **`/predict`** – Przyjmuje dane samochodu w formacie JSON i zwraca przewidywany klaster.
-- **`/get-cars-from-cluster/<int:cluster_id>`** – Przyjmuje identyfikator klastra i zwraca listę samochodów należących do tego klastra.
 
 ### Przykłady zapytań:
 
@@ -111,25 +136,4 @@ Plik **`server.py`** implementuje prostą aplikację webową przy użyciu Flask.
    {
        "predicted_cluster": 2
    }
-   ```
-
-2. **Pobieranie samochodów z klastra:**
-   ```bash
-   GET /get-cars-from-cluster/2
-   ```
-
-   **Odpowiedź:**
-   ```json
-   [
-       {
-           "capacity": 4,
-           "year": 2018,
-           "bodyType": "SUV",
-           "gearboxType": "Automatyczna",
-           "mileage": 108467,
-           "fuelType": "Benzyna",
-           "hourlyPrice": 78
-       },
-       ...
-   ]
    ```

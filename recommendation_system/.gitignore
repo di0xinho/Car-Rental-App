@@ -54,3 +54,6 @@ docs/_build/
 
 # File with artificial data
 train_data/train_data.json
+
+# File with labeled data
+labeled_data/output.json
