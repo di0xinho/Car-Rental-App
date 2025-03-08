@@ -1,6 +1,6 @@
 import express from "express";
 import axios from "axios";
-import { spawn } from "child_process";
+import authMiddleware from "../middleware/authMiddleware.js"
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import Car from "../models/carModel.js";
@@ -34,7 +34,7 @@ router.get("/get-all-cars", async(req, res) => {
 })
 
 // Endpoint odpowiedzialny za utworzenie nowej oferty z samochodem
-router.post("/create-car", async(req, res) => {
+router.post("/create-car", authMiddleware, async(req, res) => {
 
     try{
         // Pobieramy wszystkie dane z ciała zapytania
@@ -45,12 +45,21 @@ router.post("/create-car", async(req, res) => {
             return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie wszystkie pola zostały uzupełnione przez użytkownika", success: false });
         }
 
-        // Gdy jest gites
+        // Dodanie pola z informacją przez kogo została utworzona oferta oraz przez kogo została zmodyfikowana (utworzenie zasobu to też modyfikacja - jest to pierwsza modyfikacja)
+        req.body.createdBy = req.user.userId;
+
+        // Pole 'modifiedBy' składać się będzie z id modyfikacji, id użytkownika modyfikującego zasób i daty modyfikacji
+        req.body.modifiedBy = { userId: req.user.userId, modifiedAt: new Date() }; 
+        
+        // Tworzymy nowy rekord (nową ofertę samochodu)
+        const newCar = new Car(req.body)
+
+        // Zapisanie rekordu w bazie
+        await newCar.save();
+
+        // W przypadku znalezienia utworzenia rekordu w bazie, wynik jest zwracany w odpowiedzi
         res.status(StatusCodes.OK)
-        .json({ message: "Jak narazie wszystko git", success: true});
-
-
-        // Wrócimy do tego potem...
+        .json({ message: "Dodawanie nowej oferty zakończyło się powodzeniem", data: newCar, success: true});
 
     } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
     catch(error){
@@ -64,8 +73,84 @@ router.post("/create-car", async(req, res) => {
 
 })
 
+// Endpoint odpowiedzialny za modyfikację istniejącej już oferty z samochodem
+router.patch("/update-car/:carId", authMiddleware, async(req, res) => {
+
+    try{
+        // Pobranie ID samochodu z parametru ścieżki
+        const carId = req.params.carId; 
+
+        // Wyszukiwanie samochodu po numerze id
+        const foundCar = await Car.findById(carId);
+
+        // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
+        if(!foundCar){
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie znaleziono samochodu o takim numerze id", success: false });
+        }
+
+        // Pobieramy wszystkie dane z ciała zapytania
+        const { make, model, capacity, year, color, bodyType, gearboxType, mileage, fuelType, hourlyPrice, imageUrl, description } = req.body;
+
+        // Sprawdzamy, czy którykolwiek z wymaganych pól jest pusty lub undefined
+        if ([make, model, capacity, year, color, bodyType, gearboxType, mileage, fuelType, hourlyPrice, imageUrl, description].some(value => value === undefined || value === "")) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie wszystkie pola zostały uzupełnione przez użytkownika", success: false });
+        }
+        
+        // Mając numer id samochodu znajdujemy go w bazie i aktualizujemy dokument
+        const updatedCar = await Car.findOneAndUpdate({ _id: carId }, req.body, {
+            new: true, // zwracamy zaktualizowany zasób
+            runValidators: true, // aktywacja zdefiniowanych w schemacie Mongoose walidatorów 
+          });
+        
+        // W przypadku znalezienia utworzenia rekordu w bazie, wynik jest zwracany w odpowiedzi
+        res.status(StatusCodes.OK)
+        .json({ message: "Wybrany zasób został zaktualizowany", data: updatedCar, success: true});
+
+    }
+    catch (error) {
+
+        console.log(error);
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
+
+// Endpoint odpowiedzialny za usunięcie wybranego pojazdu z bazy danych
+router.delete("/delete-car/:carId", authMiddleware, async(req, res) => {
+
+    try{
+        // Pobranie ID samochodu z parametru ścieżki
+        const carId = req.params.carId; 
+
+        // Wyszukiwanie samochodu po numerze id
+        const deletedCar = await Car.findOneAndDelete({ _id: carId });
+
+        // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
+        if(!deletedCar){
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie znaleziono samochodu o takim numerze id", success: false });
+        }
+
+        // W przypadku pomyślnego usunięcia zasobu z bazy danych, wyświetlamy następujący komunikat
+        res.status(StatusCodes.OK)
+        .json({ message: "Wybrany zasób został usunięty z bazy danych", data: deletedCar, success: true});
+
+    }
+    catch (error) {
+
+        console.log(error);
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
+
 // Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
-router.post("/predict-cluster", async(req, res) => {
+router.post("/predict-cluster", authMiddleware, async(req, res) => {
     try{
         // Tworzymy URL, aby dostać się do ścieżki odpowiadającej za przewidywanie modelu
         const URL = process.env.FLASK_API_URL + "/predict";
@@ -88,23 +173,28 @@ router.post("/predict-cluster", async(req, res) => {
 
 })
 
-// Endpoint odpowiedzialny za zwrócenie kolekcji samochodów należących do danego klastra
-router.get("/get-cars-from-cluster", async(req, res) => {
+// Endpoint służący do pobrania kolekcji samochodów na podstawie preferencji użytkownika (na podstawie kolumny 'cluster')
+router.get("/get-cars-by-cluster/:clusterId", authMiddleware, async(req, res) => {
+
     try{
-        // Z parametru zapytania pobieramy id klastra
-        const cluster_id = req.query.cluster_id;
+         // Pobranie ID klastra do którego został przypisany samochód z parametru ścieżki
+         const clusterId = req.params.clusterId;
+         
+         // Odpytujemy naszą bazę danych w poszukiwaniu po odpowiednim id klastra
+         const cars = await Car.find({cluster: clusterId});
 
-        // Tworzymy URL, aby dostać się do ścieżki odpowiadającej za zwracanie kolekcji samochodów należących do danego klastra
-        const URL = process.env.FLASK_API_URL + "/get-cars-from-cluster/" + cluster_id;
+         // W przypadku, gdy w bazie nie ma żadnego rekordu zwracamy informacje o braku zasobów
+        if(!cars){
+            return res.status(StatusCodes.NOT_FOUND)
+            .json({ message: "Nie znaleziono zasobu", success: false });
+        }
 
-        // Wysyłamy żądanie do serwera obsługującego model rekomendacji; wynik zapisujemy do zmiennej 'response'
-        const response = await axios.get(URL);
+        // W przypadku znalezienia rekordów w bazie, wynik jest zwracany w odpowiedzi
+        res.status(StatusCodes.OK)
+        .json({ message: "Zwrócono listę samochodów",  data: cars, success: true});
 
-        // W postaci pliku jsonowego przedstawiona zostanie odpowiedź serwera (kolekcja samochodów należących do danego klastra - centrum)
-        res.json(response.data);
-
-    }// W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
-    catch(error){
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
 
         console.log(error);
 
@@ -112,9 +202,8 @@ router.get("/get-cars-from-cluster", async(req, res) => {
         .json({ message: "Wewnętrzny błąd serwera", success: false, error });
 
     }
+
 })
-
-
 
 export default router;
 

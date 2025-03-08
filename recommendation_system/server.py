@@ -51,19 +51,5 @@ def predict():
     except Exception as e: # W przypadku błędu serwera...
         return jsonify({"error": f"Błąd przetwarzania danych: {str(e)}"}), 400
     
-# Endpoint odpowiedzialny za zwrócenie kolekcji samochodów należących do danego klastra
-@app.route("/get-cars-from-cluster/<int:cluster_id>", methods=["GET"])
-def get_cars_from_cluster(cluster_id):
-    # Jeśli model jest pusty...
-    if model is None:
-        return jsonify({"error": "Model nie został poprawnie wczytany."}), 500
-    
-    # Wszystkie samochody należące do danego klastra zostaną zwrócone do zmiennej 'observations' i przedstawione w formacie json w odpowiedzi na żądanie
-    try:
-        observations = model.get_observations_by_cluster(cluster_id)
-        return jsonify(observations.to_dict(orient="records"))
-    except Exception as e: # W przypadku błędu serwera...
-        return jsonify({"error": f"Błąd pobierania danych klastra: {str(e)}"}), 400
-
 if __name__ == "__main__": # Aplikacja jest dostępna na localhoście, na porcie 8001
     app.run(host="127.0.0.1", port=8001, debug=True)

@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import User from "../models/userModel.js";
 import { emailSchema, usernameSchema, passwordSchema, validateField } from "../utils/validateFields.js";
 import { createJWT, attachCookie } from "../utils/authFunctions.js";
-import jwt from "jsonwebtoken";
+import authMiddleware from "../middleware/authMiddleware.js"
 import bcrypt from "bcryptjs";
 
 // Endpoint obsługujący rejestrację użytkownika 
@@ -145,5 +145,33 @@ router.post("/login", async(req, res) => {
 
     }
 });
+
+// Endpoint odpowiedzialny za zwrócenie informacji o koncie aktualnego użytkownika (aktualnie zalogowanego)
+router.get("/get-current-user", authMiddleware, async(req, res) => {
+
+    try{
+        // Znajdujemy w bazie danych użytkowanika o danym numerze id
+        const user = await User.findOne({ _id: req.user.userId });
+
+        // Zabezpieczenie - jeśli dany użytkownik nie znajduje się w bazie danych, to wyświetlamy odpowiedni komunikat
+        if(!user){
+            return res.status(StatusCodes.NOT_FOUND)
+            .json({message: "Wybrany użytkownik nie figuruje w bazie danych", success: false});
+        }
+
+        // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
+        res.status(StatusCodes.OK)
+        .json({ message: "Zwrócono dane na temat obecnego konta użytkownika", data: user, success: true });
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
+
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
 
 export default router;

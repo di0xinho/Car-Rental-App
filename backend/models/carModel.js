@@ -25,8 +25,15 @@ const carSchema = new mongoose.Schema(
         ],
         isAvailable: { type: Boolean, required: true, default: true }, // Czy samochód jest dostępny do wynajmu (zmienna boolowska) 
         createdBy: { type: mongoose.Types.ObjectId, ref: 'users', required: true }, // Identyfikator twórcy oferty
+        modifiedBy: [ // Lista użytkowników, którzy modyfikowali zasób
+          {
+              userId: { type: mongoose.Types.ObjectId, ref: 'users' }, // Id użytkownika
+              modifiedAt: { type: Date, default: Date.now } // Data modyfikacji
+          }
+      ],
+      cluster: { type: Number, required: false } // Wartość 'cluster' jest wyznaczana przez model rekomendacji (grupuje się na jej podstawie podobne samochody)
       },
-    
+      
       {
         timestamps: true, // Ustawiamy timestamps na 'true', by móc podejrzeć datę utworzenia i modyfikacji dokumentu
       }

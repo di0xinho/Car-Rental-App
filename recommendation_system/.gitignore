@@ -51,3 +51,9 @@ docs/_build/
 
 # Dotenv file
 .env
+
+# File with artificial data
+train_data/train_data.json
+
+# File with labeled data
+labeled_data/output.json
