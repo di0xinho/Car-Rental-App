@@ -45,8 +45,11 @@ router.post("/create-car", authMiddleware, async(req, res) => {
             return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie wszystkie pola zostały uzupełnione przez użytkownika", success: false });
         }
 
-        // Dodanie pola z informacją przez kogo została utworzona oferta
+        // Dodanie pola z informacją przez kogo została utworzona oferta oraz przez kogo została zmodyfikowana (utworzenie zasobu to też modyfikacja - jest to pierwsza modyfikacja)
         req.body.createdBy = req.user.userId;
+
+        // Pole 'modifiedBy' składać się będzie z id modyfikacji, id użytkownika modyfikującego zasób i daty modyfikacji
+        req.body.modifiedBy = { userId: req.user.userId, modifiedAt: new Date() }; 
         
         // Tworzymy nowy rekord (nową ofertę samochodu)
         const newCar = new Car(req.body)
@@ -69,6 +72,26 @@ router.post("/create-car", authMiddleware, async(req, res) => {
     }
 
 })
+
+// router.patch("/update-car", async(req, res) => {
+
+//     try{
+        
+//         const { id: carId } = req.params;
+
+
+
+//     }
+//     catch (error) {
+
+//         console.log(error);
+
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+//         .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+//     }
+
+// })
 
 // Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
 router.post("/predict-cluster", async(req, res) => {
