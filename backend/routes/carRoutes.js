@@ -118,6 +118,37 @@ router.patch("/update-car/:carId", authMiddleware, async(req, res) => {
 
 })
 
+// Endpoint odpowiedzialny za usunięcie wybranego pojazdu z bazy danych
+router.delete("/delete-car/:carId", authMiddleware, async(req, res) => {
+
+    try{
+        // Pobranie ID samochodu z parametru ścieżki
+        const carId = req.params.carId; 
+
+        // Wyszukiwanie samochodu po numerze id
+        const deletedCar = await Car.findOneAndDelete({ _id: carId });
+
+        // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
+        if(!deletedCar){
+            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Nie znaleziono samochodu o takim numerze id", success: false });
+        }
+
+        // W przypadku pomyślnego usunięcia zasobu z bazy danych, wyświetlamy następujący komunikat
+        res.status(StatusCodes.OK)
+        .json({ message: "Wybrany zasób został usunięty z bazy danych", data: deletedCar, success: true});
+
+    }
+    catch (error) {
+
+        console.log(error);
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
+
 // Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
 router.post("/predict-cluster", authMiddleware, async(req, res) => {
     try{
