@@ -26,8 +26,9 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     // W przypadku zapomnienia przez użytkownika hasła do konta mamy:
-    resetPasswordToken: String, // Token resetujący hasło
-    resetPasswordExpires: Date, // Data wygaśnięcia ważności tokena resetującego hasło
+    resetPasswordCode: String, // Jednorazowy kod numeryczny
+    resetPasswordCodeExpiry: Date, // Data wygaśnięcia ważności 6-cyfrowego kodu jednorazowego
+    resetPasswordAttempts: { type: Number, default: 0 }, // Limit prób resetowania hasła
     
     // Imię 
     firstName: {
