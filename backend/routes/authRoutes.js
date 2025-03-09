@@ -174,4 +174,79 @@ router.get("/get-current-user", authMiddleware, async(req, res) => {
 
 })
 
+// Endpoint odpowiedzialny za żądanie resetowania hasła
+router.post("/forgot-password", async(req, res) => {
+
+    try{
+        // Pobranie właściwości email z ciała zapytania
+        const email = req.body.email;
+
+        // Walidacja adresu email
+        const emailValidation = validateField(email, emailSchema);
+
+        // Jeśli adres email nie spełnia warunków, wtedy zwracamy odpowiednią odpowiedź
+        if( !emailValidation.isValid ){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json( {message: "Adres email nie spełnia warunków walidacji", errors: emailValidation.errors, success: false} );
+        }
+
+        // Wyszukujemy użytkownika o podanym adresie e-mail
+        const user = await User.findOne({ email: email });
+
+        // Aby nie ujawniać, które adresy są w bazie, będziemy zawsze zwracać tą samą odpowiedź niezależnie, czy użytkownik figuruje w bazie
+        if(!user){
+            return res.status(StatusCodes.OK)
+            .json({message: "Jeśli konto istnieje, otrzymasz wiadomość email ze stosownymi instrukcjami", success: true });
+        }
+
+        // Sprawdzamy limity prób resetowania hasła
+        const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+        // Jeśli w ciągu godziny próbowaliśmy zmienić hasło więcej niż 3 razy, to wtedy
+        // zwracamy informacje o przekroczeniu limitu prób resetowania hasła
+        if (user.resetPasswordAttempts >= 3 && user.resetPasswordCodeExpiry > hourAgo) {
+            return res.status(StatusCodes.TOO_MANY_REQUESTS)
+            .json( { message: "Przekroczono limit prób resetowania hasła. Spróbuj ponownie za godzinę", success: false });
+        }
+        
+        // Generujemy 6-cyfrowy jednorazowy kod 
+        const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Zapisujemy kod i czas wygaśnięcia (15 minut)
+        const expiryTime = new Date(Date.now() + 15 * 60 * 1000);
+
+        // Wyszukujemy użytkownika po numerze id, a następnie aktualizujemy wartość:
+        // 6-cyfrowego kodu jednorazowego, czas wygaśnięcia kodu oraz inkrementujemy o 1 liczbę prób resetowania hasła
+        await User.findByIdAndUpdate(user._id, {
+            resetPasswordCode: resetCode,
+            resetPasswordCodeExpiry: expiryTime,
+            $inc: { resetPasswordAttempts: 1 }
+          });
+
+        // W środowisku produkcyjnym wysyłamy email - do zrobienia na potem
+        // sendResetPasswordEmail(user.email, resetCode);
+        
+        // Dla środowiska dev wyświetlamy kod w konsoli
+        console.log(`Kod resetowania hasła dla ${user.email}: ${resetCode}`);
+        
+        // Resetujemy licznik prób po upłynięciu 24 godzin
+        setTimeout(async () => {
+        await User.findByIdAndUpdate(user._id, { resetPasswordAttempts: 0 });
+        }, 24 * 60 * 60 * 1000);
+
+        // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera 
+        res.status(StatusCodes.OK)
+        .json({ message: "Kod resetujący hasło został wysłany na Twój adres email. Kod wygasa po 15 minutach.", success: true });
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
+
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
+
 export default router;
