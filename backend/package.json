@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@azure/communication-email": "^1.0.0",
     "axios": "^1.8.2",
     "bcryptjs": "^3.0.0",
     "body-parser": "^1.20.3",
