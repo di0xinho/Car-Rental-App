@@ -2,7 +2,7 @@ import express, { Router } from "express";
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import User from "../models/userModel.js";
-import { emailSchema, usernameSchema, passwordSchema, validateField } from "../utils/validateFields.js";
+import { emailSchema, usernameSchema, passwordSchema, resetCodeSchema, validateField } from "../utils/validateFields.js";
 import { createJWT, attachCookie } from "../utils/authFunctions.js";
 import authMiddleware from "../middleware/authMiddleware.js"
 import bcrypt from "bcryptjs";
@@ -305,6 +305,91 @@ router.post("/forgot-password", async (req, res) => {
     }
 });
 
+router.post("/reset-password", async(req, res) => {
+
+    try{
+        // Pobieramy adres email, kod resetujący oraz nowe hasło z ciała zapytania
+        const { email, resetCode, newPassword } = req.body;
+
+         // Sprawdzamy, czy adres email, kod resetujący i nowe hasło spełniają warunki walidacji
+         const emailValidation = validateField(email, emailSchema);
+         const resetCodeValidation = validateField(resetCode, resetCodeSchema);
+         const passwordValidation = validateField(newPassword, passwordSchema);
+
+        // Jeśli adres email nie spełnia warunków, wtedy zwracamy odpowiednią odpowiedź
+        if( !emailValidation.isValid ){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json( {message: "Adres email nie spełnia warunków walidacji", errors: emailValidation.errors, success: false} );
+        }
+
+        // Jeśli kod jednorazowy nie spełnia warunków, wtedy zwracamy odpowiednią odpowiedź
+        if( !resetCodeValidation.isValid ){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json( {message: "Kod jednorazowy nie spełnia warunków walidacji", errors: resetCodeValidation.errors, success: false} );
+        }
+
+        // Jeśli nowe hasło nie spełnia warunków, wtedy zwracamy odpowiednią odpowiedź
+        if( !passwordValidation.isValid ){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json( {message: "Hasło nie spełnia warunków walidacji", errors: passwordValidation.errors, success: false} );
+        }
+
+        // Szukamy użytkownika w bazie danych wykorzystując podany adres email
+        const user = await User.findOne({ email: email });
+
+        // Jeśli dany użytkownik nie znajduje się w bazie danych, to wyświetlamy odpowiedni komunikat
+        if(!user){
+            return res.status(StatusCodes.NOT_FOUND)
+            .json({message: "Wybrany użytkownik nie figuruje w bazie danych", success: false});
+        }
+
+        // Sprawdzenie, czy kod jednorazowy jest poprawny i nie wygasł
+        if (!user.resetPasswordCode || user.resetPasswordCode !== resetCode || user.resetPasswordCodeExpiry < Date.now()) {
+            return res.status(StatusCodes.UNAUTHORIZED)
+            .json({ message: "Nieprawidłowy lub wygasły kod", success: false });
+        }
+
+        // Teraz zajmiemy się hasłem...
+
+        // Generujemy sól
+        const salt = await bcrypt.genSalt(10);
+
+        // Haszujemy nasze hasło dodając do niego sól
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // W miejsce hasła zapisanego w formacie tekstu jawnego zapisujemy zaszyfrowane hasło
+        req.body.password = hashedPassword;
+
+        // Ustawiamy nowe hasło użytkownikowi
+        user.password = req.body.password;
+
+        // Zmieniamy wartość kodu resetującego hasło oraz czas jego wygaśnięcia na undefined 
+        user.resetPasswordCode = undefined;
+        user.resetPasswordCodeExpiry = undefined;
+        
+        // Zapisujemy zmiany w bazie
+        await user.save();
+
+        // W przypadku, gdy proces resetowania hasła przebiegł pomyślnie, wysyłamy odpowiedni komunikat
+        res.status(StatusCodes.OK).json({
+            message: "Proces resetowania i nadawania nowego hasła przebiegł pomyślnie",
+            success: true,
+        });
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
+
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Wewnętrzny błąd serwera",
+            success: false,
+            error,
+        });
+
+    }
+
+})
+
 // Endpoint odpowiedzialny za poprawne wylogowanie użytkownika z aplikacji
 router.delete("/logout", async(req, res) => {
 
@@ -322,7 +407,7 @@ router.delete("/logout", async(req, res) => {
             success: true,
         });
 
-    }
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
     catch (error) {
 
         console.error(error);
