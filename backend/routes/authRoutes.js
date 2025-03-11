@@ -160,9 +160,51 @@ router.get("/get-current-user", authMiddleware, async(req, res) => {
             .json({message: "Wybrany użytkownik nie figuruje w bazie danych", success: false});
         }
 
+        // Z przyczyn bezpieczeństwa hasło jak i dane dotyczące przypominania hasła są ustawiane jako undefined
+        user.password = undefined;
+        user.resetPasswordCode = undefined;
+        user.resetPasswordCodeExpiry = undefined;
+        user.resetPasswordAttempts = undefined;
+
+
         // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
         res.status(StatusCodes.OK)
         .json({ message: "Zwrócono dane na temat obecnego konta użytkownika", data: user, success: true });
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
+
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
+
+// Endpoint zwracający dane na temat użytkownika (uogólnienie endpointa '/get-current-user', gdzie zwracaliśmy dane na temat AKTUALNEGO użytkownika, gdzie numer id był 
+// pozyskiwany z odpowiedniego pliku cookie)
+router.get("/get-user-by-id", authMiddleware, async(req, res) => {
+
+    try{
+        // Znajdujemy w bazie danych użytkowanika o danym numerze id
+        const user = await User.findOne({ _id: req.body.userId });
+
+         // Zabezpieczenie - jeśli dany użytkownik nie znajduje się w bazie danych, to wyświetlamy odpowiedni komunikat
+         if(!user){
+            return res.status(StatusCodes.NOT_FOUND)
+            .json({message: "Wybrany użytkownik nie figuruje w bazie danych", success: false});
+        }
+
+         // Z przyczyn bezpieczeństwa hasło jak i dane dotyczące przypominania hasła są ustawiane jako undefined
+         user.password = undefined;
+         user.resetPasswordCode = undefined;
+         user.resetPasswordCodeExpiry = undefined;
+         user.resetPasswordAttempts = undefined;
+
+         // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
+         res.status(StatusCodes.OK)
+         .json({ message: "Zwrócono dane na temat obecnego konta użytkownika", data: user, success: true });
 
     } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
     catch (error) {
@@ -204,7 +246,7 @@ router.post("/forgot-password", async (req, res) => {
             });
         }
 
-        // Limit prób resetowania hasła
+        // Ustawienie czasu po którym będzie można dalej resetować hasła oraz limit prób do ich resetowania 
         const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
         const limit = 3;
 
@@ -217,6 +259,8 @@ router.post("/forgot-password", async (req, res) => {
 
         // Generowanie 6-cyfrowego kodu
         const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Czas ważności 6-cyfrowego kodu
         const expiryTime = new Date(Date.now() + 15 * 60 * 1000);
 
         // Aktualizacja użytkownika
