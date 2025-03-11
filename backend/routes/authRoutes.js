@@ -305,4 +305,35 @@ router.post("/forgot-password", async (req, res) => {
     }
 });
 
+// Endpoint odpowiedzialny za poprawne wylogowanie użytkownika z aplikacji
+router.delete("/logout", async(req, res) => {
+
+    try{
+        // Nadpisujemy istniejące ciasteczko 'token' nowym ciasteczkiem o nazwie 'logout'
+        // W ten sposób radzimy sobie z unieważnieniem poprzedniego tokena uwierzytelniającego 
+        res.cookie('token', 'logout', {
+            httpOnly: true,
+            expires: new Date(Date.now() + 1000), // ciasteczko wygasa po 1 sekundzie
+          });
+
+         // Serwer zwraca odpowiedni komunikat
+         res.status(StatusCodes.OK).json({
+            message: "Użytkownik został wylogowany pomyślnie",
+            success: true,
+        });
+
+    }
+    catch (error) {
+
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Wewnętrzny błąd serwera",
+            success: false,
+            error,
+        });
+
+    }
+
+})
+
 export default router;
