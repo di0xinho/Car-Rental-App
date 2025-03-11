@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@azure/communication-email": "^1.0.0",
     "axios": "^1.8.2",
     "bcryptjs": "^3.0.0",
     "body-parser": "^1.20.3",
@@ -13,7 +14,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.13.0",
     "mongoose": "^8.10.0",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "stripe": "^17.7.0"
   },
   "type": "module",
   "scripts": {

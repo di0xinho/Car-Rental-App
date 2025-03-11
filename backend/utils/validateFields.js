@@ -29,6 +29,20 @@ const passwordSchema = Joi.string()
     .pattern(/[^a-zA-Z0-9]/, "Jeden znak specjalny")
     .required();
 
+// Definiujemy schemat według którego ma przebiegać walidacja 6-cyfrowego kodu jednorazowego
+const resetCodeSchema = Joi.string()
+    .length(6)
+    .pattern(/^\d{6}$/)
+    .required()
+    .messages({
+        "string.base": "Kod resetujący musi być ciągiem znaków.",
+        "string.empty": "Kod resetujący nie może być pusty.",
+        "string.length": "Kod resetujący musi składać się z dokładnie 6 cyfr.",
+        "string.pattern.base": "Kod resetujący może zawierać tylko cyfry.",
+        "any.required": "Kod resetujący jest wymagany."
+    });
+
+
 // Uniwersalna funkcja walidująca dowolny parametr
 const validateField = (value, schema) => {
     const { error } = schema.validate(value);
@@ -38,4 +52,4 @@ const validateField = (value, schema) => {
     };
 };
 
-export { emailSchema, usernameSchema, passwordSchema, validateField };
+export { emailSchema, usernameSchema, passwordSchema, resetCodeSchema, validateField };

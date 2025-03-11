@@ -2,10 +2,11 @@ import express, { Router } from "express";
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import User from "../models/userModel.js";
-import { emailSchema, usernameSchema, passwordSchema, validateField } from "../utils/validateFields.js";
+import { emailSchema, usernameSchema, passwordSchema, resetCodeSchema, validateField } from "../utils/validateFields.js";
 import { createJWT, attachCookie } from "../utils/authFunctions.js";
 import authMiddleware from "../middleware/authMiddleware.js"
 import bcrypt from "bcryptjs";
+import emailService from "../utils/emailService.js";
 
 // Endpoint obsługujący rejestrację użytkownika 
 router.post("/register", async(req, res) => {
@@ -159,6 +160,13 @@ router.get("/get-current-user", authMiddleware, async(req, res) => {
             .json({message: "Wybrany użytkownik nie figuruje w bazie danych", success: false});
         }
 
+        // Z przyczyn bezpieczeństwa hasło jak i dane dotyczące przypominania hasła są ustawiane jako undefined
+        user.password = undefined;
+        user.resetPasswordCode = undefined;
+        user.resetPasswordCodeExpiry = undefined;
+        user.resetPasswordAttempts = undefined;
+
+
         // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
         res.status(StatusCodes.OK)
         .json({ message: "Zwrócono dane na temat obecnego konta użytkownika", data: user, success: true });
@@ -169,6 +177,245 @@ router.get("/get-current-user", authMiddleware, async(req, res) => {
         console.log(error);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
+
+// Endpoint zwracający dane na temat użytkownika (uogólnienie endpointa '/get-current-user', gdzie zwracaliśmy dane na temat AKTUALNEGO użytkownika, gdzie numer id był 
+// pozyskiwany z odpowiedniego pliku cookie)
+router.get("/get-user-by-id", authMiddleware, async(req, res) => {
+
+    try{
+        // Znajdujemy w bazie danych użytkowanika o danym numerze id
+        const user = await User.findOne({ _id: req.body.userId });
+
+         // Zabezpieczenie - jeśli dany użytkownik nie znajduje się w bazie danych, to wyświetlamy odpowiedni komunikat
+         if(!user){
+            return res.status(StatusCodes.NOT_FOUND)
+            .json({message: "Wybrany użytkownik nie figuruje w bazie danych", success: false});
+        }
+
+         // Z przyczyn bezpieczeństwa hasło jak i dane dotyczące przypominania hasła są ustawiane jako undefined
+         user.password = undefined;
+         user.resetPasswordCode = undefined;
+         user.resetPasswordCodeExpiry = undefined;
+         user.resetPasswordAttempts = undefined;
+
+         // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
+         res.status(StatusCodes.OK)
+         .json({ message: "Zwrócono dane na temat obecnego konta użytkownika", data: user, success: true });
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
+
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
+
+    }
+
+})
+
+// Endpoint odpowiedzialny za żądanie resetowania hasła
+router.post("/forgot-password", async (req, res) => {
+    try {
+        // Pobieramy adres email z ciała zapytania
+        const email = req.body.email;
+
+        // Walidacja adresu email
+        const emailValidation = validateField(email, emailSchema);
+        
+        // W przypadku nie przejścia procesu walidacji, wysyłamy odpowiedni komunikat...
+        if (!emailValidation.isValid) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                message: "Adres email nie spełnia warunków walidacji",
+                errors: emailValidation.errors,
+                success: false,
+            });
+        }
+
+        // Wyszukujemy użytkownika o podanym adresie e-mail
+        const user = await User.findOne({ email });
+
+        // Zwracamy tę samą odpowiedź niezależnie, czy użytkownik istnieje
+        if (!user) {
+            return res.status(StatusCodes.OK).json({
+                message: "Jeśli konto istnieje, otrzymasz wiadomość email ze stosownymi instrukcjami",
+                success: true,
+            });
+        }
+
+        // Ustawienie czasu po którym będzie można dalej resetować hasła oraz limit prób do ich resetowania 
+        const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
+        const limit = 3;
+
+        if (user.resetPasswordAttempts >= limit && user.resetPasswordCodeExpiry > hourAgo) {
+            return res.status(StatusCodes.TOO_MANY_REQUESTS).json({
+                message: "Przekroczono limit prób resetowania hasła. Spróbuj ponownie za godzinę.",
+                success: false,
+            });
+        }
+
+        // Generowanie 6-cyfrowego kodu
+        const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Czas ważności 6-cyfrowego kodu
+        const expiryTime = new Date(Date.now() + 15 * 60 * 1000);
+
+        // Aktualizacja użytkownika
+        await User.findByIdAndUpdate(user._id, {
+            resetPasswordCode: resetCode,
+            resetPasswordCodeExpiry: expiryTime,
+            $inc: { resetPasswordAttempts: 1 },
+        });
+
+        // Wysyłanie emaila przez Azure
+        try {
+            const emailSent = await emailService.sendResetPasswordEmail(user.email, resetCode);
+
+            console.log(`Kod resetowania hasła dla ${user.email}: ${resetCode}`);
+
+            if (!emailSent) {
+                console.warn(`Nie udało się wysłać emaila do ${user.email}`);
+            }
+        } catch (error) {
+            console.error("Błąd podczas wysyłania emaila:", error);
+        }
+
+        // Resetowanie liczby prób po 24h
+        setTimeout(async () => {
+            await User.findByIdAndUpdate(user._id, { resetPasswordAttempts: 0 });
+        }, 24 * 60 * 60 * 1000);
+
+        // W przypadku, gdy proces wysyłania maila przebiegł pomyślnie, wysyłamy odpowiedni komunikat
+        res.status(StatusCodes.OK).json({
+            message: "Kod resetujący hasło został wysłany na Twój adres email. Kod wygasa po 15 minutach.",
+            success: true,
+        });
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Wewnętrzny błąd serwera",
+            success: false,
+            error,
+        });
+    }
+});
+
+router.post("/reset-password", async(req, res) => {
+
+    try{
+        // Pobieramy adres email, kod resetujący oraz nowe hasło z ciała zapytania
+        const { email, resetCode, newPassword } = req.body;
+
+         // Sprawdzamy, czy adres email, kod resetujący i nowe hasło spełniają warunki walidacji
+         const emailValidation = validateField(email, emailSchema);
+         const resetCodeValidation = validateField(resetCode, resetCodeSchema);
+         const passwordValidation = validateField(newPassword, passwordSchema);
+
+        // Jeśli adres email nie spełnia warunków, wtedy zwracamy odpowiednią odpowiedź
+        if( !emailValidation.isValid ){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json( {message: "Adres email nie spełnia warunków walidacji", errors: emailValidation.errors, success: false} );
+        }
+
+        // Jeśli kod jednorazowy nie spełnia warunków, wtedy zwracamy odpowiednią odpowiedź
+        if( !resetCodeValidation.isValid ){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json( {message: "Kod jednorazowy nie spełnia warunków walidacji", errors: resetCodeValidation.errors, success: false} );
+        }
+
+        // Jeśli nowe hasło nie spełnia warunków, wtedy zwracamy odpowiednią odpowiedź
+        if( !passwordValidation.isValid ){
+            return res.status(StatusCodes.BAD_REQUEST)
+            .json( {message: "Hasło nie spełnia warunków walidacji", errors: passwordValidation.errors, success: false} );
+        }
+
+        // Szukamy użytkownika w bazie danych wykorzystując podany adres email
+        const user = await User.findOne({ email: email });
+
+        // Jeśli dany użytkownik nie znajduje się w bazie danych, to wyświetlamy odpowiedni komunikat
+        if(!user){
+            return res.status(StatusCodes.NOT_FOUND)
+            .json({message: "Wybrany użytkownik nie figuruje w bazie danych", success: false});
+        }
+
+        // Sprawdzenie, czy kod jednorazowy jest poprawny i nie wygasł
+        if (!user.resetPasswordCode || user.resetPasswordCode !== resetCode || user.resetPasswordCodeExpiry < Date.now()) {
+            return res.status(StatusCodes.UNAUTHORIZED)
+            .json({ message: "Nieprawidłowy lub wygasły kod", success: false });
+        }
+
+        // Teraz zajmiemy się hasłem...
+
+        // Generujemy sól
+        const salt = await bcrypt.genSalt(10);
+
+        // Haszujemy nasze hasło dodając do niego sól
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // W miejsce hasła zapisanego w formacie tekstu jawnego zapisujemy zaszyfrowane hasło
+        req.body.password = hashedPassword;
+
+        // Ustawiamy nowe hasło użytkownikowi
+        user.password = req.body.password;
+
+        // Zmieniamy wartość kodu resetującego hasło oraz czas jego wygaśnięcia na undefined 
+        user.resetPasswordCode = undefined;
+        user.resetPasswordCodeExpiry = undefined;
+        
+        // Zapisujemy zmiany w bazie
+        await user.save();
+
+        // W przypadku, gdy proces resetowania hasła przebiegł pomyślnie, wysyłamy odpowiedni komunikat
+        res.status(StatusCodes.OK).json({
+            message: "Proces resetowania i nadawania nowego hasła przebiegł pomyślnie",
+            success: true,
+        });
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
+
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Wewnętrzny błąd serwera",
+            success: false,
+            error,
+        });
+
+    }
+
+})
+
+// Endpoint odpowiedzialny za poprawne wylogowanie użytkownika z aplikacji
+router.delete("/logout", async(req, res) => {
+
+    try{
+        // Nadpisujemy istniejące ciasteczko 'token' nowym ciasteczkiem o nazwie 'logout'
+        // W ten sposób radzimy sobie z unieważnieniem poprzedniego tokena uwierzytelniającego 
+        res.cookie('token', 'logout', {
+            httpOnly: true,
+            expires: new Date(Date.now() + 1000), // ciasteczko wygasa po 1 sekundzie
+          });
+
+         // Serwer zwraca odpowiedni komunikat
+         res.status(StatusCodes.OK).json({
+            message: "Użytkownik został wylogowany pomyślnie",
+            success: true,
+        });
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
+
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Wewnętrzny błąd serwera",
+            success: false,
+            error,
+        });
 
     }
 
