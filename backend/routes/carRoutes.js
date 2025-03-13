@@ -40,6 +40,32 @@ router.get("/get-all-cars", async (req, res) => {
     .json({ message: "Zwrócono listę samochodów", data: cars, success: true });
 });
 
+// Endpoint odpowiadający za zwrócenie informacji o danym samochodzie wykorzystując jego id
+router.get("/get-car-by-id/:carId", async (req, res) => {
+  // Pobranie ID samochodu z parametru ścieżki
+  const carId = req.params.carId;
+
+  // Wyszukiwanie samochodu po numerze id
+  const foundCar = await Car.findById(carId);
+
+  // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
+  if (!foundCar) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Nie znaleziono samochodu o takim numerze id",
+      success: false,
+    });
+  }
+
+  // W przypadku znalezienia samochodu o danym adresie id, serwer zwraca odpowiednią odpowiedź
+  res
+    .status(StatusCodes.OK)
+    .json({
+      message: `Zwrócono informacje dotyczące pojazdu o numerze id: ${carId}`,
+      data: foundCar,
+      success: true,
+    });
+});
+
 // Endpoint odpowiedzialny za utworzenie nowej oferty z samochodem
 router.post("/create-car", authMiddleware, async (req, res) => {
   // Pobieramy wszystkie dane z ciała zapytania
@@ -88,27 +114,43 @@ router.post("/create-car", authMiddleware, async (req, res) => {
     { field: "Pojemność", validation: validateField(capacity, capacitySchema) },
     { field: "Rok produkcji", validation: validateField(year, yearSchema) },
     { field: "Kolor", validation: validateField(color, colorSchema) },
-    { field: "Typ nadwozia", validation: validateField(bodyType, bodyTypeSchema) },
-    { field: "Skrzynia biegów", validation: validateField(gearboxType, gearboxTypeSchema) },
+    {
+      field: "Typ nadwozia",
+      validation: validateField(bodyType, bodyTypeSchema),
+    },
+    {
+      field: "Skrzynia biegów",
+      validation: validateField(gearboxType, gearboxTypeSchema),
+    },
     { field: "Przebieg", validation: validateField(mileage, mileageSchema) },
-    { field: "Rodzaj paliwa", validation: validateField(fuelType, fuelTypeSchema) },
-    { field: "Cena za godzinę", validation: validateField(hourlyPrice, hourlyPriceSchema) },
-    { field: "Link do obrazu", validation: validateField(imageUrl, imageUrlSchema) },
-    { field: "Opis", validation: validateField(description, descriptionSchema) },
+    {
+      field: "Rodzaj paliwa",
+      validation: validateField(fuelType, fuelTypeSchema),
+    },
+    {
+      field: "Cena za godzinę",
+      validation: validateField(hourlyPrice, hourlyPriceSchema),
+    },
+    {
+      field: "Link do obrazu",
+      validation: validateField(imageUrl, imageUrlSchema),
+    },
+    {
+      field: "Opis",
+      validation: validateField(description, descriptionSchema),
+    },
   ];
 
   // Jeśli jakiekolwiek pole nie spełnia warunków walidacji, zwracamy odpowiednią odpowiedź
-    for (const { field, validation } of validations) {
-      if (!validation.isValid) {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json({
-            message: `${field} nie spełnia warunków walidacji`,
-            errors: validation.errors,
-            success: false,
-          });
-      }
+  for (const { field, validation } of validations) {
+    if (!validation.isValid) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: `${field} nie spełnia warunków walidacji`,
+        errors: validation.errors,
+        success: false,
+      });
     }
+  }
 
   // Dodanie pola z informacją przez kogo została utworzona oferta oraz przez kogo została zmodyfikowana (utworzenie zasobu to też modyfikacja - jest to pierwsza modyfikacja)
   req.body.createdBy = req.user.userId;
@@ -192,27 +234,43 @@ router.patch("/update-car/:carId", authMiddleware, async (req, res) => {
     { field: "Pojemność", validation: validateField(capacity, capacitySchema) },
     { field: "Rok produkcji", validation: validateField(year, yearSchema) },
     { field: "Kolor", validation: validateField(color, colorSchema) },
-    { field: "Typ nadwozia", validation: validateField(bodyType, bodyTypeSchema) },
-    { field: "Skrzynia biegów", validation: validateField(gearboxType, gearboxTypeSchema) },
+    {
+      field: "Typ nadwozia",
+      validation: validateField(bodyType, bodyTypeSchema),
+    },
+    {
+      field: "Skrzynia biegów",
+      validation: validateField(gearboxType, gearboxTypeSchema),
+    },
     { field: "Przebieg", validation: validateField(mileage, mileageSchema) },
-    { field: "Rodzaj paliwa", validation: validateField(fuelType, fuelTypeSchema) },
-    { field: "Cena za godzinę", validation: validateField(hourlyPrice, hourlyPriceSchema) },
-    { field: "Link do obrazu", validation: validateField(imageUrl, imageUrlSchema) },
-    { field: "Opis", validation: validateField(description, descriptionSchema) },
+    {
+      field: "Rodzaj paliwa",
+      validation: validateField(fuelType, fuelTypeSchema),
+    },
+    {
+      field: "Cena za godzinę",
+      validation: validateField(hourlyPrice, hourlyPriceSchema),
+    },
+    {
+      field: "Link do obrazu",
+      validation: validateField(imageUrl, imageUrlSchema),
+    },
+    {
+      field: "Opis",
+      validation: validateField(description, descriptionSchema),
+    },
   ];
 
   // Jeśli jakiekolwiek pole nie spełnia warunków walidacji, zwracamy odpowiednią odpowiedź
-    for (const { field, validation } of validations) {
-      if (!validation.isValid) {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json({
-            message: `${field} nie spełnia warunków walidacji`,
-            errors: validation.errors,
-            success: false,
-          });
-      }
+  for (const { field, validation } of validations) {
+    if (!validation.isValid) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: `${field} nie spełnia warunków walidacji`,
+        errors: validation.errors,
+        success: false,
+      });
     }
+  }
 
   // Mając numer id samochodu znajdujemy go w bazie i aktualizujemy dokument
   const updatedCar = await Car.findOneAndUpdate({ _id: carId }, req.body, {
