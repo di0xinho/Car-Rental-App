@@ -23,6 +23,9 @@ app.use(express.json());
 
 app.use(cors());
 
+// Importujemy middleware do obsługi błędów serwera
+import errorMiddleware from "./middleware/errorMiddleware.js";
+
 // Importujemy routery dla endpointów związanych z samochodami i procesami związanymi z autentykacją użytkownika 
 import carRoutes from "./routes/carRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -32,6 +35,9 @@ app.use("/api/cars", carRoutes);
 
 // Robimy to samo dla innych ścieżek API...
 app.use("/api/auth", authRoutes); // do autentykacji użytkownika
+
+// Używamy middleware do obsługi błędów jako ostatniego
+app.use(errorMiddleware);
 
 // Definiujemy port, na którym nasłuchuje serwer (domyślnie jest to port 8000); w przeciwnym wypadku będzie to port 5000
 const port = process.env.PORT || 5000;
