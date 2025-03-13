@@ -1,4 +1,5 @@
 import Joi from "joi";
+import moment from "moment";
 
 // Definiujemy schemat według którego ma przebiegać walidacja adresu email
 const emailSchema = Joi.string().email().required();
@@ -42,6 +43,81 @@ const resetCodeSchema = Joi.string()
         "any.required": "Kod resetujący jest wymagany."
     });
 
+// Definiujemy schemat według którego ma przebiegać walidacja imienia
+const firstNameSchema = Joi.string()
+    .pattern(/^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/)
+    .min(2)
+    .max(30)
+    .required()
+    .messages({
+        "string.base": "Imię musi być ciągiem znaków.",
+        "string.empty": "Imię jest wymagane.",
+        "string.min": "Imię musi mieć co najmniej {#limit} znaki.",
+        "string.max": "Imię może mieć maksymalnie {#limit} znaków.",
+        "string.pattern.base": "Imię może zawierać tylko litery oraz pojedynczy myślnik lub spację.",
+    });
+
+// Definiujemy schemat według którego ma przebiegać walidacja nazwiska
+const surnameSchema = Joi.string()
+    .pattern(/^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/)
+    .min(2)
+    .max(50)
+    .required()
+    .messages({
+        "string.base": "Nazwisko musi być ciągiem znaków.",
+        "string.empty": "Nazwisko jest wymagane.",
+        "string.min": "Nazwisko musi mieć co najmniej {#limit} znaki.",
+        "string.max": "Nazwisko może mieć maksymalnie {#limit} znaków.",
+        "string.pattern.base": "Nazwisko może zawierać tylko litery oraz pojedynczy myślnik lub spację.",
+    }); 
+
+// Definiujemy schemat według którego ma przebiegać walidacja numeru telefonu
+const phoneNumberSchema = Joi.string()
+    .pattern(/^[0-9]{9,15}$/)
+    .required()
+    .messages({
+        "string.base": "Numer telefonu musi być ciągiem cyfr",
+        "string.empty": "Numer telefonu jest wymagany",
+        "string.pattern.base": "Numer telefonu powinien zawierać tylko cyfry (9-15 znaków)",
+    });
+
+// Definiujemy schemat według którego ma przebiegać walidacja płci
+const genderSchema = Joi.string()
+    .valid("Mężczyzna", "Kobieta", "Inna")
+    .required()
+    .messages({
+        "any.only": "Płeć musi być jedną z wartości: Mężczyzna, Kobieta lub Inna",
+        "string.base": "Płeć musi być ciągiem znaków",
+        "string.empty": "Płeć jest wymagana",
+    });
+
+// Definiujemy schemat według którego ma przebiegać walidacja daty urodzenia
+const dateOfBirthSchema = Joi.string()
+    .pattern(/^\d{2}-\d{2}-\d{4}$/)
+    .custom((value, helpers) => {
+        const regex = /^\d{2}-\d{2}-\d{4}$/;
+        if (!regex.test(value)) {
+            throw new Joi.ValidationError("Data urodzenia musi być w formacie DD-MM-YYYY");
+        }
+        
+        const parsedDate = moment(value, "DD-MM-YYYY", true);
+        
+        if (!parsedDate.isValid()) {
+            throw new Joi.ValidationError("Niepoprawna data urodzenia");
+        }
+        
+        const age = moment().diff(parsedDate, "years");
+        if (age < 18) {
+            throw new Joi.ValidationError("Musisz mieć co najmniej 13 lat");
+        }
+        
+        return value;
+    })
+    .required()
+    .messages({
+        "string.base": "Data urodzenia musi być ciągiem znaków",
+        "string.empty": "Data urodzenia jest wymagana",
+    });
 
 // Uniwersalna funkcja walidująca dowolny parametr
 const validateField = (value, schema) => {
@@ -52,4 +128,4 @@ const validateField = (value, schema) => {
     };
 };
 
-export { emailSchema, usernameSchema, passwordSchema, resetCodeSchema, validateField };
+export { emailSchema, usernameSchema, passwordSchema, resetCodeSchema, firstNameSchema, surnameSchema, dateOfBirthSchema, phoneNumberSchema, genderSchema, validateField };
