@@ -60,12 +60,10 @@ router.post("/create-car", authMiddleware, async (req, res) => {
       description,
     ].some((value) => value === undefined || value === "")
   ) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        message: "Nie wszystkie pola zostały uzupełnione przez użytkownika",
-        success: false,
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Nie wszystkie pola zostały uzupełnione przez użytkownika",
+      success: false,
+    });
   }
 
   // Dodanie pola z informacją przez kogo została utworzona oferta oraz przez kogo została zmodyfikowana (utworzenie zasobu to też modyfikacja - jest to pierwsza modyfikacja)
@@ -81,13 +79,11 @@ router.post("/create-car", authMiddleware, async (req, res) => {
   await newCar.save();
 
   // W przypadku znalezienia utworzenia rekordu w bazie, wynik jest zwracany w odpowiedzi
-  res
-    .status(StatusCodes.OK)
-    .json({
-      message: "Dodawanie nowej oferty zakończyło się powodzeniem",
-      data: newCar,
-      success: true,
-    });
+  res.status(StatusCodes.OK).json({
+    message: "Dodawanie nowej oferty zakończyło się powodzeniem",
+    data: newCar,
+    success: true,
+  });
 });
 
 // Endpoint odpowiedzialny za modyfikację istniejącej już oferty z samochodem
@@ -100,12 +96,10 @@ router.patch("/update-car/:carId", authMiddleware, async (req, res) => {
 
   // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
   if (!foundCar) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        message: "Nie znaleziono samochodu o takim numerze id",
-        success: false,
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Nie znaleziono samochodu o takim numerze id",
+      success: false,
+    });
   }
 
   // Pobieramy wszystkie dane z ciała zapytania
@@ -141,12 +135,10 @@ router.patch("/update-car/:carId", authMiddleware, async (req, res) => {
       description,
     ].some((value) => value === undefined || value === "")
   ) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        message: "Nie wszystkie pola zostały uzupełnione przez użytkownika",
-        success: false,
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Nie wszystkie pola zostały uzupełnione przez użytkownika",
+      success: false,
+    });
   }
 
   // Mając numer id samochodu znajdujemy go w bazie i aktualizujemy dokument
@@ -156,57 +148,50 @@ router.patch("/update-car/:carId", authMiddleware, async (req, res) => {
   });
 
   // W przypadku znalezienia utworzenia rekordu w bazie, wynik jest zwracany w odpowiedzi
-  res
-    .status(StatusCodes.OK)
-    .json({
-      message: "Wybrany zasób został zaktualizowany",
-      data: updatedCar,
-      success: true,
-    });
+  res.status(StatusCodes.OK).json({
+    message: "Wybrany zasób został zaktualizowany",
+    data: updatedCar,
+    success: true,
+  });
 });
 
 // Endpoint odpowiedzialny za dodanie samochodu do listy ulubionych
-router.patch("/add-to-favorites/:carId", authMiddleware, async(req, res) => {
+router.patch("/add-to-favorites/:carId", authMiddleware, async (req, res) => {
+  // Pobranie ID samochodu z parametru ścieżki
+  const carId = req.params.carId;
+  // Pobranie ID użytkownika z ciasteczka
+  const userId = req.user.userId;
 
-// Pobranie ID samochodu z parametru ścieżki
-const carId = req.params.carId;
-// Pobranie ID użytkownika z ciasteczka
-const userId = req.user.userId;
+  // Szukamy w bazie samochodu o podanym numerze id
+  const favoriteCar = await Car.findById(carId);
 
-// Szukamy w bazie samochodu o podanym numerze id
-const favoriteCar = await Car.findById(carId);
-
-// Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
-if (!favoriteCar) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        message: "Nie znaleziono samochodu o takim numerze id",
-        success: false,
-      });
+  // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
+  if (!favoriteCar) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Nie znaleziono samochodu o takim numerze id",
+      success: false,
+    });
   }
 
-// Pobranie użytkownika z bazy danych
-const user = await User.findById(userId);
+  // Pobranie użytkownika z bazy danych
+  const user = await User.findById(userId);
 
-// Jeśli użytkownik nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
-if (!user) {
-  return res
-    .status(StatusCodes.BAD_REQUEST)
-    .json({
+  // Jeśli użytkownik nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
+  if (!user) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
       message: "Nie znaleziono użytkownika",
       success: false,
     });
-}
+  }
 
-// Dodanie lub usunięcie ID samochodu z listy ulubionych samochodów użytkownika
+  // Dodanie lub usunięcie ID samochodu z listy ulubionych samochodów użytkownika
 
-// Na początku pobieramy index samochodu znajdującego się w tablicy
-const carIndex = user.favorites.indexOf(carId);
-let message = undefined;
+  // Na początku pobieramy index samochodu znajdującego się w tablicy
+  const carIndex = user.favorites.indexOf(carId);
+  let message = undefined;
 
-// Jeśli w tablicy ulubionych samochodów nie ma zapisanego tego auta (index wynosi -1), to dodajemy je do listy 
-if (carIndex === -1) {
+  // Jeśli w tablicy ulubionych samochodów nie ma zapisanego tego auta (index wynosi -1), to dodajemy je do listy
+  if (carIndex === -1) {
     user.favorites.push(carId);
     message = "Samochód został dodany do listy ulubionych";
   } else {
@@ -218,14 +203,43 @@ if (carIndex === -1) {
   // Zapisanie zmian w bazie danych
   await user.save();
 
-  res
-    .status(StatusCodes.OK)
-    .json({
-      message: message,
-      success: true,
-      favoriteCars: user.favorites,
+  // W przypadku dodania lub usunięcia elementu z listy ulubionych, wynik operacji jest zwracany w odpowiedzi
+  res.status(StatusCodes.OK).json({
+    message: message,
+    success: true,
+    favoriteCars: user.favorites,
+  });
+});
+
+// Endpoint odpowiedzialny za zwrócenie listy ulubionych bieżącego użytkownika
+router.get("/get-favorites", authMiddleware, async (req, res) => {
+  // Pobranie userId z ciasteczek
+  const userId = req.user.userId;
+
+  // Pobranie użytkownika z bazy danych
+  const user = await User.findById(userId);
+
+  // Jeśli użytkownik nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
+  if (!user) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Nie znaleziono użytkownika",
+      success: false,
     });
-})
+  }
+
+  // Treść komunikatu dodawanego do odpowiedzi serwera jest różna w zależności od tego czy cokolwiek znajduje się na liście ulubionych
+  let message =
+    Array.isArray(user.favorites) && user.favorites.length
+      ? "Lista ulubionych została zwrócona"
+      : "Lista ulubionych jest pusta";
+
+  // W odpowiedzi zwracamy listę ulubionych; komunikat różni się w zależności od tego, czy lista jest pusta czy znajduje się w niej przynajmniej jeden element
+  res.status(StatusCodes.OK).json({
+    message: message,
+    success: true,
+    favoriteCars: user.favorites,
+  });
+});
 
 // Endpoint odpowiedzialny za usunięcie wybranego pojazdu z bazy danych
 router.delete("/delete-car/:carId", authMiddleware, async (req, res) => {
@@ -237,22 +251,18 @@ router.delete("/delete-car/:carId", authMiddleware, async (req, res) => {
 
   // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
   if (!deletedCar) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        message: "Nie znaleziono samochodu o takim numerze id",
-        success: false,
-      });
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Nie znaleziono samochodu o takim numerze id",
+      success: false,
+    });
   }
 
   // W przypadku pomyślnego usunięcia zasobu z bazy danych, wyświetlamy następujący komunikat
-  res
-    .status(StatusCodes.OK)
-    .json({
-      message: "Wybrany zasób został usunięty z bazy danych",
-      data: deletedCar,
-      success: true,
-    });
+  res.status(StatusCodes.OK).json({
+    message: "Wybrany zasób został usunięty z bazy danych",
+    data: deletedCar,
+    success: true,
+  });
 });
 
 // Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
@@ -286,13 +296,11 @@ router.get(
     }
 
     // W przypadku znalezienia rekordów w bazie, wynik jest zwracany w odpowiedzi
-    res
-      .status(StatusCodes.OK)
-      .json({
-        message: "Zwrócono listę samochodów",
-        data: cars,
-        success: true,
-      });
+    res.status(StatusCodes.OK).json({
+      message: "Zwrócono listę samochodów",
+      data: cars,
+      success: true,
+    });
   }
 );
 
