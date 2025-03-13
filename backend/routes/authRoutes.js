@@ -305,6 +305,82 @@ router.post("/forgot-password", async (req, res) => {
     }
 });
 
+// Endpoint obsługujący resetowanie hasła
+router.post("/reset-password/:userId", async(req, res) => {
+    try {
+        // Pobieramy identyfikator użytkownika z parametru URL oraz kod resetujący i nowe hasło z ciała zapytania
+        const { userId } = req.params;
+        const { resetCode, newPassword } = req.body;
+
+        // Sprawdzamy, czy kod resetujący i nowe hasło spełniają warunki walidacji
+        const resetCodeValidation = validateField(resetCode, resetCodeSchema);
+        const passwordValidation = validateField(newPassword, passwordSchema);
+
+        // W przypadku nie przejścia poszczególnych procesów walidacji, wysyłamy odpowiedni komunikat...
+        if (!resetCodeValidation.isValid) {
+            return res.status(StatusCodes.BAD_REQUEST)
+                .json({ message: "Kod jednorazowy nie spełnia warunków walidacji", errors: resetCodeValidation.errors, success: false });
+        }
+
+        if (!passwordValidation.isValid) {
+            return res.status(StatusCodes.BAD_REQUEST)
+                .json({ message: "Hasło nie spełnia warunków walidacji", errors: passwordValidation.errors, 
+                        success: false });
+        }
+
+        // Szukamy użytkownika w bazie danych wykorzystując podany identyfikator
+        const user = await User.findById(userId);
+
+        // Jeśli użytkownik nie został znaleziony w bazie danych, to zwracamy odpowiednią odpowiedź
+        if (!user) {
+            return res.status(StatusCodes.NOT_FOUND)
+            .json({ message: "Użytkownik nie znaleziony", 
+                    success: false });
+        }
+
+        // Sprawdzamy, czy podany kod resetujący jest poprawny
+        if (user.resetPasswordCode !== resetCode) {
+            return res.status(StatusCodes.UNAUTHORIZED)
+            .json({ message: "Nieprawidłowy kod resetujący", 
+                success: false });
+        }
+
+        // Teraz zajmiemy się hasłem...
+
+        // Aktualizujemy hasło użytkownika
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+         // W miejsce hasła zapisanego w formacie tekstu jawnego zapisujemy zaszyfrowane hasło
+        req.body.password = hashedPassword;
+
+        // Ustawiamy nowe hasło użytkownikowi
+        user.password = req.body.password;
+
+        // Zmieniamy wartość kodu resetującego hasło oraz czas jego wygaśnięcia na undefined 
+        user.resetPasswordCode = undefined;
+        user.resetPasswordCodeExpiry = undefined;
+
+        // Zapisujemy zmiany w bazie
+        await user.save();
+
+        // W przypadku, gdy proces resetowania hasła przebiegł pomyślnie, wysyłamy odpowiedni komunikat
+        res.status(StatusCodes.OK).json({
+            message: "Proces resetowania i nadawania nowego hasła przebiegł pomyślnie",
+            success: true,
+        });
+
+    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
+    catch (error) {
+
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Błąd serwera", 
+                error: error.message, 
+                success: false });
+    }
+
+});
+
 router.post("/reset-password", async(req, res) => {
 
     try{
