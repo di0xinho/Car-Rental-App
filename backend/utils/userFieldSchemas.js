@@ -119,13 +119,4 @@ const dateOfBirthSchema = Joi.string()
         "string.empty": "Data urodzenia jest wymagana",
     });
 
-// Uniwersalna funkcja walidująca dowolny parametr
-const validateField = (value, schema) => {
-    const { error } = schema.validate(value);
-    return {
-        isValid: !error,
-        errors: error ? error.details.map(err => err.message) : []
-    };
-};
-
-export { emailSchema, usernameSchema, passwordSchema, resetCodeSchema, firstNameSchema, surnameSchema, dateOfBirthSchema, phoneNumberSchema, genderSchema, validateField };
+export { emailSchema, usernameSchema, passwordSchema, resetCodeSchema, firstNameSchema, surnameSchema, dateOfBirthSchema, phoneNumberSchema, genderSchema };
