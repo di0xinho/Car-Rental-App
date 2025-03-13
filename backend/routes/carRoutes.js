@@ -9,7 +9,7 @@ import Car from "../models/carModel.js";
 router.get("/get-all-cars", async(req, res) => {
 
     // Na początku próbujemy zwrócić wszystkie samochody z naszej bazy danych
-    try{
+   
         const cars = await Car.find({});
 
         // W przypadku, gdy w bazie nie ma żadnego rekordu zwracamy informacje o braku zasobów
@@ -21,22 +21,11 @@ router.get("/get-all-cars", async(req, res) => {
         // W przypadku znalezienia rekordów w bazie, wynik jest zwracany w odpowiedzi
         res.status(StatusCodes.OK)
         .json({ message: "Zwrócono listę samochodów",  data: cars, success: true});
-
-    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
-    catch(error){
-
-        console.log(error);
-
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
-    }
-
 })
 
 // Endpoint odpowiedzialny za utworzenie nowej oferty z samochodem
 router.post("/create-car", authMiddleware, async(req, res) => {
 
-    try{
         // Pobieramy wszystkie dane z ciała zapytania
         const { make, model, capacity, year, color, bodyType, gearboxType, mileage, fuelType, hourlyPrice, imageUrl, description } = req.body;
 
@@ -60,23 +49,11 @@ router.post("/create-car", authMiddleware, async(req, res) => {
         // W przypadku znalezienia utworzenia rekordu w bazie, wynik jest zwracany w odpowiedzi
         res.status(StatusCodes.OK)
         .json({ message: "Dodawanie nowej oferty zakończyło się powodzeniem", data: newCar, success: true});
-
-    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
-    catch(error){
-
-        console.log(error);
-
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
-
-    }
-
 })
 
 // Endpoint odpowiedzialny za modyfikację istniejącej już oferty z samochodem
 router.patch("/update-car/:carId", authMiddleware, async(req, res) => {
 
-    try{
         // Pobranie ID samochodu z parametru ścieżki
         const carId = req.params.carId; 
 
@@ -105,23 +82,11 @@ router.patch("/update-car/:carId", authMiddleware, async(req, res) => {
         // W przypadku znalezienia utworzenia rekordu w bazie, wynik jest zwracany w odpowiedzi
         res.status(StatusCodes.OK)
         .json({ message: "Wybrany zasób został zaktualizowany", data: updatedCar, success: true});
-
-    }
-    catch (error) {
-
-        console.log(error);
-
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
-
-    }
-
 })
 
 // Endpoint odpowiedzialny za usunięcie wybranego pojazdu z bazy danych
 router.delete("/delete-car/:carId", authMiddleware, async(req, res) => {
 
-    try{
         // Pobranie ID samochodu z parametru ścieżki
         const carId = req.params.carId; 
 
@@ -136,22 +101,11 @@ router.delete("/delete-car/:carId", authMiddleware, async(req, res) => {
         // W przypadku pomyślnego usunięcia zasobu z bazy danych, wyświetlamy następujący komunikat
         res.status(StatusCodes.OK)
         .json({ message: "Wybrany zasób został usunięty z bazy danych", data: deletedCar, success: true});
-
-    }
-    catch (error) {
-
-        console.log(error);
-
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
-
-    }
-
 })
 
 // Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
 router.post("/predict-cluster", authMiddleware, async(req, res) => {
-    try{
+   
         // Tworzymy URL, aby dostać się do ścieżki odpowiadającej za przewidywanie modelu
         const URL = process.env.FLASK_API_URL + "/predict";
                 
@@ -160,23 +114,11 @@ router.post("/predict-cluster", authMiddleware, async(req, res) => {
 
         // W postaci pliku jsonowego przedstawiona zostanie odpowiedź serwera
         res.json(response.data);
-    }
-    // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
-    catch(error){
-
-        console.log(error);
-
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
-
-    }
-
 })
 
 // Endpoint służący do pobrania kolekcji samochodów na podstawie preferencji użytkownika (na podstawie kolumny 'cluster')
 router.get("/get-cars-by-cluster/:clusterId", authMiddleware, async(req, res) => {
 
-    try{
          // Pobranie ID klastra do którego został przypisany samochód z parametru ścieżki
          const clusterId = req.params.clusterId;
          
@@ -192,17 +134,6 @@ router.get("/get-cars-by-cluster/:clusterId", authMiddleware, async(req, res) =>
         // W przypadku znalezienia rekordów w bazie, wynik jest zwracany w odpowiedzi
         res.status(StatusCodes.OK)
         .json({ message: "Zwrócono listę samochodów",  data: cars, success: true});
-
-    } // W przypadku błędu serwera, zwracany jest odpowiedni wyjątek
-    catch (error) {
-
-        console.log(error);
-
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ message: "Wewnętrzny błąd serwera", success: false, error });
-
-    }
-
 })
 
 export default router;
