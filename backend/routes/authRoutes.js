@@ -3,6 +3,7 @@ const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import User from "../models/userModel.js";
 import convertToISODateWithMoment from "../utils/convertDateToISO.js";
+import validateField from "../utils/validateField.js";
 import {
   emailSchema,
   usernameSchema,
@@ -12,9 +13,8 @@ import {
   surnameSchema,
   phoneNumberSchema,
   genderSchema,
-  dateOfBirthSchema,
-  validateField,
-} from "../utils/validateFields.js";
+  dateOfBirthSchema
+} from "../utils/userFieldSchemas.js";
 import { createJWT, attachCookie } from "../utils/authFunctions.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import bcrypt from "bcryptjs";
