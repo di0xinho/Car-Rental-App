@@ -26,15 +26,17 @@ app.use(cors());
 // Importujemy middleware do obsługi błędów serwera
 import errorMiddleware from "./middleware/errorMiddleware.js";
 
-// Importujemy routery dla endpointów związanych z samochodami i procesami związanymi z autentykacją użytkownika 
+// Importujemy routery dla endpointów związanych z samochodami, procesami związanymi z autentykacją użytkownika oraz z wypożyczeniami samochodów
 import carRoutes from "./routes/carRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
 
 // Rejestrujemy ścieżkę API dla operacji na samochodach  
 app.use("/api/cars", carRoutes);
 
 // Robimy to samo dla innych ścieżek API...
 app.use("/api/auth", authRoutes); // do autentykacji użytkownika
+app.use("/api/booking", bookingRoutes) // do wypożyczeń samochodów
 
 // Używamy middleware do obsługi błędów jako ostatniego
 app.use(errorMiddleware);
