@@ -21,23 +21,113 @@ import {
   descriptionSchema,
 } from "../utils/carFieldSchemas.js";
 
-// Endpoint zwracający wszystkie pojazdy
+// Endpoint zwracający wszystkie pojazdy z filtrowaniem i paginacją
+// Przykład: localhost:8000/api/cars/get-all-cars?make=Toyota&minYear=2000&maxYear=2021&gearboxType=Automatyczna&sort=latest&page=2
 router.get("/get-all-cars", async (req, res) => {
-  // Na początku próbujemy zwrócić wszystkie samochody z naszej bazy danych
+  
+    const {
+      make,
+      model,
+      fuelType,
+      gearboxType,
+      color,
+      bodyType,
+      minYear,
+      maxYear,
+      minCapacity,
+      maxCapacity,
+      minMileage,
+      maxMileage,
+      minPrice,
+      maxPrice,
+      sort,
+      search,
+      page,
+      limit,
+    } = req.query;
 
-  const cars = await Car.find({});
+    // Tworzymy obiekt zapytania dynamicznie na podstawie parametrów
+    const queryObject = {};
 
-  // W przypadku, gdy w bazie nie ma żadnego rekordu zwracamy informacje o braku zasobów
-  if (!cars) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ message: "Nie znaleziono zasobu", success: false });
-  }
+    if (make) {
+      queryObject.make = { $regex: make, $options: "i" }; // Wyszukiwanie ignorujące wielkość liter
+    }
+    if (model) {
+      queryObject.model = { $regex: model, $options: "i" };
+    }
+    if (fuelType) {
+      queryObject.fuelType = fuelType;
+    }
+    if (gearboxType) {
+      queryObject.gearboxType = gearboxType;
+    }
+    if (color) {
+      queryObject.color = color;
+    }
+    if (bodyType) {
+      queryObject.bodyType = bodyType;
+    }
+    if (minYear || maxYear) {
+      queryObject.year = {};
+      if (minYear) queryObject.year.$gte = Number(minYear);
+      if (maxYear) queryObject.year.$lte = Number(maxYear);
+    }
+    if (minCapacity || maxCapacity) {
+      queryObject.capacity = {};
+      if (minCapacity) queryObject.capacity.$gte = Number(minCapacity);
+      if (maxCapacity) queryObject.capacity.$lte = Number(maxCapacity);
+    }
+    if (minMileage || maxMileage) {
+      queryObject.mileage = {};
+      if (minMileage) queryObject.mileage.$gte = Number(minMileage);
+      if (maxMileage) queryObject.mileage.$lte = Number(maxMileage);
+    }
+    if (minPrice || maxPrice) {
+      queryObject.price = {};
+      if (minPrice) queryObject.hourlyPrice.$gte = Number(minPrice);
+      if (maxPrice) queryObject.mileage.$lte = Number(maxPrice);
+    }
 
-  // W przypadku znalezienia rekordów w bazie, wynik jest zwracany w odpowiedzi
-  res
-    .status(StatusCodes.OK)
-    .json({ message: "Zwrócono listę samochodów", data: cars, success: true });
+    // Znalezienie pasujących pojazdów według wprowadzonych parametrów
+    let result = Car.find(queryObject);
+
+    // Obsługa sortowania
+    if (sort === "latest") {
+      result = result.sort("-year");
+    } else if (sort === "oldest") {
+      result = result.sort("year");
+    } else if (sort === "price-asc") {
+      result = result.sort("price");
+    } else if (sort === "price-desc") {
+      result = result.sort("-price");
+    } else if (sort === "mileage-asc") {
+      result = result.sort("mileage");
+    } else if (sort === "mileage-desc") {
+      result = result.sort("-mileage");
+    }
+
+    // Obsługa paginacji
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 10;
+    const skip = (pageNum - 1) * limitNum;
+    result = result.skip(skip).limit(limitNum);
+
+    // Pobranie wyników
+    const cars = await result;
+
+    // Liczba dostępnych rekordów po przefiltrowaniu
+    const totalCars = await Car.countDocuments(queryObject);
+    const numOfPages = Math.ceil(totalCars / limitNum);
+
+    // Zwrócenie odpowiedzi
+    res.status(StatusCodes.OK).json({
+      message: "Lista pojazdów została zwrócona",
+      totalCars,
+      numOfPages,
+      currentPage: pageNum,
+      cars: cars,
+      success: true
+    });
 });
 
 // Endpoint odpowiadający za zwrócenie informacji o danym samochodzie wykorzystując jego id
