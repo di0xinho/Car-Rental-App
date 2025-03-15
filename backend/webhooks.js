@@ -40,21 +40,18 @@ app.post(
         return;
       }
 
-      // Handle the event
+      // Obsługa zdarzeń
       switch (event.type) {
-        case "payment_intent.succeeded":
+        // Przypadek, w którym sesja rozliczeniowa zakończyła się powodzeniem (udało się opłacić usługę)
+        case "checkout.session.completed":
           const session = event.data.object;
-          const session_2 = event.data;
           
-
-          console.log(session_2)
-  
           // Znajdź użytkownika i samochód na podstawie danych w sesji
           const user = await User.findById(session.client_reference_id);
           const bookingCar = await Car.findById(session.metadata.carId);
   
           if (user && bookingCar) {
-            // Aktualizacja danych samochodu
+            // Aktualizacja danych samochodu (data użytkowania samochodu przez innego użytkownika, dostępność samochodu)
             bookingCar.bookedTimeSlots.push({
               from: session.metadata.from,
               to: session.metadata.to,
@@ -62,29 +59,31 @@ app.post(
             bookingCar.isAvailable = false;
             await bookingCar.save();
   
-            // Utwórz nową rezerwację
+            // Tworzymy nową rezerwację i uzupełniamy ją o wartości pól, które zdefiniowane zostały w schemacie Mongoose
             const newBooking = new Booking({
               user: user._id,
               car: bookingCar._id,
+              totalHours: session.metadata.totalHours,
               bookedTimeSlots: {
                 from: session.metadata.from,
                 to: session.metadata.to,
               },
+              driver: session.metadata.driver,
               totalPrice: session.amount_total / 100,
               isPaid: true,
             });
-  
+            
+            // Zapisujemy rekord w bazie danych
             await newBooking.save();
           }
   
-          // Then define and call a function to handle the event invoice.payment_succeeded
+          // Poniżej możemy obsłużyć inne typy zdarzeń...
           break;
-        // ... handle other event types
         default:
-          console.log(`Unhandled event type ${event.type}`);
+          console.log(`Nieobsłużony typ zdarzenia ${event.type}`);
       }
   
-      // Return a 200 response to acknowledge receipt of the event
+      // W przypadku powodzenia zwracamy status code równy 200 - czyli OK
       response.send();
     }
   );

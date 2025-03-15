@@ -85,9 +85,19 @@ router.post("/book-car", authMiddleware, async (req, res) => {
 
   // Znajdujemy samochód po ID
   const bookingCar = await Car.findById(booking_details.carId);
-  if (!bookingCar || !bookingCar.isAvailable) {
+
+  // Sprawdzamy, czy samochód znajduje się w bazie wypożyczalni
+  if (!bookingCar) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       message: "Nie znaleziono samochodu o takim numerze id",
+      success: false,
+    });
+  }
+
+  // Sprawdzamy, czy samochód jest dostępny do wypożyczenia
+  if (!bookingCar.isAvailable) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Samochód jest tymczasowo niedostępny w ofercie wypożyczalni. Za utrudnienia przepraszamy.",
       success: false,
     });
   }
@@ -108,13 +118,15 @@ router.post("/book-car", authMiddleware, async (req, res) => {
         quantity: 1,
       },
     ],
-    success_url: `https://www.onet.pl/`, // Na razie niech będą takie linki :)
-    cancel_url: `https://www.sejm.gov.pl/`, //
+    success_url: `https://www.onet.pl/`, // Przekierowanie na onet.pl w przypadku powodzenia :)
+    cancel_url: `https://www.sejm.gov.pl/`, // Przekierowanie na stronę sejmu w razie błędu :)
     client_reference_id: req.user.userId,
     metadata: {
       carId: booking_details.carId,
+      totalHours: booking_details.totalHours,
       from: booking_details.bookedTimeSlots.from,
       to: booking_details.bookedTimeSlots.to,
+      driver: booking_details.driver
     },
   });
 
@@ -123,7 +135,6 @@ router.post("/book-car", authMiddleware, async (req, res) => {
     message:
       "Tworzenie sesji rozliczeniowej zostało zrealizowane pomyślnie. Adres url sesji znajduje się w ciele odpowiedzi",
     url: session.url,
-    data: session,
     success: true,
   });
 });
