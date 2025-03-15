@@ -146,7 +146,11 @@ router.post("/login", async (req, res) => {
   // W odpowiedzi serwera będziemy chcieli też zwrócić dane użytkownika i dlatego należy nie ujawniać hasła
   // Mimo, że hasło jest w postaci zaszyfrowanej (hasło haszujemy z dodatkiem soli przy pomocy 'bcryptjs' - przypomnienie),
   // to nigdy nie należy go ujawniać
+  // To samo robimy z właściwościami 6-cyfrowego kodu jednorazowego 
   user.password = undefined;
+  user.resetPasswordCode = undefined;
+  user.resetPasswordCodeExpiry = undefined;
+  user.resetPasswordAttempts = undefined;
 
   // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
   res
@@ -175,9 +179,7 @@ router.get("/get-current-user", authMiddleware, async (req, res) => {
 
   // Z przyczyn bezpieczeństwa hasło jak i dane dotyczące przypominania hasła są ustawiane jako undefined
   user.password = undefined;
-  user.resetPasswordCode = undefined;
-  user.resetPasswordCodeExpiry = undefined;
-  user.resetPasswordAttempts = undefined;
+  
 
   // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
   res
@@ -204,12 +206,6 @@ router.get("/get-user-by-id", authMiddleware, async (req, res) => {
         success: false,
       });
   }
-
-  // Z przyczyn bezpieczeństwa hasło jak i dane dotyczące przypominania hasła są ustawiane jako undefined
-  user.password = undefined;
-  user.resetPasswordCode = undefined;
-  user.resetPasswordCodeExpiry = undefined;
-  user.resetPasswordAttempts = undefined;
 
   // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
   res

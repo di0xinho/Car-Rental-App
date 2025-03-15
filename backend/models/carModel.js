@@ -24,7 +24,7 @@ const carSchema = new mongoose.Schema(
           },
         ],
         isAvailable: { type: Boolean, required: true, default: true }, // Czy samochód jest dostępny do wynajmu (zmienna boolowska) 
-        createdBy: { type: mongoose.Types.ObjectId, ref: 'users', required: true }, // Identyfikator twórcy oferty
+        createdBy: { type: mongoose.Types.ObjectId, ref: 'users', required: false }, // Identyfikator twórcy oferty
         modifiedBy: [ // Lista użytkowników, którzy modyfikowali zasób
           {
               userId: { type: mongoose.Types.ObjectId, ref: 'users' }, // Id użytkownika
