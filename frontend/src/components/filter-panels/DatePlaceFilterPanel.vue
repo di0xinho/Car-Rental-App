@@ -7,7 +7,7 @@
 </script>
 
 <template>
-  <form class="flex bg-layout-primary p-8">
+  <form class="flex p-8">
     <div class="pr-8">
       <label for="city" class="block font-semibold">
         Miejsce

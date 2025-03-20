@@ -1,10 +1,21 @@
 <script setup lang="ts">
   import { RouterLink } from 'vue-router';
+  import useUser from '@/composables/useUser';
+  import { useRouter } from "vue-router";
+
+  const router = useRouter();
+
+  const { user, logoutUser } = useUser();
+
+  function handleLogout() {
+    logoutUser();
+    router.push({name: 'home'});
+  }
 </script>
 
 <template>
-    <div class="h-screen grid grid-cols-[20rem_minmax(20rem,_1fr)] grid-rows-[6rem_1fr] bg-layout-secondary">
-      <header class="col-start-2 bg-layout-primary ml-1">
+    <div class="h-screen grid grid-cols-[20rem_minmax(20rem,_1fr)] grid-rows-[6rem_1fr] bg-layout-secondary gap-1">
+      <header class="col-start-2 bg-layout-primary">
         <div class="flex justify-end items-center h-full">
           <div class="flex gap-2 items-center">
             <label for="dark-mode">Dark Mode</label>
@@ -19,7 +30,7 @@
           </label>
           <div class="flex gap-4 items-center ml-16">
             <img src="/users/default_user.webp" alt="user avatar" class="h-15 rounded-full border border-dominant-primary">
-            <h4>User Name</h4>
+            <h4>{{ user!.firstName + ' ' + user!.surname }}</h4>
           </div>
         </div>
       </header>
@@ -91,7 +102,7 @@
             </li>
           </ul>
         </nav>
-        <button class="flex gap-3 items-center p-8 ml-5 self-start">
+        <button class="flex gap-3 items-center p-8 ml-5 self-start" @click="handleLogout">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8.90039 7.56023C9.21039 3.96023 11.0604 2.49023 15.1104 2.49023H15.2404C19.7104 2.49023 21.5004 4.28023 21.5004 8.75023V15.2702C21.5004 19.7402 19.7104 21.5302 15.2404 21.5302H15.1104C11.0904 21.5302 9.24039 20.0802 8.91039 16.5402" stroke="#FE8400" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M15 12H3.62" stroke="#FE8400" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

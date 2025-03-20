@@ -21,7 +21,4 @@ html, body {
   --color-dominant-secondary :#FF9E0C;
   --color-layout-primary: #FFFFFF;
   --color-layout-secondary: #F7F7F7;
-  /* border radius */
-  --radius-medium: 24px;
-  --radius-small: 16px
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center bg-dominant-primary p-20 mt-48 rounded-medium gap-28">
+  <div class="flex justify-center bg-dominant-primary p-20 mt-48 rounded-3xl gap-28">
     <div class="relative min-w-64">
       <img 
         src="/images/mobile-banner/mobile_phone.png"

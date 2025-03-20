@@ -5,15 +5,15 @@
 
   defineProps({
     car: {type: Object as PropType<Car>, required: true},
+    cardBackground: {type: String, default: 'layout-primary'}
   });
 </script>
 
 <template>
-  <section class="flex flex-col bg-neutral-100 rounded-medium overflow-hidden">
-    <div class="flex justify-between m-4">
+  <div class="flex flex-col rounded-3xl overflow-hidden" :class="`bg-${cardBackground}`">
+    <div class="flex justify-between m-5">
       <div>
-        <h3>{{ car.make }}</h3>
-        <h4>{{ car.model }}</h4>
+        <h4 class="text-xl">{{ car.make + " " + car.model }}</h4>
         <h5>{{ car.bodyType }}</h5>
       </div>
       <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -25,7 +25,7 @@
       alt="car in our offer"
       class="w-full"
     >
-    <div class="flex justify-between mx-4">
+    <div class="flex justify-between mx-5">
       <div>
         <h6>{{ car.gearboxType }}</h6>
       </div>
@@ -36,10 +36,11 @@
         <h6>{{ car.capacity }} Osoby</h6>
       </div>
     </div>
-    <div>
-      <button type="button" class="m-4 p-2 rounded-lg bg-dominant-primary text-center">
+    <div class="flex justify-between items-center m-5">
+      <h5 class="text-xl">ZŁ {{ car.price }}</h5>
+      <button type="button" class="py-2 px-6 rounded-xl bg-dominant-primary text-center text-neutral-50">
         Wynajmij
       </button>
     </div>
-  </section>
+  </div>
 </template>

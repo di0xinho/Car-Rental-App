@@ -1,17 +1,23 @@
 <script setup lang="ts">
   import { ref } from 'vue';
+  import useUser from '@/composables/useUser';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
+  const { loginUser } = useUser();
 
   const email = ref('');
   const password = ref('');
   const rememberMe = ref(false);
 
-  function loginUser() {
-    console.log(`Logging in user! Email: ${email.value}, Password: ${password.value}, remember user: ${rememberMe.value}`);
+  function handleLogin() {
+    loginUser(email.value, password.value, rememberMe.value);
+    router.push({name: 'home'});
   }
 </script>
 
 <template>
-  <form @submit.prevent="loginUser" class="min-w-xs">
+  <form @submit.prevent="handleLogin" class="min-w-xs">
     <div class="my-5">
       <label for="email">Adres e-mail</label>
       <input id="email" type="text" v-model="email" placeholder="Wpisz swój adres e-mail" class="block w-full p-2 border border-neutral-400 rounded-lg">

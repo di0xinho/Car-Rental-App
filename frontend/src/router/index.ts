@@ -2,15 +2,21 @@ import { createRouter, createWebHistory } from 'vue-router';
 import 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
-import LoginView from '@/views/user/LoginView.vue';
-
+import LoginView from '@/views/LoginView.vue';
+  // User Panel Views Chunk:
+  // ( https://router.vuejs.org/guide/advanced/lazy-loading.html )
 import UserMainView from '@/views/user/UserMainView.vue';
 import UserOrdersView from '../views/user/UserOrdersView.vue';
 import UserAnaliticsView from '@/views/user/UserAnaliticsView.vue';
-import UserRentView from '@/views/user/UserRentView.vue';
 import UserSettingsView from '@/views/user/UserSettingsView.vue';
+import UserRentCarView from '@/views/user/UserRentCarView.vue';
 
-// Setting types for route meta data:  https://router.vuejs.org/guide/advanced/meta.html#TypeScript
+import useUser from '@/composables/useUser';
+
+const { user } = useUser();
+
+  // Setting types for route meta data:
+  // https://router.vuejs.org/guide/advanced/meta.html#TypeScript
 declare module 'vue-router' {
   interface RouteMeta {
     layout?: 'UserLayout'|'AdminLayout'|'DefaultLayout'|'EmptyLayout',
@@ -40,15 +46,15 @@ const router = createRouter({
       },
     },
     {
-      path: '/rezerwacja',
-      name: 'reservation',
-      component: () => import('../views/ReservationView.vue'),
+      path: '/wynajem',
+      name: 'rent',
+      component: () => import('../views/RentCarView.vue'),
       meta: {
         layout: 'DefaultLayout'
       },
     },
     {
-      path: '/cars',
+      path: '/samochody',
       name: 'cars-collection',
       component: () => import('../views/CarsCollectionViev.vue'),
       meta: {
@@ -56,7 +62,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/cars/:model',
+      path: '/samochody/:model',
       name: 'cars-model',
       component: () => import('../views/CarModelView.vue'),
       meta: {
@@ -83,11 +89,15 @@ const router = createRouter({
       path: '/user',
       children: [
         { path: '', name: 'user-main', component: UserMainView },
-        { path: 'orders', name: 'user-orders', component: UserOrdersView },
-        { path: 'analitics', name: 'user-analitics', component: UserAnaliticsView },
-        { path: 'rent', name: 'user-rent', component: UserRentView },
-        { path: 'settings', name: 'user-settings', component: UserSettingsView },
+        { path: 'zamowienia', name: 'user-orders', component: UserOrdersView },
+        { path: 'analityka', name: 'user-analitics', component: UserAnaliticsView },
+        { path: 'wynajem', name: 'user-rent', component: UserRentCarView },
+        { path: 'ustawienia', name: 'user-settings', component: UserSettingsView },
       ],
+      beforeEnter: (to, from) => {
+        if (user.value) return true;
+        else return {name: 'login'};
+      },
       meta: {
         layout: 'UserLayout'
       },

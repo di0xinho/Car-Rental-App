@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { RouterLink } from 'vue-router';
   import { ref } from 'vue';
   import LoginForm from '@/components/login-forms/LoginForm.vue';
   import SigninForm from '@/components/login-forms/SigninForm.vue';
@@ -7,7 +8,7 @@
 </script>
 
 <template>
-  <section class="flex h-full items-center">
+  <section class="flex items-center">
     <div class="m-8 max-w-md w-md">
       <h1 class="text-5xl">
         {{loginMode ? 'Witamy ponownie!' : 'Zacznij teraz!'}}
@@ -40,13 +41,13 @@
       </div>
       <p v-if="loginMode" class="text-center">
         Nie masz konta?
-        <button @click="loginMode = false" class="ml-2 cursor-pointer">
+        <button @click="loginMode = false" class="ml-2 cursor-pointer text-sky-800">
           Zarejestruj się
         </button>
       </p>
       <p v-else class="text-center">
         Masz konto?
-        <button @click="loginMode = true" class="ml-2 cursor-pointer">
+        <button @click="loginMode = true" class="ml-2 cursor-pointer text-sky-800">
           Zaloguj się
         </button>
       </p>

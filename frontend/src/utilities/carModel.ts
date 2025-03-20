@@ -10,10 +10,24 @@ export class Car {
     public gearboxType: string,
     public mileage: number,
     public fuelType: string,
-    public dailyPrice: number,
+    public price: number,
     public imageUrl: string,
     public description: string,
     public bookedTimeSlots: {from: string, to:string}[],
     public isAvailable: boolean,
   ) {}
 }
+
+export type CarPreferences = {
+  bodyType: string[];
+  capacity: number;
+  price: number;
+  fuelType: string;
+  gearboxType: string;
+  year: number;
+  mileage: number;
+}
+
+export const carBodyTypes = ['sport', 'suv', 'mpv', 'sedan', 'coupe', 'hatchback'];
+
+export const fuelTypes = ['Benzyna', 'Gaz', 'Diesel', 'Hybryda', 'Elektryczny'];

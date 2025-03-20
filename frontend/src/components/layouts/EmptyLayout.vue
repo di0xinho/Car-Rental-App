@@ -1,6 +1,9 @@
 <template>
-  <div class="min-h-screen flex flex-col justify-center">
-    <main>
+  <div class="min-h-screen flex flex-col">
+    <RouterLink :to="{name: 'home'}" class="ml-auto mr-8 my-4">
+      <span class="text-xl my-2">&#8592;</span> Wróć na stronę główną
+    </RouterLink>
+    <main class="my-auto">
       <slot/>
     </main>
   </div>

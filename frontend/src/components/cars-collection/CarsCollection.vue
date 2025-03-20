@@ -8,9 +8,9 @@
 </script>
 
 <template>
-  <ul class="grid grid-cols-[repeat(auto-fill,_minmax(22rem,_1fr))] p-8 gap-8">
+  <ul class="grid grid-cols-[repeat(auto-fill,_minmax(20rem,_1fr))] gap-8">
     <li v-for="(car, index) in cars" :key="index">
-      <CarViewCard :index="index" :id="car._id" :model="car.model" />
+      <CarViewCard :car="car" />
     </li>
   </ul>
 </template>

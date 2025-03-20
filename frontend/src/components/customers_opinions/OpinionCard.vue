@@ -6,7 +6,7 @@
 </script>
 
 <template>
-  <figure class="flex flex-col justify-between bg-neutral-100 rounded-medium h-full">
+  <figure class="flex flex-col justify-between bg-neutral-100 rounded-3xl h-full">
     <blockquote class="mb-16 mt-8 mx-4">
       <div class="ml-8 h-16">
         <!-- double quotes symbol -->
@@ -21,7 +21,7 @@
         <slot/>
       </p>
     </blockquote>
-    <figcaption class="bg-dominant-primary relative h-28 rounded-b-medium">
+    <figcaption class="bg-dominant-primary relative h-28 rounded-b-3xl">
       <img 
         :src="image"
         alt="user image"
