@@ -1,0 +1,50 @@
+[
+    {
+        "make": "Fiat",
+        "model": "500",
+        "capacity": 4,
+        "year": 2003,
+        "color": "Niebieski",
+        "bodyType": "Crossover",
+        "gearboxType": "Manualna",
+        "mileage": 520403,
+        "fuelType": "Diesel",
+        "hourlyPrice": 40,
+        "imageUrl": "https://media.gettyimages.com/id/672151647/photo/silver-car-speeding-on-bridge.jpg?s=2048x2048&w=gi&k=20&c=C4QgEYzOBXL7EOs1T0lHCxiQjfpBMVtFV572oLCbS_E='",
+        "description": "Jesteś zainteresowany naszą ofertą? Myślę, że niebieski Fiat 500 to idealny samochód dla Ciebie. W naszej ofercie wynajmu znajdziesz pojazdy, które są bezpieczne i komfortowe. Dlatego dążymy do tego, aby samochody znajdujące się w naszej ofercie były jak najmłodsze – dowodem na to jest oferta tego auta, gdzie rok produkcji to 2003. Model ten wyróżnia się manualną skrzynią biegów oraz niezawodnym napędem diesla, zapewniającym doskonałą dynamikę jazdy i komfort. Dzięki temu doskonale sprawdza się zarówno w dalekich podróżach, jak i w warunkach miejskich. Koszt wynajmu to zaledwie 40 zł za godzinę, co czyni go atrakcyjną opcją dla osób poszukujących niezawodnego środka transportu.",
+        "bookedTimeSlots": [],
+        "isAvailable": true
+    },
+    {
+        "make": "Audi",
+        "model": "A5",
+        "capacity": 7,
+        "year": 2015,
+        "color": "Biały",
+        "bodyType": "Hatchback",
+        "gearboxType": "Manualna",
+        "mileage": 232417,
+        "fuelType": "Hybryda",
+        "hourlyPrice": 99,
+        "imageUrl": "https://media.gettyimages.com/id/1255788362/photo/generic-modern-car-as-product-shot.jpg?s=2048x2048&w=gi&k=20&c=KnoLE7lFgV-FrSfPn0bet7X_zA5HSwar-3qW3Yg4lWs=",
+        "description": "Jesteś zainteresowany naszą ofertą? Myślę, że białe Audi A5 to idealny samochód dla Ciebie. W naszej ofercie wynajmu znajdziesz pojazdy, które są bezpieczne i komfortowe. Dlatego staramy się, aby samochody znajdujące się w naszej ofercie były jak najmłodsze – oferta tego auta, gdzie rokiem produkcji jest rok produkcji 2015, jest tego dowodem. Model ten wyróżnia się manualną skrzynią biegów oraz niezawodnym napędem hybrydowym, zapewniającym doskonałą dynamikę jazdy i komfort. Dzięki temu doskonale sprawdza się zarówno w dalekich podróżach, jak i w warunkach miejskich. Koszt wynajmu to zaledwie 99 zł za godzinę, co czyni go atrakcyjną opcją dla osób poszukujących niezawodnego środka transportu. Cena różni się w zależności od wielkości pojazdu (100 km/h) lub zasięgu (40 km/h). Aby uzyskać więcej informacji o tym, jak kupić własne BMW i3 w sprzedaży, skontaktuj się z nami pod adresem: daniela@sftmwwe.",
+        "bookedTimeSlots": [],
+        "isAvailable": true
+    },
+    {
+        "make": "Honda",
+        "model": "CR-V",
+        "capacity": 4,
+        "year": 2004,
+        "color": "Niebieski",
+        "bodyType": "Sedan",
+        "gearboxType": "Manualna",
+        "mileage": 516994,
+        "fuelType": "Benzyna",
+        "hourlyPrice": 30,
+        "imageUrl": "https://media.gettyimages.com/id/94294294/photo/blue-suv-with-clipping-paths.jpg?s=2048x2048&w=gi&k=20&c=F-VtDX9B79DBeLX24EVPK2-vy0dyU3PfmNFG6owuSi0=",
+        "description": "Jesteś zainteresowany naszą ofertą? Myślę, że niebieska Honda CR-V to idealny samochód dla Ciebie. W naszej ofercie wynajmu znajdziesz pojazdy, które są bezpieczne i komfortowe. Dlatego staramy się, aby samochody znajdujące się w naszej ofercie były jak najmłodsze – dowodem na to jest oferta tego auta, gdzie rok produkcji to 2004. Model ten wyróżnia się manualną skrzynią biegów oraz niezawodnym napędem benzynowym, zapewniającym doskonałą dynamikę jazdy i komfort. Dzięki temu doskonale sprawdza się zarówno w dalekich podróżach, jak i w warunkach miejskich. Koszt wynajmu to zaledwie 30 zł za godzinę, co czyni go atrakcyjną opcją dla osób poszukujących niezawodnego środka transportu. Pierwsza wersja została niedawno przetestowana na dwóch różnych motocyklach, z których każdy kierowca jest przewożony ponad 10 mil (10 km) ze swojego rodzinnego miasta: Kowalpa/Kawalpa w pobliżu Amla w Gokutamurri tutaj... Dodaliśmy wszystkie cztery modele do tej pory! Wszystkie trzy zostały wykonane przy użyciu unikalnego silnika V8 Yamaha - nie są wyposażone w automatyczne wspomaganie kierownicy ani ABS, co pozwala im na całkowicie swobodne przemieszczanie się w kierunku celu bez żadnych ograniczeń, ale nadal zapewniają świetne funkcje bezpieczeństwa, takie jak wyłączanie podczas bezpiecznej podróży podczas jazdy między miastami i miasteczkami wokół stolicy Indii. Przywozimy również przydatną technologię baterii, w tym akumulatory, takie jak ładowarki USB, od kiedy można z nich bezproblemowo korzystać po dojazdach do pracy; Jednak nie ma też zbyt wiele miejsca na przepadek...",
+        "bookedTimeSlots": [],
+        "isAvailable": true
+    }
+]

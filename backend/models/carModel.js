@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+// Pola: make, model, capacity, year, color, bodyType, gearboxType, mileage, fuelType, hourlyPrice, imageUrl, description, bookedTimeSlots, isAvailable, createdBy
+
 // Definiujemy schemat dla modelu Car
 const carSchema = new mongoose.Schema(
     {
@@ -13,7 +15,7 @@ const carSchema = new mongoose.Schema(
         mileage: { type: Number, required: true }, // Przebieg (w km)
         fuelType: { type: String, required: true }, // Rodzaj Paliwa
         hourlyPrice: { type: Number, required: true }, // Cena wynajmu za godzinę
-        imageUrl: { type: String }, // adres URL do zdjęcia samochodu
+        imageUrl: { type: String }, // Adres URL do zdjęcia samochodu
         description: { type: String }, // Opis samochodu
         bookedTimeSlots: [ // Lista rezerwacji w postaci przedziałów czasowych
           {
@@ -21,9 +23,17 @@ const carSchema = new mongoose.Schema(
             to: { type: String, required: true }, // Data i godzina zakończenia rezerwacji
           },
         ],
-        isAvailable: { type: Boolean, required: true, default: true }, // Czy samochód jest dostępny do wynajmu (zmienna boolowska)
+        isAvailable: { type: Boolean, required: true, default: true }, // Czy samochód jest dostępny do wynajmu (zmienna boolowska) 
+        createdBy: { type: mongoose.Types.ObjectId, ref: 'users', required: false }, // Identyfikator twórcy oferty
+        modifiedBy: [ // Lista użytkowników, którzy modyfikowali zasób
+          {
+              userId: { type: mongoose.Types.ObjectId, ref: 'users' }, // Id użytkownika
+              modifiedAt: { type: Date, default: Date.now } // Data modyfikacji
+          }
+      ],
+      cluster: { type: Number, required: false } // Wartość 'cluster' jest wyznaczana przez model rekomendacji (grupuje się na jej podstawie podobne samochody)
       },
-    
+      
       {
         timestamps: true, // Ustawiamy timestamps na 'true', by móc podejrzeć datę utworzenia i modyfikacji dokumentu
       }
