@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="flex justify-between p-8 gap-8">
+  <div class="flex justify-between gap-8">
     <ValueCard title="Dostępność" image="/images/values/location_icon.svg">
       Nasza oferta jest zawsze na wyciągnięie ręki.....
     </ValueCard>

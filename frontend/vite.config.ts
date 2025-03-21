@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import path from 'node:path'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -15,6 +16,20 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+  },
+  build: {
+    rollupOptions: {
+      // splitting javascript bundle into chunks:
+      // https://router.vuejs.org/guide/advanced/lazy-loading.html
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('/views/user/')) {
+            return 'user-group';
+          }
+          return null;
+        },
+      },
     },
   },
 })

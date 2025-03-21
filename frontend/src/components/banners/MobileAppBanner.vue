@@ -1,14 +1,14 @@
 <template>
-  <div class="flex bg-glow mx-8 rounded-t-2xl mt-40">
-    <div class="relative min-w-xs">
+  <div class="flex justify-center bg-dominant-primary p-20 mt-48 rounded-3xl gap-28">
+    <div class="relative min-w-64">
       <img 
         src="/images/mobile-banner/mobile_phone.png"
         alt="mobile phone screen"
-        class="absolute bottom-1/4 left-1/5 w-3/5"
+        class="absolute w-full bottom-0 left-0"
       > 
     </div>
-    <div class="text-neutral-50 p-16 min-w-xs">
-      <h4 class="text-4xl">Pobierz naszą aplikację</h4>
+    <div class="text-neutral-50 min-w-xs max-w-152">
+      <h4 class="text-5xl">Pobierz naszą aplikację</h4>
       <p class="text-2xl my-8">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis exercitationem voluptate ad voluptatum omnis, corporis vero voluptates quibusdam doloribus qui dolor quae pariatur. Vero!
       </p>
