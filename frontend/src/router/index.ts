@@ -6,7 +6,7 @@ import LoginView from '@/views/LoginView.vue';
   // User Panel Views Chunk:
   // ( https://router.vuejs.org/guide/advanced/lazy-loading.html )
 import UserMainView from '@/views/user/UserMainView.vue';
-import UserOrdersView from '../views/user/UserOrdersView.vue';
+import UserOrdersView from '@/views/user/UserOrdersView.vue';
 import UserAnaliticsView from '@/views/user/UserAnaliticsView.vue';
 import UserSettingsView from '@/views/user/UserSettingsView.vue';
 import UserRentCarView from '@/views/user/UserRentCarView.vue';

@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import path from 'node:path'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -22,14 +23,11 @@ export default defineConfig({
       // splitting javascript bundle into chunks:
       // https://router.vuejs.org/guide/advanced/lazy-loading.html
       output: {
-        manualChunks: {
-          'user-group': [
-            './src/views/user/UserMainView',
-            './src/views/user/UserOrdersView',
-            './src/views/user/UserAnaliticsView',
-            './src/views/user/UserSettingsView',
-            './src/views/user/UserRentCarView',
-          ],
+        manualChunks: (id) => {
+          if (id.includes('/views/user/')) {
+            return 'user-group';
+          }
+          return null;
         },
       },
     },
