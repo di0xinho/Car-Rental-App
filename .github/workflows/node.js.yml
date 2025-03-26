@@ -45,4 +45,4 @@ jobs:
         echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> .env
         echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env
     - run: npm ci
-    - run: npm start --if-present
+    - run: npm start --if-present &
