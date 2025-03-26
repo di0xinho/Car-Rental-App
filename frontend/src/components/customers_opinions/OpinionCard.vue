@@ -6,7 +6,7 @@
 </script>
 
 <template>
-  <figure class="flex flex-col justify-between bg-neutral-100 rounded-3xl h-full">
+  <figure class="card justify-between h-full">
     <blockquote class="mb-16 mt-8 mx-4">
       <div class="ml-8 h-16">
         <!-- double quotes symbol -->

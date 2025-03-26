@@ -5,7 +5,7 @@
 
   defineProps({
     car: {type: Object as PropType<Car>, required: true},
-    cardBackground: {type: String, default: 'layout-primary'}
+    cardBackground: {type: String, default: 'page-light-bg'}
   });
 </script>
 

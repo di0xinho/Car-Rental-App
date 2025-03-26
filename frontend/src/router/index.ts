@@ -13,8 +13,6 @@ import UserRentCarView from '@/views/user/UserRentCarView.vue';
 
 import useUser from '@/composables/useUser';
 
-const { user } = useUser();
-
   // Setting types for route meta data:
   // https://router.vuejs.org/guide/advanced/meta.html#TypeScript
 declare module 'vue-router' {
@@ -95,6 +93,7 @@ const router = createRouter({
         { path: 'ustawienia', name: 'user-settings', component: UserSettingsView },
       ],
       beforeEnter: (to, from) => {
+        const { user } = useUser();
         if (user.value) return true;
         else return {name: 'login'};
       },

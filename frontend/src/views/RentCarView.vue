@@ -33,16 +33,16 @@
       <PreferencesWizard />
     </div>
     <section class="h-full grid grid-cols-[20rem_1fr] grid-rows-[auto_1fr] my-15">
-      <div class="col-start-1 row-span-full bg-layout-secondary p-8">
+      <div class="col-start-1 row-span-full bg-card-bg p-8">
         <CarPreferencesFilterPanel />
       </div>
-      <div class="col-start-2 justify-self-start ml-8 bg-layout-secondary">
+      <div class="col-start-2 justify-self-start ml-8 bg-card-bg">
         <DatePlaceFilterPanel v-model:city="city" v-model:date-from="dateFrom" v-model:date-to="dateTo" />
       </div>
       <div class="m-8">
         <ul class="grid grid-cols-[repeat(auto-fill,_minmax(20rem,_1fr))] gap-8">
           <li v-for="(car, index) in cars" :key="index">
-            <CarRentCard :car="car" card-background="layout-secondary" />
+            <CarRentCard :car="car" card-bg="card-bg" />
           </li>
         </ul>
       </div>

@@ -39,7 +39,7 @@
 </script>
 
 <template>
-  <div class="p-18 bg-layout-secondary">
+  <div class="p-18 bg-card-bg">
     <h2 class="text-5xl text-neutral-500 mb-2">
       Odpowiedz na kilka pytań.
     </h2>
@@ -53,7 +53,7 @@
   <!-- modal window -->
   <Teleport to="body">
     <div id="modal_container" v-if="open" class="fixed top-0 w-screen h-screen bg-neutral-100/75 z-30">
-      <div id="modal_window" class="w-4/5 max-w-288 mx-auto my-[10vh] h-4/5 bg-layout-primary p-8 flex flex-col">
+      <div id="modal_window" class="w-4/5 max-w-288 mx-auto my-[10vh] h-4/5 bg-page-light-bg p-8 flex flex-col">
         <div class="flex gap-10 justify-between items-start mb-10">
           <div>
             <h2 class="text-3xl">

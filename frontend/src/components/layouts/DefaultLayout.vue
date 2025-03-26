@@ -5,17 +5,21 @@
   import MobileAppBanner from '@/components/banners/MobileAppBanner.vue';
   import DiscountBanner from '@/components/banners/DiscountBanner.vue';
   import useUser from '@/composables/useUser';
-
+  import DarkModeSwitch from './common-components/DarkModeSwitch.vue';
+  
   const { user } = useUser();
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col gap-15">
+  <div class="min-h-screen flex flex-col gap-15 dark:text-page-dark-text">
     <header>
       <div class="flex justify-between items-center">
-        <h1 class="w-2/5 bg-neutral-900 py-8 px-16 text-dominant-primary">
-          CARENT
-        </h1>
+        <div class="w-2/5 bg-neutral-900 flex">
+          <h1 class="py-8 px-16 text-dominant-primary">
+            CARENT
+          </h1>
+          <DarkModeSwitch />
+        </div>
         <nav>
           <ul class="flex gap-8 mx-8">
             <li>
@@ -56,7 +60,7 @@
     <section class="mx-18">
       <MobileAppBanner />
     </section>
-    <footer class="bg-neutral-900 text-neutral-50 flex flex-col pt-35 pb-20 px-30">
+    <footer class="bg-footer-bg text-neutral-50 flex flex-col pt-35 pb-20 px-30">
       <nav class="flex gap-12 justify-between">
         <LinksList title="Wynajem">
           <li>Wynajmij Samochód</li>
