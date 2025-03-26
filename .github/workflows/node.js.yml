@@ -28,5 +28,21 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: './backend/package-lock.json'
+    - name: Create .env file
+      run: |
+        touch .env
+        echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+        echo "COMMUNICATION_SERVICES_CONNECTION_STRING=${{ secrets.COMMUNICATION_SERVICES_CONNECTION_STRING }}" >> .env
+        echo "EMAIL_SENDER=${{ secrets.EMAIL_SENDER }}" >> .env
+        echo "FLASK_API_URL=${{ secrets.FLASK_API_URL }}" >> .env
+        echo "FRONT_END_URL=${{ secrets.FRONT_END_URL }}" >> .env
+        echo "JWT_LIFETIME=${{ secrets.JWT_LIFETIME }}" >> .env
+        echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
+        echo "MONGO_URL=${{ secrets.MONGO_URL }}" >> .env
+        echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
+        echo "PORT=${{ secrets.PORT }}" >> .env
+        echo "STRIPE_ENDPOINT_SECRET=${{ secrets.STRIPE_ENDPOINT_SECRET }}" >> .env
+        echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> .env
+        echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env
     - run: npm ci
     - run: npm start --if-present
