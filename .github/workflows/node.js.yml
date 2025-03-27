@@ -46,3 +46,12 @@ jobs:
         echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env
     - run: npm ci
     - run: npm start --if-present &
+
+    - name: Build Docker Image
+      run: docker build . -t ${{ secrets.DOCKER_USERNAME }}/car-rental-merito:latest
+          
+    - name: Push Docker Image on DockerHub
+      run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker pull ${{ secrets.DOCKER_USERNAME }}/car-rental-merito:latest
+          
