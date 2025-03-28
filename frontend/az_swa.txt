@@ -1,0 +1,8 @@
+npx swa login --resource-group rg-we-car-rental-static --app-name car-rental-dev
+npx swa deploy --env production --resource-group rg-we-car-rental-static --app-name car-rental-dev
+
+
+--------------------------------------------------
+https://portal.azure.com/#home
+
+https://learn.microsoft.com/pl-pl/azure/static-web-apps/deploy-web-framework?tabs=bash&pivots=vanilla-js#create-a-static-web-app-on-azure

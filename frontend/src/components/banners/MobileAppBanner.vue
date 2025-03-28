@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center bg-dominant-primary p-20 mt-48 rounded-3xl gap-28">
+  <div class="banner flex justify-center p-20 mt-48 gap-28">
     <div class="relative min-w-64">
       <img 
         src="/images/mobile-banner/mobile_phone.png"
@@ -7,7 +7,7 @@
         class="absolute w-full bottom-0 left-0"
       > 
     </div>
-    <div class="text-neutral-50 min-w-xs max-w-152">
+    <div class="min-w-xs max-w-152">
       <h4 class="text-5xl">Pobierz naszą aplikację</h4>
       <p class="text-2xl my-8">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis exercitationem voluptate ad voluptatum omnis, corporis vero voluptates quibusdam doloribus qui dolor quae pariatur. Vero!

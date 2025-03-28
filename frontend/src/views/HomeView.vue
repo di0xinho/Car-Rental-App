@@ -17,7 +17,7 @@
   </section>
   <section id="cars" class="mx-18 my-15">
     <CarsCollection :cars="cars"/>
-    <RouterLink :to="{name: 'cars-collection'}" class="block w-max mx-auto mt-8 py-3 px-6 bg-dominant-primary text-center text-neutral-50 rounded-xl">
+    <RouterLink :to="{name: 'cars-collection'}" class="block w-max mx-auto mt-8 btn text-light-txt">
       Zobacz wszytkie samochody
     </RouterLink>
   </section>
