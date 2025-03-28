@@ -22,8 +22,10 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon server.js",
+    "start" : "node server.js",
     "webhooks": "nodemon webhooks.js" 
   },
   "_comment": "Polecenie 'npm run dev' do uruchomienia aplikacji webowej - nie trzeba restartować aplikacji, by móc zobaczyć nowo wprowadzone zmiany",
-  "_comment_2": "Polecenie 'npm run webhooks' do uruchomienia aplikacji webowej, która gwarantuje obsługę zdarzeń webhooków zdefiniowanych przez platformę Stripe" 
+  "_comment_2": "Polecenie 'npm start' do uruchomienia aplikacji webowej - bez angażowania pakietu nodemon do restartowania aplikacji",
+  "_comment_3": "Polecenie 'npm run webhooks' do uruchomienia aplikacji webowej, która gwarantuje obsługę zdarzeń webhooków zdefiniowanych przez platformę Stripe" 
 }

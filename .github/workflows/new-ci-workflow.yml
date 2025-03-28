@@ -1,0 +1,56 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    defaults:
+       run:
+         working-directory: ./backend/
+    strategy:
+      matrix:
+       node-version: [22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: './backend/package-lock.json'
+    - name: Create .env file
+      run: |
+        touch .env
+        echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+        echo "COMMUNICATION_SERVICES_CONNECTION_STRING=${{ secrets.COMMUNICATION_SERVICES_CONNECTION_STRING }}" >> .env
+        echo "EMAIL_SENDER=${{ secrets.EMAIL_SENDER }}" >> .env
+        echo "FLASK_API_URL=${{ secrets.FLASK_API_URL }}" >> .env
+        echo "FRONT_END_URL=${{ secrets.FRONT_END_URL }}" >> .env
+        echo "JWT_LIFETIME=${{ secrets.JWT_LIFETIME }}" >> .env
+        echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
+        echo "MONGO_URL=${{ secrets.MONGO_URL }}" >> .env
+        echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
+        echo "PORT=${{ secrets.PORT }}" >> .env
+        echo "STRIPE_ENDPOINT_SECRET=${{ secrets.STRIPE_ENDPOINT_SECRET }}" >> .env
+        echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> .env
+        echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env
+    - run: npm ci
+    - run: npm start --if-present &
+
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      with:
+          app-name: car-rental-merito
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .       
+          

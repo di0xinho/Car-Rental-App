@@ -1,0 +1,71 @@
+# Ignorowanie logów
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Ignorowanie danych uruchomieniowych
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Ignorowanie katalogów zależności
+node_modules/
+bower_components/
+jspm_packages/
+web_modules/
+
+# Ignorowanie plików cache i kompilacji
+.cache
+.parcel-cache
+.next
+.nuxt
+dist
+.docusaurus
+.temp
+.vitepress/cache
+.vitepress/dist
+.serverless/
+.fusebox/
+.dynamodb/
+
+# Ignorowanie plików budowy i konfiguracji
+build/
+build/Release
+*.tsbuildinfo
+.nyc_output
+.npm
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Ignorowanie plików środowiskowych
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Ignorowanie plików związanych z Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Ignorowanie testów i raportów pokrycia kodu
+.coverage
+*.lcov
+coverage/
+.tox/
+nosetests.xml
+coverage.xml
+
+# Ignorowanie plików specyficznych dla VS Code
+.vscode-test
