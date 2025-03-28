@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="bg-dominant-primary rounded-3xl pt-20 pb-10 px-22 text-neutral-50 bg-[url('/images/discount-banner/car-blured.webp')] bg-[position:bottom_right_20%] bg-[length:40%] bg-no-repeat">
+  <div class="banner pt-20 pb-10 px-22 bg-[url('/images/discount-banner/car-blured.webp')] bg-[position:bottom_right_20%] bg-[length:40%] bg-no-repeat">
     <h4 class="text-5xl">Zarejestruj się i odbierz 10% rabatu!</h4>
     <p class="my-4">
       Dołącz do naszej społeczności i ciesz się wyjątkowymi korzyściami! Zarejestruj się na naszej stronie już dziś, a otrzymasz 10% zniżki na pierwszy wynajem samochodu.
@@ -23,8 +23,8 @@
       </li>
     </ul>
     <p class="mb-8">Nie czekaj - załóż konto i ruszaj w podróż taniej!</p>
-    <RouterLink :to="{name: 'login'}" class="py-3 px-6 bg-dominant-secondary text-center inline-block rounded-xl">
-      Zarejestruj się
+    <RouterLink :to="{name: 'login'}" class="btn inline-block text-dark-txt bg-dominant-secondary">
+      Zaloguj się | Zarejestruj się
     </RouterLink>
   </div>
 </template>

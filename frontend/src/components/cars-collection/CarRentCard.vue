@@ -5,12 +5,12 @@
 
   defineProps({
     car: {type: Object as PropType<Car>, required: true},
-    cardBackground: {type: String, default: 'page-light-bg'}
+    cardBackground: {type: String}
   });
 </script>
 
 <template>
-  <div class="flex flex-col rounded-3xl overflow-hidden" :class="`bg-${cardBackground}`">
+  <div class="card" :class="cardBackground ?? ''">
     <div class="flex justify-between m-5">
       <div>
         <h4 class="text-xl">{{ car.make + " " + car.model }}</h4>
@@ -38,7 +38,7 @@
     </div>
     <div class="flex justify-between items-center m-5">
       <h5 class="text-xl">ZŁ {{ car.price }}</h5>
-      <button type="button" class="py-2 px-6 rounded-xl bg-dominant-primary text-center text-neutral-50">
+      <button type="button" class="btn text-light-txt">
         Wynajmij
       </button>
     </div>

@@ -13,23 +13,23 @@ html, body {
   /* colors */
   --color-dominant-primary: #FE8400;
   --color-dominant-secondary: #FF9E0C;
-  --color-page-light-bg: #FFFFFF;
-  --color-user-page-light-bg: #F7F7F7;
-  --color-page-light-text: #000000;
+  --color-light-bg: #FFFFFF;
+  --color-light-secondary-bg: #F7F7F7;
+  --color-dark-bg: #000000;
+  --color-dark-secondary-bg: #2A2A2A;
+    /* text */
+  --color-light-txt: #FFFFFF;
+  --color-dark-txt: #000000;
+    /* footer */
   --color-footer-bg: #000000;
-  --color-footer-light-text: #FFFFFF;
-    /* dark mode */
-  --color-page-dark-bg: #000000;
-  --color-page-dark-text: #FFFFFF;
-  --color-footer-dark-text: #FF9E0C;
     /* card */
   --color-card-bg: #F7F7F7;
-  --color-card-text: #000000;
     /* banner */
   --color-banner-bg: #FE8400;
-  --color_baner-text: #FFFFFF;
+  --color-baner-txt: #FFFFFF;
 }
 
+/* https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
@@ -43,11 +43,23 @@ html, body {
     background-color: var(--color-card-bg);
     border-radius: var(--radius-3xl);
     overflow: hidden;
-    color: var(--color-card-text);
+    color: var(--color-dark-txt);
     display: flex;
     flex-direction: column;
   }
-}
 
-@layer components {}
+  .banner {
+    background-color: var(--color-dominant-primary);
+    color: var(--color-baner-txt);
+    border-radius: var(--radius-3xl);
+  }
+
+  .btn {
+    background-color: var(--color-dominant-primary);
+    padding-inline: calc(var(--spacing) * 6);
+    padding-block: calc(var(--spacing) * 3);
+    text-align: center;
+    border-radius: var(--radius-xl);
+  }
+}
 

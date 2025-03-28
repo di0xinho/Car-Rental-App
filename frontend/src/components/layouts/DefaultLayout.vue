@@ -4,18 +4,19 @@
   import LinksList from './default-components/LinksList.vue';
   import MobileAppBanner from '@/components/banners/MobileAppBanner.vue';
   import DiscountBanner from '@/components/banners/DiscountBanner.vue';
+  import SocialMediaLinks from '@/components/layouts/default-components/SocialMediaLinks.vue';
+  import DarkModeSwitch from '@/components/layouts/common-components/DarkModeSwitch.vue';
   import useUser from '@/composables/useUser';
-  import DarkModeSwitch from './common-components/DarkModeSwitch.vue';
-  
+
   const { user } = useUser();
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col gap-15 dark:text-page-dark-text">
+  <div class="min-h-screen flex flex-col gap-15 dark:text-light-txt">
     <header>
       <div class="flex justify-between items-center">
-        <div class="w-2/5 bg-neutral-900 flex">
-          <h1 class="py-8 px-16 text-dominant-primary">
+        <div class="w-2/5 bg-dark-bg text-light-txt flex justify-between px-16">
+          <h1 class="my-8 text-dominant-primary">
             CARENT
           </h1>
           <DarkModeSwitch />
@@ -43,7 +44,7 @@
           <img src="/users/default_user.webp" alt="user avatar" class="h-15 rounded-full border border-dominant-primary">
           <h4>{{ user.firstName + ' ' + user.surname }}</h4>
         </RouterLink>
-        <RouterLink v-else :to="{name: 'login'}" class="mx-8 py-2 px-4 bg-dominant-primary rounded-sm">
+        <RouterLink v-else :to="{name: 'login'}" class="mx-8 btn">
           Zaloguj się | Zarejestruj się
         </RouterLink>
       </div>
@@ -60,7 +61,7 @@
     <section class="mx-18">
       <MobileAppBanner />
     </section>
-    <footer class="bg-footer-bg text-neutral-50 flex flex-col pt-35 pb-20 px-30">
+    <footer class="bg-footer-bg text-light-txt dark:text-dominant-secondary flex flex-col pt-35 pb-20 px-30">
       <nav class="flex gap-12 justify-between">
         <LinksList title="Wynajem">
           <li>Wynajmij Samochód</li>
@@ -79,17 +80,9 @@
           <li>Dokumenty & Zarządzenia</li>
         </LinksList>
       </nav>
-      <hr class="border-neutral-50 my-6">
+      <hr class="border- my-6">
       <div class="self-end">
-        <a href="https://x.com/" class="mx-4">
-          <img src="/images/layout/twitter-icon.svg" alt="Twitter Icon" class="inline-block">
-        </a>
-        <a href="https://www.facebook.com" class="mx-4">
-          <img src="/images/layout/facebook-icon.svg" alt="Facebook Icon" class="inline-block">
-        </a>
-        <a href="https://www.instagram.com/" class="mx-4">
-          <img src="/images/layout/instagram-icon.svg" alt="Instagram Icon" class="inline-block">
-        </a>
+        <SocialMediaLinks />
       </div>
     </footer>
   </div>

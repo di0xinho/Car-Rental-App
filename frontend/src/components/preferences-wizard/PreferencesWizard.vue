@@ -46,14 +46,14 @@
     <h3 class="text-4xl text-neutral-500">
       Pozwól nam wybrać auto najlepiej dopasowane do Twoich potrzeb.
     </h3>
-    <button @click="openPreferencesWizard" class="py-3 px-6 mt-10 bg-dominant-primary text-neutral-50 block ml-auto rounded-sm">
+    <button @click="openPreferencesWizard" class="btn mt-10 text-light-txt block ml-auto">
       Zaczynamy
     </button>
   </div>
   <!-- modal window -->
   <Teleport to="body">
-    <div id="modal_container" v-if="open" class="fixed top-0 w-screen h-screen bg-neutral-100/75 z-30">
-      <div id="modal_window" class="w-4/5 max-w-288 mx-auto my-[10vh] h-4/5 bg-page-light-bg p-8 flex flex-col">
+    <div id="modal_container" v-if="open" class="fixed top-0 w-screen h-screen bg-neutral-100/75 dark:bg-neutral-900/75 z-30">
+      <div id="modal_window" class="w-4/5 max-w-288 mx-auto my-[10vh] h-4/5 bg-light-bg p-8 flex flex-col">
         <div class="flex gap-10 justify-between items-start mb-10">
           <div>
             <h2 class="text-3xl">
@@ -90,7 +90,7 @@
               Next <span class="text-xl">&#8594;</span>
             </button>
           </div>
-          <button @click="setNewCarPreferences(); open = false" class="py-3 px-6 bg-dominant-primary text-center rounded-sm self-end">
+          <button @click="setNewCarPreferences(); open = false" class="btn self-end">
             Sprawdź dostępne modele
           </button>
         </div>

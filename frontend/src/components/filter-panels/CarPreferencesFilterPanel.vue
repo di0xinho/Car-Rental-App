@@ -83,7 +83,7 @@
     <div>
       <MileageFilter v-model:mileage="mileage" />
     </div>
-    <button type="submit" class="py-3 px-6 bg-dominant-primary text-center rounded-sm">
+    <button type="submit" class="btn">
       Sprawdź dostępne modele
     </button>
   </form>

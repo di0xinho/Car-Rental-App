@@ -24,7 +24,7 @@
 
 <template>
   <section class="grid grid-cols-[20rem_1fr] my-15">
-    <div class="bg-card-bg p-8">
+    <div class="bg-card-bg p-8 text-dark-txt">
       <BodyTypeFilter v-model:type="type" />
       <PriceFilter v-model:price="price" />
     </div>

@@ -9,7 +9,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col bg-neutral-100 rounded-3xl overflow-hidden">
+  <div class="card">
     <img 
       :src="`/cars/${car.imageUrl}`"
       alt="car in our offer"
@@ -38,7 +38,7 @@
         <h6>{{ car.capacity }} Osoby</h6>
       </div>
     </div>
-    <RouterLink :to="{name: 'cars-model', params: {model: car._id}}" class="m-4 p-2 rounded-xl bg-dominant-primary text-center text-neutral-50">
+    <RouterLink :to="{name: 'cars-model', params: {model: car._id}}" class="m-4 btn text-light-txt">
       Zobacz szczegóły
     </RouterLink>
   </div>
