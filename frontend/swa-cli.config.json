@@ -7,8 +7,8 @@
       "appBuildCommand": "npm run build",
       "run": "npm run dev",
       "appDevserverUrl": "http://localhost:5173",
-      "appName": "CarRentalAppFrontendDEV",
-      "resourceGroup": "rg-we-carrentalapp-dev"
+      "appName": "car-rental-dev",
+      "resourceGroup": "rg-we-car-rental-static"
     }
   }
 }

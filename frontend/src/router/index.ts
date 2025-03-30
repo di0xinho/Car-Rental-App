@@ -1,12 +1,23 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import 'vue-router'
-import HomeView from '@/views/user/HomeView.vue'
-import NotFoundView from '@/views/NotFoundView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import 'vue-router';
+import HomeView from '@/views/HomeView.vue';
+import NotFoundView from '@/views/NotFoundView.vue';
+import LoginView from '@/views/LoginView.vue';
+  // User Panel Views Chunk:
+  // ( https://router.vuejs.org/guide/advanced/lazy-loading.html )
+import UserMainView from '@/views/user/UserMainView.vue';
+import UserOrdersView from '@/views/user/UserOrdersView.vue';
+import UserAnaliticsView from '@/views/user/UserAnaliticsView.vue';
+import UserSettingsView from '@/views/user/UserSettingsView.vue';
+import UserRentCarView from '@/views/user/UserRentCarView.vue';
 
-// Setting types for route meta data:  https://router.vuejs.org/guide/advanced/meta.html#TypeScript
+import useUser from '@/composables/useUser';
+
+  // Setting types for route meta data:
+  // https://router.vuejs.org/guide/advanced/meta.html#TypeScript
 declare module 'vue-router' {
   interface RouteMeta {
-    layout?: 'UserLayout'|'AdminLayout'|'DefaultLayout',
+    layout?: 'UserLayout'|'AdminLayout'|'DefaultLayout'|'EmptyLayout',
   }
 }
 
@@ -18,7 +29,7 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
       meta: {
-        layout: 'UserLayout'
+        layout: 'DefaultLayout'
       },
     },
     {
@@ -27,47 +38,65 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/user/AboutView.vue'),
+      component: () => import('../views/AboutView.vue'),
       meta: {
-        layout: 'UserLayout'
+        layout: 'DefaultLayout'
       },
     },
     {
-      path: '/rezerwacja',
-      name: 'reservation',
-      component: () => import('../views/user/ReservationView.vue'),
+      path: '/wynajem',
+      name: 'rent',
+      component: () => import('../views/RentCarView.vue'),
       meta: {
-        layout: 'UserLayout'
+        layout: 'DefaultLayout'
+      },
+    },
+    {
+      path: '/samochody',
+      name: 'cars-collection',
+      component: () => import('../views/CarsCollectionViev.vue'),
+      meta: {
+        layout: 'DefaultLayout'
+      },
+    },
+    {
+      path: '/samochody/:model',
+      name: 'cars-model',
+      component: () => import('../views/CarModelView.vue'),
+      meta: {
+        layout: 'DefaultLayout'
       },
     },
     {
       path: '/kontakt',
       name: 'contact',
-      component: () => import('../views/user/ContactView.vue'),
+      component: () => import('../views/ContactView.vue'),
       meta: {
-        layout: 'UserLayout'
+        layout: 'DefaultLayout'
       },
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/user/LoginView.vue'),
+      component: LoginView,
       meta: {
-        layout: 'UserLayout'
+        layout: 'EmptyLayout'
       },
     },
     {
       path: '/user',
-      name: 'user-panel',
-      component: () => import('../views/user/UserPanelView.vue'),
-      meta: {
-        layout: 'UserLayout'
+      children: [
+        { path: '', name: 'user-main', component: UserMainView },
+        { path: 'zamowienia', name: 'user-orders', component: UserOrdersView },
+        { path: 'analityka', name: 'user-analitics', component: UserAnaliticsView },
+        { path: 'wynajem', name: 'user-rent', component: UserRentCarView },
+        { path: 'ustawienia', name: 'user-settings', component: UserSettingsView },
+      ],
+      beforeEnter: (to, from) => {
+        const { user } = useUser();
+        if (user.value) return true;
+        else return {name: 'login'};
       },
-    },
-    {
-      path: '/car/:model',
-      name: 'car-model',
-      component: () => import('../views/user/CarModelView.vue'),
       meta: {
         layout: 'UserLayout'
       },
@@ -85,10 +114,9 @@ const router = createRouter({
       name: 'not-found',
       component: NotFoundView,
       meta: {
-        layout: 'DefaultLayout'
+        layout: 'EmptyLayout'
       },
     },
-
   ],
 })
 
