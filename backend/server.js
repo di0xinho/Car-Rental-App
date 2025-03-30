@@ -12,8 +12,16 @@ app.use(cookieParser());
 // Importujemy moduł "dotenv" do obsługi zmiennych środowiskowych 
 import dotenv from 'dotenv';
 
+// Importujemy routery dla endpointów związanych z samochodami, procesami związanymi z autentykacją użytkownika oraz z wypożyczeniami samochodów
+import carRoutes from "./routes/carRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import stripeWebhook from "./routes/stripeWebhook.js";
+
 // Wczytujemy zmienne środowiskowe z pliku .env
 dotenv.config();
+
+app.use("/api", stripeWebhook); // dla webhooków Stripe
 
 // Importujemy moduł do połączenia z bazą danych MongoDB
 import connection from "./db/connection.js";
@@ -25,11 +33,6 @@ app.use(cors());
 
 // Importujemy middleware do obsługi błędów serwera
 import errorMiddleware from "./middleware/errorMiddleware.js";
-
-// Importujemy routery dla endpointów związanych z samochodami, procesami związanymi z autentykacją użytkownika oraz z wypożyczeniami samochodów
-import carRoutes from "./routes/carRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-import bookingRoutes from "./routes/bookingRoutes.js";
 
 // Rejestrujemy ścieżkę API dla operacji na samochodach  
 app.use("/api/cars", carRoutes);
