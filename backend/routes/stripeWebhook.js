@@ -26,10 +26,6 @@ router.post("/webhook",
           
               let event;
 
-              console.log(`sig - ${sig}`);
-              console.log(`stripe_endpoint_secret - ${stripe_endpoint_secret}`);
-              console.log(`stripe_secret_key - ${stripe_secret_key}`);
-
               try {
                 event = stripe.webhooks.constructEvent(request.body, sig, stripe_endpoint_secret);
                 console.log(event)
