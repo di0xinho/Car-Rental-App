@@ -2,6 +2,7 @@
 import express from "express";
 import Stripe from "stripe";
 import dotenv from "dotenv";
+import { StatusCodes } from "http-status-codes";
 import connection from "./db_connection/connection.js";
 import User from "./models/userModel.js";
 import Car from "./models/carModel.js";
@@ -18,16 +19,31 @@ const stripe = new Stripe(stripe_secret_key);
 // Klucz prywatny do testowania webhooka Stripe CLI na środowisku lokalnym
 const stripe_endpoint_secret = process.env.STRIPE_ENDPOINT_SECRET;
 
+// Definiujemy port, na którym nasłuchuje serwer 
+const port = 4242;
+
 const app = express();
 
-// Definiujemy port, na którym nasłuchuje serwer 
-const port = process.env.PORT;
+app.get("/", (req, res) => {
+    return res
+      .status(StatusCodes.OK)
+      .json({
+        message:
+          "Aplikacja działa poprawnie",
+        success: true,
+      });
+})
 
 app.post(
     "/webhook",
     express.raw({ type: "application/json" }),
     async (request, response) => {
+
+    
       const sig = request.headers["stripe-signature"];
+
+
+      console.log(sig);
   
       let event;
   
