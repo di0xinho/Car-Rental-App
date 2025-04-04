@@ -106,7 +106,6 @@ router.post("/book-car", authMiddleware, async (req, res) => {
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "payment",
-    ui_mode: "custom",
     line_items: [
       {
         price_data: {
