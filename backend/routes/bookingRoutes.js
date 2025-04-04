@@ -16,7 +16,9 @@ dotenv.config();
 // Wczytujemy ze zmiennych środowiskowych klucz prywatny do API platformy Stripe
 const stripe_secret_key = process.env.STRIPE_SECRET_KEY;
 
-const stripe = new Stripe(stripe_secret_key);
+const stripe = new Stripe(stripe_secret_key, {
+   apiVersion: '2025-03-31.basil',  
+  });
 
 // Endpoint zwracający rezerwacje z filtrowaniem i paginacją
 // Przykład: localhost:8000/api/bookings/get-all-bookings?user=123&car=456&isPaid=true&startDate=2025-01-01&endDate=2025-03-01&page=2
