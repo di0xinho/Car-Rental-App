@@ -3,6 +3,7 @@ import axios from "axios";
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError, TooManyRequestsError } from "../errors/index.js";
 import asyncWrapper from "../utils/asyncWrapper.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import checkPermissions from "../utils/checkPermissions.js";
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import Car from "../models/carModel.js";
@@ -90,6 +91,9 @@ router.get("/get-all-cars", asyncWrapper(async (req, res) => {
       if (maxPrice) queryObject.mileage.$lte = Number(maxPrice);
     }
 
+    // Szukamy wśród dostępnych aut
+    queryObject.isAvailable = true;
+
     // Znalezienie pasujących pojazdów według wprowadzonych parametrów
     let result = Car.find(queryObject);
 
@@ -157,6 +161,10 @@ router.get("/get-car-by-id/:carId", asyncWrapper(async (req, res) => {
 
 // Endpoint odpowiedzialny za utworzenie nowej oferty z samochodem
 router.post("/create-car", authMiddleware, asyncWrapper(async (req, res) => {
+
+  // Sprawdzenie, czy uprawnienia użytkownika są wystarczające (czy jest adminem)
+  checkPermissions(req.user);
+
   // Pobieramy wszystkie dane z ciała zapytania
   const {
     make,
@@ -259,6 +267,10 @@ router.post("/create-car", authMiddleware, asyncWrapper(async (req, res) => {
 
 // Endpoint odpowiedzialny za modyfikację istniejącej już oferty z samochodem
 router.patch("/update-car/:carId", authMiddleware, asyncWrapper(async (req, res) => {
+
+  // Sprawdzenie, czy uprawnienia użytkownika są wystarczające (czy jest adminem)
+  checkPermissions(req.user);
+
   // Pobranie ID samochodu z parametru ścieżki
   const carId = req.params.carId;
 
@@ -441,6 +453,10 @@ router.get("/get-favorites", authMiddleware, asyncWrapper(async (req, res) => {
 
 // Endpoint odpowiedzialny za usunięcie wybranego pojazdu z bazy danych
 router.delete("/delete-car/:carId", authMiddleware, asyncWrapper(async (req, res) => {
+
+  // Sprawdzenie, czy uprawnienia użytkownika są wystarczające (czy jest adminem)
+  checkPermissions(req.user);
+
   // Pobranie ID samochodu z parametru ścieżki
   const carId = req.params.carId;
 
@@ -462,6 +478,7 @@ router.delete("/delete-car/:carId", authMiddleware, asyncWrapper(async (req, res
 
 // Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
 router.post("/predict-cluster", authMiddleware, asyncWrapper(async (req, res) => {
+
   // Tworzymy URL, aby dostać się do ścieżki odpowiadającej za przewidywanie modelu
   const URL = process.env.FLASK_API_URL + "/predict";
 
@@ -477,6 +494,7 @@ router.get(
   "/get-cars-by-cluster/:clusterId",
   authMiddleware,
   asyncWrapper(async (req, res) => {
+
     // Pobranie ID klastra do którego został przypisany samochód z parametru ścieżki
     const clusterId = req.params.clusterId;
 

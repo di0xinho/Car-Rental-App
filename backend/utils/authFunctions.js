@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 
 // Metoda tworząca token JWT
 const createJWT = (user) => {
-    return jwt.sign( { userId: user._id }, process.env.JWT_SECRET_KEY, { 
+
+    const payload = { userId: user._id, email: user.email, role: user.isAdmin };
+
+    return jwt.sign( payload, process.env.JWT_SECRET_KEY, { 
         expiresIn: process.env.JWT_LIFETIME,
     });
 }

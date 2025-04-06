@@ -16,6 +16,7 @@ import dotenv from 'dotenv';
 import carRoutes from "./routes/carRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import stripeWebhook from "./routes/stripeWebhook.js";
 
 // Wczytujemy zmienne środowiskowe z pliku .env
@@ -40,6 +41,7 @@ app.use("/api/cars", carRoutes);
 // Robimy to samo dla innych ścieżek API...
 app.use("/api/auth", authRoutes); // do autentykacji użytkownika
 app.use("/api/booking", bookingRoutes) // do wypożyczeń samochodów
+app.use("/api/admin", adminRoutes); // dla administratora
 
 // Używamy middleware do obsługi błędów jako ostatniego
 app.use(errorMiddleware);
