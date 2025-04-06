@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import Stripe from "stripe";
+import moment from 'moment';
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError, TooManyRequestsError } from "../errors/index.js";
@@ -24,29 +25,39 @@ const stripe = new Stripe(stripe_secret_key, {
 // Endpoint zwracający rezerwacje z filtrowaniem i paginacją
 // Przykład: localhost:8000/api/bookings/get-all-bookings?user=123&car=456&isPaid=true&startDate=2025-01-01&endDate=2025-03-01&page=2
 router.get("/get-all-bookings", authMiddleware, asyncWrapper(async (req, res) => {
-  const { user, car, isPaid, startDate, endDate, page, limit } = req.query;
 
+  const { carId, isPaid, startDate, endDate, page, limit } = req.query;
+
+  // Pobieramy id użytkownika
+  const userId = req.user.userId;
+  
   // Tworzymy obiekt zapytania dynamicznie na podstawie parametrów
   const queryObject = {};
 
-  if (user) {
-    queryObject.user = user; // Filtrujemy po ID użytkownika
-  }
-  if (car) {
-    queryObject.car = car; // Filtrujemy po ID samochodu
+  // Filtrujemy po id użytkownika
+  queryObject.user = userId;
+
+  if (carId) {
+    queryObject.car = carId; // Filtrujemy po id samochodu
   }
   if (isPaid !== undefined) {
-    queryObject.isPaid = isPaid === "true"; // Filtrujemy po statusie opłaty
-  }
-  if (startDate || endDate) {
-    queryObject["bookedTimeSlots.from"] = {};
-    queryObject["bookedTimeSlots.to"] = {};
-    if (startDate)
-      queryObject["bookedTimeSlots.from"].$gte = new Date(startDate);
-    if (endDate) queryObject["bookedTimeSlots.to"].$lte = new Date(endDate);
+    queryObject.isPaid = isPaid; // Filtrujemy po statusie opłaty
   }
 
-  // Znalezienie pasujących rezerwacji według wprowadzonych parametrów
+  if (startDate || endDate) {
+    const fromDate = startDate
+      ? moment(startDate, 'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm')
+      : '1970-01-01 00:00';
+  
+    const toDate = endDate
+      ? moment(endDate, 'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm')
+      : '3000-01-01 00:00';
+
+    queryObject["bookedTimeSlots.from"] = { $lte: toDate };
+    queryObject["bookedTimeSlots.to"] = { $gte: fromDate };
+  }
+  
+   // Znalezienie pasujących rezerwacji według wprowadzonych parametrów
   let result = Booking.find(queryObject);
 
   // Obsługa paginacji
@@ -56,7 +67,9 @@ router.get("/get-all-bookings", authMiddleware, asyncWrapper(async (req, res) =>
   result = result.skip(skip).limit(limitNum);
 
   // Pobranie wyników
-  const bookings = await result.populate("car user"); // Do wyniku dołączamy samochód i użytkownika, na którego została przeprowadzona rezerwacja
+  const bookings = await result
+  .populate({ path: "user", select: "-password -resetPasswordCode -resetPasswordCodeExpiry -resetPasswordAttempts"})
+  .populate("car"); // Do wyniku dołączamy samochód i użytkownika, na którego została przeprowadzona rezerwacja
 
   // Liczba dostępnych rezerwacji po przefiltrowaniu
   const totalBookings = await Booking.countDocuments(queryObject);
@@ -71,6 +84,7 @@ router.get("/get-all-bookings", authMiddleware, asyncWrapper(async (req, res) =>
     bookings: bookings,
     success: true,
   });
+
 }));
 
 // Endpoint odpowiedzialny za rezerwację samochodu i rozpoczęcie procesu płatności
