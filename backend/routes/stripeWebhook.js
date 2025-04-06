@@ -9,6 +9,7 @@ import {
   TooManyRequestsError,
 } from "../errors/index.js";
 import asyncWrapper from "../utils/asyncWrapper.js";
+import emailService from "../utils/emailService.js";
 import Stripe from "stripe";
 import dotenv from "dotenv";
 import User from "../models/userModel.js";
