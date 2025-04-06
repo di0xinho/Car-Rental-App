@@ -1,8 +1,8 @@
 import express, { Router } from "express";
-const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError, TooManyRequestsError } from "../errors/index.js";
 import asyncWrapper from "../utils/asyncWrapper.js";
+import checkPermissions from "../utils/checkPermissions.js";
 import User from "../models/userModel.js";
 import convertToISODateWithMoment from "../utils/convertDateToISO.js";
 import validateField from "../utils/validateField.js";
@@ -21,6 +21,8 @@ import { createJWT, attachCookie } from "../utils/authFunctions.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import bcrypt from "bcryptjs";
 import emailService from "../utils/emailService.js";
+
+const router = express.Router();
 
 // Endpoint obsługujący rejestrację użytkownika
 router.post("/register", asyncWrapper(async (req, res) => {
@@ -166,6 +168,10 @@ router.get("/get-current-user", authMiddleware, asyncWrapper(async (req, res) =>
 // Endpoint zwracający dane na temat użytkownika (uogólnienie endpointa '/get-current-user', gdzie zwracaliśmy dane na temat AKTUALNEGO użytkownika, gdzie numer id był
 // pozyskiwany z odpowiedniego pliku cookie)
 router.get("/get-user-by-id", authMiddleware, asyncWrapper(async (req, res) => {
+
+  // Sprawdzenie, czy uprawnienia użytkownika są wystarczające (czy jest adminem)
+  checkPermissions(req.user);
+
   // Znajdujemy w bazie danych użytkowanika o danym numerze id
   const user = await User.findOne({ _id: req.body.userId });
 

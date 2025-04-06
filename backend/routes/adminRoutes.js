@@ -1,5 +1,4 @@
 import express, { Router } from "express";
-const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import BadRequestError from "../errors/BadRequest.js";
 import NotFoundError from "../errors/NotFound.js";
@@ -7,6 +6,8 @@ import authMiddleware from "../middleware/authMiddleware.js";
 import checkPermissions from "../utils/checkPermissions.js";
 import asyncWrapper from "../utils/asyncWrapper.js";
 import User from "../models/userModel.js";
+
+const router = express.Router();
 
 // Endpoint zwracający wszystkich użytkowników wraz z filtrowaniem i paginacją
 router.get("/get-all-users", authMiddleware, asyncWrapper(async (req, res) => {

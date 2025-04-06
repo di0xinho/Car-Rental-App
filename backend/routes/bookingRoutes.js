@@ -1,15 +1,9 @@
 import express, { Router } from "express";
 import Stripe from "stripe";
 import moment from "moment";
-const router = express.Router();
 import { StatusCodes } from "http-status-codes";
-import {
-  BadRequestError,
-  ConflictError,
-  NotFoundError,
-  UnauthorizedError,
-  TooManyRequestsError,
-} from "../errors/index.js";
+import BadRequestError from "../errors/BadRequest.js";
+import NotFoundError from "../errors/NotFound.js";
 import asyncWrapper from "../utils/asyncWrapper.js";
 import User from "../models/userModel.js";
 import Car from "../models/carModel.js";
@@ -17,6 +11,8 @@ import Booking from "../models/bookingModel.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import emailService from "../utils/emailService.js";
 import dotenv from "dotenv";
+
+const router = express.Router();
 
 // Wczytujemy zmienne środowiskowe z pliku .env
 dotenv.config();

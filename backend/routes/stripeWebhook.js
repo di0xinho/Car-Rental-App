@@ -1,13 +1,5 @@
 import express from "express";
-const router = express.Router();
-import { StatusCodes } from "http-status-codes";
-import {
-  BadRequestError,
-  ConflictError,
-  NotFoundError,
-  UnauthorizedError,
-  TooManyRequestsError,
-} from "../errors/index.js";
+import BadRequestError from "../errors/BadRequest.js";
 import asyncWrapper from "../utils/asyncWrapper.js";
 import emailService from "../utils/emailService.js";
 import Stripe from "stripe";
@@ -15,6 +7,8 @@ import dotenv from "dotenv";
 import User from "../models/userModel.js";
 import Car from "../models/carModel.js";
 import Booking from "../models/bookingModel.js";
+
+const router = express.Router();
 
 // Wczytujemy zmienne środowiskowe z pliku .env
 dotenv.config();

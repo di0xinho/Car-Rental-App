@@ -1,10 +1,10 @@
 import express from "express";
 import axios from "axios";
-import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError, TooManyRequestsError } from "../errors/index.js";
+import BadRequestError from "../errors/BadRequest.js";
+import NotFoundError from "../errors/NotFound.js";
 import asyncWrapper from "../utils/asyncWrapper.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import checkPermissions from "../utils/checkPermissions.js";
-const router = express.Router();
 import { StatusCodes } from "http-status-codes";
 import Car from "../models/carModel.js";
 import User from "../models/userModel.js";
@@ -23,6 +23,8 @@ import {
   imageUrlSchema,
   descriptionSchema,
 } from "../utils/carFieldSchemas.js";
+
+const router = express.Router();
 
 // Endpoint zwracający wszystkie pojazdy z filtrowaniem i paginacją
 // Przykład: localhost:8000/api/cars/get-all-cars?make=Toyota&minYear=2000&maxYear=2021&gearboxType=Automatyczna&sort=latest&page=2
