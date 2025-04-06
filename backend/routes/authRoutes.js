@@ -1,6 +1,8 @@
 import express, { Router } from "express";
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError, TooManyRequestsError } from "../errors/index.js";
+import asyncWrapper from "../utils/asyncWrapper.js";
 import User from "../models/userModel.js";
 import convertToISODateWithMoment from "../utils/convertDateToISO.js";
 import validateField from "../utils/validateField.js";
@@ -21,33 +23,22 @@ import bcrypt from "bcryptjs";
 import emailService from "../utils/emailService.js";
 
 // Endpoint obsługujący rejestrację użytkownika
-router.post("/register", async (req, res) => {
+router.post("/register", asyncWrapper(async (req, res) => {
   // Pobieramy wszystkie dane z ciała zapytania
   const { username, email, password } = req.body;
 
   // W ciele zapytania należy umieścić wszystkie potrzebne wartości, czyli nazwę użytkownika, adres email oraz hasło
   // W przeciwnym wypadku serwer zwróci następującą odpowiedź...
-  if (!username || !email || !password) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        message: "Ciało zapytania nie zawiera wszystkich wartości",
-        success: false,
-      });
+  if (!username || !email || !password) {    
+      throw new BadRequestError("Ciało zapytania nie zawiera wszystkich wartości");
   }
 
   // Na początku sprawdzamy, czy użytkownik o podanym adresie email posiada już konto w aplikacji
   const userExists = await User.findOne({ email: email });
 
   // Jeśli tak, to zwracamy odpowiedź, w której informujemy użytkownika o tym, że istnieje już konto o podanym adresie
-  if (userExists) {
-    return res
-      .status(StatusCodes.CONFLICT)
-      .json({
-        message:
-          "Istnieje już konto, na które zarejestrowano podany adres e-mail",
-        success: false,
-      });
+  if (userExists) {    
+      throw new ConflictError("Istnieje już konto, na które zarejestrowano podany adres e-mail");
   }
 
   // W przeciwnym wypadku...
@@ -65,13 +56,7 @@ router.post("/register", async (req, res) => {
   // Jeśli jakiekolwiek pole nie spełnia warunków walidacji, zwracamy odpowiednią odpowiedź
   for (const { field, validation } of validations) {
     if (!validation.isValid) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({
-          message: `${field} nie spełnia warunków walidacji`,
-          errors: validation.errors,
-          success: false,
-        });
+        throw new BadRequestError(`${field} nie spełnia warunków walidacji. Błędy walidacji: ${validation.errors}`);
     }
   }
 
@@ -98,22 +83,18 @@ router.post("/register", async (req, res) => {
   res
     .status(StatusCodes.OK)
     .json({ message: "Tworzenie konta przebiegło pomyślnie", success: true });
-});
+}));
 
 // Endpoint obsługujący logowanie użytkownika
-router.post("/login", async (req, res) => {
+router.post("/login", asyncWrapper(async (req, res) => {
   // Pobieramy wszystkie dane z ciała zapytania
   const { email, password } = req.body;
 
   // W ciele zapytania należy umieścić wszystkie potrzebne wartości, czyli adres email oraz hasło
   // W przeciwnym wypadku serwer zwróci następującą odpowiedź...
+
   if (!email || !password) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        message: "Ciało zapytania nie zawiera wszystkich wartości",
-        success: false,
-      });
+    throw new BadRequestError("Ciało zapytania nie zawiera wszystkich wartości");
   }
 
   // Szukamy użytkownika w bazie wykorzystując do tego podany adres email
@@ -122,9 +103,7 @@ router.post("/login", async (req, res) => {
   // Jeśli użytkownik nie istnieje w bazie danych, to zwracamy odpowiedź, w której informujemy użytkownika o tym, że dane są niepoprawne
   // (Z przyczyn bezpieczeństwa nie informujemy o tym, że podany użytkownik znajduje się bądź nie znajduje w bazie danych)
   if (!user) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ message: "Wprowadzono niepoprawne dane", success: false });
+      throw new BadRequestError("Wprowadzono niepoprawne dane");
   }
 
   // Porównujemy hasło znajdujące się w ciele zapytania z hasłem zapisanym w bazie (kolejno pierwszy i drugi parametr metody)
@@ -132,9 +111,7 @@ router.post("/login", async (req, res) => {
 
   // W sytuacji, gdy hasła są inne zwracamy następującą odpowiedź
   if (!isMatch) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ message: "Wprowadzono niepoprawne dane", success: false });
+      throw new BadRequestError("Wprowadzono niepoprawne dane");
   }
 
   // Tworzymy token JWT
@@ -160,21 +137,16 @@ router.post("/login", async (req, res) => {
       data: user,
       success: true,
     });
-});
+}));
 
 // Endpoint odpowiedzialny za zwrócenie informacji o koncie aktualnego użytkownika (aktualnie zalogowanego)
-router.get("/get-current-user", authMiddleware, async (req, res) => {
+router.get("/get-current-user", authMiddleware, asyncWrapper(async (req, res) => {
   // Znajdujemy w bazie danych użytkowanika o danym numerze id
   const user = await User.findOne({ _id: req.user.userId });
 
   // Zabezpieczenie - jeśli dany użytkownik nie znajduje się w bazie danych, to wyświetlamy odpowiedni komunikat
   if (!user) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json({
-        message: "Wybrany użytkownik nie figuruje w bazie danych",
-        success: false,
-      });
+    throw new NotFoundError("Wybrany użytkownik nie figuruje w bazie danych");
   }
 
   // Z przyczyn bezpieczeństwa hasło jak i dane dotyczące przypominania hasła są ustawiane jako undefined
@@ -189,22 +161,17 @@ router.get("/get-current-user", authMiddleware, async (req, res) => {
       data: user,
       success: true,
     });
-});
+}));
 
 // Endpoint zwracający dane na temat użytkownika (uogólnienie endpointa '/get-current-user', gdzie zwracaliśmy dane na temat AKTUALNEGO użytkownika, gdzie numer id był
 // pozyskiwany z odpowiedniego pliku cookie)
-router.get("/get-user-by-id", authMiddleware, async (req, res) => {
+router.get("/get-user-by-id", authMiddleware, asyncWrapper(async (req, res) => {
   // Znajdujemy w bazie danych użytkowanika o danym numerze id
   const user = await User.findOne({ _id: req.body.userId });
 
   // Zabezpieczenie - jeśli dany użytkownik nie znajduje się w bazie danych, to wyświetlamy odpowiedni komunikat
   if (!user) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json({
-        message: "Wybrany użytkownik nie figuruje w bazie danych",
-        success: false,
-      });
+    throw new NotFoundError("Wybrany użytkownik nie figuruje w bazie danych");
   }
 
   // W sytuacji, gdy wszystko przebiegło poprawnie, zwracamy odpowiednią odpowiedź serwera
@@ -215,10 +182,10 @@ router.get("/get-user-by-id", authMiddleware, async (req, res) => {
       data: user,
       success: true,
     });
-});
+}));
 
 // Endpoint odpowiedzialny za aktualizację danych o użytkowniku z bieżącego konta
-router.patch("/update-user", authMiddleware, async (req, res) => {
+router.patch("/update-user", authMiddleware, asyncWrapper(async (req, res) => {
   // Pobieramy numer id użytkownika z ciasteczka
   const userId = req.user.userId;
 
@@ -228,12 +195,7 @@ router.patch("/update-user", authMiddleware, async (req, res) => {
   // W ciele zapytania należy umieścić wszystkie potrzebne wartości, czyli adres email oraz hasło
   // W przeciwnym wypadku serwer zwróci następującą odpowiedź...
   if (!firstName || !surname || !phoneNumber || !dateOfBirth || !gender) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({
-        message: "Ciało zapytania nie zawiera wszystkich wartości",
-        success: false,
-      });
+    throw new BadRequestError("Ciało zapytania nie zawiera wszystkich wartości");
   }
 
   // Pobieramy użytkownika z bazy danych
@@ -241,12 +203,7 @@ router.patch("/update-user", authMiddleware, async (req, res) => {
 
   // jeśli dany użytkownik nie znajduje się w bazie danych, to wyświetlamy odpowiedni komunikat
   if (!user) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json({
-        message: "Wybrany użytkownik nie figuruje w bazie danych",
-        success: false,
-      });
+    throw new NotFoundError("Wybrany użytkownik nie figuruje w bazie danych");
   }
 
   // Sprawdzamy, czy przekazane w żądaniu dane spełniają warunki walidacji
@@ -267,13 +224,7 @@ router.patch("/update-user", authMiddleware, async (req, res) => {
   // Jeśli jakiekolwiek pole nie spełnia warunków walidacji, zwracamy odpowiednią odpowiedź
   for (const { field, validation } of validations) {
     if (!validation.isValid) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({
-          message: `${field} nie spełnia warunków walidacji`,
-          errors: validation.errors,
-          success: false,
-        });
+        throw new BadRequestError(`${field} nie spełnia warunków walidacji. Błędy walidacji: ${validation.errors}`);
     }
   }
 
@@ -292,10 +243,10 @@ router.patch("/update-user", authMiddleware, async (req, res) => {
     message: "Aktualizacja danych użytkownika przebiegła pomyślnie",
     success: true,
   });
-});
+}));
 
 // Endpoint odpowiedzialny za żądanie resetowania hasła
-router.post("/forgot-password", async (req, res) => {
+router.post("/forgot-password", asyncWrapper(async (req, res) => {
   // Pobieramy adres email z ciała zapytania
   const email = req.body.email;
 
@@ -304,11 +255,7 @@ router.post("/forgot-password", async (req, res) => {
 
   // W przypadku nie przejścia procesu walidacji, wysyłamy odpowiedni komunikat...
   if (!emailValidation.isValid) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Adres email nie spełnia warunków walidacji",
-      errors: emailValidation.errors,
-      success: false,
-    });
+      throw new BadRequestError(`Adres email nie spełnia warunków walidacji. Błędy walidacji: ${validation.errors}`);
   }
 
   // Wyszukujemy użytkownika o podanym adresie e-mail
@@ -331,11 +278,7 @@ router.post("/forgot-password", async (req, res) => {
     user.resetPasswordAttempts >= limit &&
     user.resetPasswordCodeExpiry > hourAgo
   ) {
-    return res.status(StatusCodes.TOO_MANY_REQUESTS).json({
-      message:
-        "Przekroczono limit prób resetowania hasła. Spróbuj ponownie za godzinę.",
-      success: false,
-    });
+    throw new TooManyRequestsError("Przekroczono limit prób resetowania hasła. Spróbuj ponownie za godzinę.");
   }
 
   // Generowanie 6-cyfrowego kodu
@@ -378,10 +321,10 @@ router.post("/forgot-password", async (req, res) => {
       "Kod resetujący hasło został wysłany na Twój adres email. Kod wygasa po 15 minutach.",
     success: true,
   });
-});
+}));
 
 // Endpoint obsługujący resetowanie hasła
-router.post("/reset-password/:userId", async (req, res) => {
+router.post("/reset-password/:userId", asyncWrapper(async (req, res) => {
   // Pobieramy identyfikator użytkownika z parametru URL oraz kod resetujący i nowe hasło z ciała zapytania
   const { userId } = req.params;
   const { resetCode, newPassword } = req.body;
@@ -401,13 +344,7 @@ router.post("/reset-password/:userId", async (req, res) => {
   // Jeśli jakiekolwiek pole nie spełnia warunków walidacji, zwracamy odpowiednią odpowiedź
   for (const { field, validation } of validations) {
     if (!validation.isValid) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({
-          message: `${field} nie spełnia warunków walidacji`,
-          errors: validation.errors,
-          success: false,
-        });
+      throw new BadRequestError(`${field} nie spełnia warunków walidacji.`, validation.errors);
     }
   }
 
@@ -416,16 +353,12 @@ router.post("/reset-password/:userId", async (req, res) => {
 
   // Jeśli użytkownik nie został znaleziony w bazie danych, to zwracamy odpowiednią odpowiedź
   if (!user) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ message: "Użytkownik nie znaleziony", success: false });
+    throw new NotFoundError("Użytkownik nie znaleziony");
   }
 
   // Sprawdzamy, czy podany kod resetujący jest poprawny
   if (user.resetPasswordCode !== resetCode) {
-    return res
-      .status(StatusCodes.UNAUTHORIZED)
-      .json({ message: "Nieprawidłowy kod resetujący", success: false });
+    throw new UnauthorizedError("Nieprawidłowy kod resetujący");
   }
 
   // Teraz zajmiemy się hasłem...
@@ -452,10 +385,10 @@ router.post("/reset-password/:userId", async (req, res) => {
     message: "Proces resetowania i nadawania nowego hasła przebiegł pomyślnie",
     success: true,
   });
-});
+}));
 
 // Endpoint odpowiedzialny za poprawne wylogowanie użytkownika z aplikacji
-router.delete("/logout", async (req, res) => {
+router.delete("/logout", asyncWrapper(async (req, res) => {
   // Nadpisujemy istniejące ciasteczko 'token' nowym ciasteczkiem o nazwie 'logout'
   // W ten sposób radzimy sobie z unieważnieniem poprzedniego tokena uwierzytelniającego
   res.cookie("token", "logout", {
@@ -468,6 +401,6 @@ router.delete("/logout", async (req, res) => {
     message: "Użytkownik został wylogowany pomyślnie",
     success: true,
   });
-});
+}));
 
 export default router;

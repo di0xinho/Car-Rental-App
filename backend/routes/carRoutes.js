@@ -1,5 +1,7 @@
 import express from "express";
 import axios from "axios";
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError, TooManyRequestsError } from "../errors/index.js";
+import asyncWrapper from "../utils/asyncWrapper.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
@@ -23,7 +25,7 @@ import {
 
 // Endpoint zwracający wszystkie pojazdy z filtrowaniem i paginacją
 // Przykład: localhost:8000/api/cars/get-all-cars?make=Toyota&minYear=2000&maxYear=2021&gearboxType=Automatyczna&sort=latest&page=2
-router.get("/get-all-cars", async (req, res) => {
+router.get("/get-all-cars", asyncWrapper(async (req, res) => {
   
     const {
       make,
@@ -128,10 +130,10 @@ router.get("/get-all-cars", async (req, res) => {
       cars: cars,
       success: true
     });
-});
+}));
 
 // Endpoint odpowiadający za zwrócenie informacji o danym samochodzie wykorzystując jego id
-router.get("/get-car-by-id/:carId", async (req, res) => {
+router.get("/get-car-by-id/:carId", asyncWrapper(async (req, res) => {
   // Pobranie ID samochodu z parametru ścieżki
   const carId = req.params.carId;
 
@@ -140,10 +142,7 @@ router.get("/get-car-by-id/:carId", async (req, res) => {
 
   // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
   if (!foundCar) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Nie znaleziono samochodu o takim numerze id",
-      success: false,
-    });
+    throw new NotFoundError("Nie znaleziono samochodu o takim numerze id");
   }
 
   // W przypadku znalezienia samochodu o danym adresie id, serwer zwraca odpowiednią odpowiedź
@@ -154,10 +153,10 @@ router.get("/get-car-by-id/:carId", async (req, res) => {
       data: foundCar,
       success: true,
     });
-});
+}));
 
 // Endpoint odpowiedzialny za utworzenie nowej oferty z samochodem
-router.post("/create-car", authMiddleware, async (req, res) => {
+router.post("/create-car", authMiddleware, asyncWrapper(async (req, res) => {
   // Pobieramy wszystkie dane z ciała zapytania
   const {
     make,
@@ -191,10 +190,7 @@ router.post("/create-car", authMiddleware, async (req, res) => {
       description,
     ].some((value) => value === undefined || value === "")
   ) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Nie wszystkie pola zostały uzupełnione przez użytkownika",
-      success: false,
-    });
+    throw new BadRequestError("Nie wszystkie pola zostały uzupełnione przez użytkownika");
   }
 
   // Definiujemy walidacje dla każdego pola
@@ -234,11 +230,10 @@ router.post("/create-car", authMiddleware, async (req, res) => {
   // Jeśli jakiekolwiek pole nie spełnia warunków walidacji, zwracamy odpowiednią odpowiedź
   for (const { field, validation } of validations) {
     if (!validation.isValid) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message: `${field} nie spełnia warunków walidacji`,
-        errors: validation.errors,
-        success: false,
-      });
+
+      throw new BadRequestError(`${field} nie spełnia warunków walidacji`, validation.errors);
+
+     
     }
   }
 
@@ -260,10 +255,10 @@ router.post("/create-car", authMiddleware, async (req, res) => {
     data: newCar,
     success: true,
   });
-});
+}));
 
 // Endpoint odpowiedzialny za modyfikację istniejącej już oferty z samochodem
-router.patch("/update-car/:carId", authMiddleware, async (req, res) => {
+router.patch("/update-car/:carId", authMiddleware, asyncWrapper(async (req, res) => {
   // Pobranie ID samochodu z parametru ścieżki
   const carId = req.params.carId;
 
@@ -272,10 +267,7 @@ router.patch("/update-car/:carId", authMiddleware, async (req, res) => {
 
   // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
   if (!foundCar) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Nie znaleziono samochodu o takim numerze id",
-      success: false,
-    });
+    throw new NotFoundError("Nie znaleziono samochodu o takim numerze id");
   }
 
   // Pobieramy wszystkie dane z ciała zapytania
@@ -311,10 +303,8 @@ router.patch("/update-car/:carId", authMiddleware, async (req, res) => {
       description,
     ].some((value) => value === undefined || value === "")
   ) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Nie wszystkie pola zostały uzupełnione przez użytkownika",
-      success: false,
-    });
+
+    throw new BadRequestError("Nie wszystkie pola zostały uzupełnione przez użytkownika");
   }
 
   // Definiujemy walidacje dla każdego pola
@@ -354,11 +344,7 @@ router.patch("/update-car/:carId", authMiddleware, async (req, res) => {
   // Jeśli jakiekolwiek pole nie spełnia warunków walidacji, zwracamy odpowiednią odpowiedź
   for (const { field, validation } of validations) {
     if (!validation.isValid) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message: `${field} nie spełnia warunków walidacji`,
-        errors: validation.errors,
-        success: false,
-      });
+      throw new BadRequestError(`${field} nie spełnia warunków walidacji`, validation.errors);
     }
   }
 
@@ -374,10 +360,10 @@ router.patch("/update-car/:carId", authMiddleware, async (req, res) => {
     data: updatedCar,
     success: true,
   });
-});
+}));
 
 // Endpoint odpowiedzialny za dodanie samochodu do listy ulubionych
-router.patch("/add-to-favorites/:carId", authMiddleware, async (req, res) => {
+router.patch("/add-to-favorites/:carId", authMiddleware, asyncWrapper(async (req, res) => {
   // Pobranie ID samochodu z parametru ścieżki
   const carId = req.params.carId;
   // Pobranie ID użytkownika z ciasteczka
@@ -388,10 +374,7 @@ router.patch("/add-to-favorites/:carId", authMiddleware, async (req, res) => {
 
   // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
   if (!favoriteCar) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Nie znaleziono samochodu o takim numerze id",
-      success: false,
-    });
+    throw new NotFoundError("Nie znaleziono samochodu o takim numerze id");
   }
 
   // Pobranie użytkownika z bazy danych
@@ -399,10 +382,7 @@ router.patch("/add-to-favorites/:carId", authMiddleware, async (req, res) => {
 
   // Jeśli użytkownik nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
   if (!user) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Nie znaleziono użytkownika",
-      success: false,
-    });
+    throw new NotFoundError("Nie znaleziono użytkownika");
   }
 
   // Dodanie lub usunięcie ID samochodu z listy ulubionych samochodów użytkownika
@@ -430,10 +410,10 @@ router.patch("/add-to-favorites/:carId", authMiddleware, async (req, res) => {
     success: true,
     favoriteCars: user.favorites,
   });
-});
+}));
 
 // Endpoint odpowiedzialny za zwrócenie listy ulubionych bieżącego użytkownika
-router.get("/get-favorites", authMiddleware, async (req, res) => {
+router.get("/get-favorites", authMiddleware, asyncWrapper(async (req, res) => {
   // Pobranie userId z ciasteczek
   const userId = req.user.userId;
 
@@ -442,10 +422,7 @@ router.get("/get-favorites", authMiddleware, async (req, res) => {
 
   // Jeśli użytkownik nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
   if (!user) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Nie znaleziono użytkownika",
-      success: false,
-    });
+    throw new NotFoundError("Nie znaleziono użytkownika");
   }
 
   // Treść komunikatu dodawanego do odpowiedzi serwera jest różna w zależności od tego czy cokolwiek znajduje się na liście ulubionych
@@ -460,10 +437,10 @@ router.get("/get-favorites", authMiddleware, async (req, res) => {
     success: true,
     favoriteCars: user.favorites,
   });
-});
+}));
 
 // Endpoint odpowiedzialny za usunięcie wybranego pojazdu z bazy danych
-router.delete("/delete-car/:carId", authMiddleware, async (req, res) => {
+router.delete("/delete-car/:carId", authMiddleware, asyncWrapper(async (req, res) => {
   // Pobranie ID samochodu z parametru ścieżki
   const carId = req.params.carId;
 
@@ -472,10 +449,7 @@ router.delete("/delete-car/:carId", authMiddleware, async (req, res) => {
 
   // Jeśli samochód nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
   if (!deletedCar) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Nie znaleziono samochodu o takim numerze id",
-      success: false,
-    });
+    throw new NotFoundError("Nie znaleziono samochodu o takim numerze id");
   }
 
   // W przypadku pomyślnego usunięcia zasobu z bazy danych, wyświetlamy następujący komunikat
@@ -484,10 +458,10 @@ router.delete("/delete-car/:carId", authMiddleware, async (req, res) => {
     data: deletedCar,
     success: true,
   });
-});
+}));
 
 // Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
-router.post("/predict-cluster", authMiddleware, async (req, res) => {
+router.post("/predict-cluster", authMiddleware, asyncWrapper(async (req, res) => {
   // Tworzymy URL, aby dostać się do ścieżki odpowiadającej za przewidywanie modelu
   const URL = process.env.FLASK_API_URL + "/predict";
 
@@ -496,13 +470,13 @@ router.post("/predict-cluster", authMiddleware, async (req, res) => {
 
   // W postaci pliku jsonowego przedstawiona zostanie odpowiedź serwera
   res.json(response.data);
-});
+}));
 
 // Endpoint służący do pobrania kolekcji samochodów na podstawie preferencji użytkownika (na podstawie kolumny 'cluster')
 router.get(
   "/get-cars-by-cluster/:clusterId",
   authMiddleware,
-  async (req, res) => {
+  asyncWrapper(async (req, res) => {
     // Pobranie ID klastra do którego został przypisany samochód z parametru ścieżki
     const clusterId = req.params.clusterId;
 
@@ -511,9 +485,7 @@ router.get(
 
     // W przypadku, gdy w bazie nie ma żadnego rekordu zwracamy informacje o braku zasobów
     if (!cars) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ message: "Nie znaleziono zasobu", success: false });
+      throw new NotFoundError("Nie znaleziono zasobu");
     }
 
     // W przypadku znalezienia rekordów w bazie, wynik jest zwracany w odpowiedzi
@@ -523,6 +495,6 @@ router.get(
       success: true,
     });
   }
-);
+));
 
 export default router;

@@ -1,8 +1,9 @@
 import express, { Router } from "express";
 import Stripe from "stripe";
 const router = express.Router();
-import { v4 as uuidv4 } from "uuid";
 import { StatusCodes } from "http-status-codes";
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError, TooManyRequestsError } from "../errors/index.js";
+import asyncWrapper from "../utils/asyncWrapper.js";
 import User from "../models/userModel.js";
 import Car from "../models/carModel.js";
 import Booking from "../models/bookingModel.js";
@@ -22,7 +23,7 @@ const stripe = new Stripe(stripe_secret_key, {
 
 // Endpoint zwracający rezerwacje z filtrowaniem i paginacją
 // Przykład: localhost:8000/api/bookings/get-all-bookings?user=123&car=456&isPaid=true&startDate=2025-01-01&endDate=2025-03-01&page=2
-router.get("/get-all-bookings", authMiddleware, async (req, res) => {
+router.get("/get-all-bookings", authMiddleware, asyncWrapper(async (req, res) => {
   const { user, car, isPaid, startDate, endDate, page, limit } = req.query;
 
   // Tworzymy obiekt zapytania dynamicznie na podstawie parametrów
@@ -70,19 +71,16 @@ router.get("/get-all-bookings", authMiddleware, async (req, res) => {
     bookings: bookings,
     success: true,
   });
-});
+}));
 
 // Endpoint odpowiedzialny za rezerwację samochodu i rozpoczęcie procesu płatności
-router.post("/book-car", authMiddleware, async (req, res) => {
+router.post("/book-car", authMiddleware, asyncWrapper(async (req, res) => {
   const { booking_details } = req.body;
 
   // Znajdujemy użytkownika po ID
   const user = await User.findById(req.user.userId);
   if (!user) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      message: "Wybrany użytkownik nie figuruje w bazie danych",
-      success: false,
-    });
+    throw new NotFoundError("Wybrany użytkownik nie figuruje w bazie danych");
   }
 
   // Znajdujemy samochód po ID
@@ -90,18 +88,12 @@ router.post("/book-car", authMiddleware, async (req, res) => {
 
   // Sprawdzamy, czy samochód znajduje się w bazie wypożyczalni
   if (!bookingCar) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Nie znaleziono samochodu o takim numerze id",
-      success: false,
-    });
+    throw new NotFoundError("Nie znaleziono samochodu o takim numerze id");
   }
 
   // Sprawdzamy, czy samochód jest dostępny do wypożyczenia
   if (!bookingCar.isAvailable) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      message: "Samochód jest tymczasowo niedostępny w ofercie wypożyczalni. Za utrudnienia przepraszamy.",
-      success: false,
-    });
+    throw new BadRequestError("Samochód jest tymczasowo niedostępny w ofercie wypożyczalni. Za utrudnienia przepraszamy.");
   }
 
   // Tworzenie sesji Stripe
@@ -121,8 +113,6 @@ router.post("/book-car", authMiddleware, async (req, res) => {
         quantity: 1,
       },
     ],
-    success_url: `https://www.onet.pl/`, // Przekierowanie na onet.pl w przypadku powodzenia :)
-    cancel_url: `https://www.sejm.gov.pl/`, // Przekierowanie na stronę sejmu w razie błędu :)
     client_reference_id: req.user.userId,
     metadata: {
       carId: booking_details.carId,
@@ -140,13 +130,13 @@ router.post("/book-car", authMiddleware, async (req, res) => {
     url: session.url,
     success: true,
   });
-});
+}));
 
 // Endpoint zwracający szczegóły dotyczące rezerwacji
 router.get(
   "/get-booking-details/:bookingId",
   authMiddleware,
-  async (req, res) => {
+  asyncWrapper(async (req, res) => {
     // Pobranie ID wypożyczenia z parametru ścieżki
     const bookingId = req.params.bookingId;
 
@@ -155,10 +145,7 @@ router.get(
 
     // Jeśli w bazie danych nie ma rezerwacji o podanym numerze id, to zwracany jest odpowiedni komunikat
     if (!booking) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "Nie znaleziono rezerwacji o takim numerze id",
-        success: false,
-      });
+      throw new NotFoundError("Nie znaleziono rezerwacji o takim numerze id");
     }
 
     // W przypadku pomyślnego znalezienia zasobu w bazie danych, wyświetlamy następujący komunikat
@@ -169,6 +156,6 @@ router.get(
       success: true,
     });
   }
-);
+));
 
 export default router;

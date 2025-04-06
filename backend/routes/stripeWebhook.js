@@ -1,6 +1,8 @@
 import express from "express";
 const router = express.Router();
 import { StatusCodes } from "http-status-codes";
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError, TooManyRequestsError } from "../errors/index.js";
+import asyncWrapper from "../utils/asyncWrapper.js";
 import Stripe from "stripe";
 import dotenv from "dotenv";
 import User from "../models/userModel.js";
@@ -20,7 +22,7 @@ const stripe_endpoint_secret = process.env.STRIPE_ENDPOINT_SECRET;
 
 router.post("/webhook",
     express.raw({ type: "application/json" }),
-    async (request, response) => {
+    asyncWrapper(async (request, response) => {
 
         const sig = request.headers["stripe-signature"];
           
@@ -29,10 +31,7 @@ router.post("/webhook",
               try {
                 event = stripe.webhooks.constructEvent(request.body, sig, stripe_endpoint_secret);
               } catch (err) {
-                response
-                  .status(StatusCodes.BAD_REQUEST)
-                  .send(`Webhook Error: ${err.message}`);
-                return;
+                throw new BadRequestError(`Webhook Error: ${err.message}`);
               }
         
               // Obsługa zdarzeń
@@ -80,6 +79,6 @@ router.post("/webhook",
           
               // W przypadku powodzenia zwracamy status code równy 200 - czyli OK
               response.send();
-    });
+    }));
 
 export default router;
