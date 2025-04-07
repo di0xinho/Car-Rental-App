@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 
 // Tworzymy instancję aplikacji Express
 const app = express();
@@ -27,6 +28,11 @@ app.use("/api", stripeWebhook); // dla webhooków Stripe
 // Importujemy moduł do połączenia z bazą danych MongoDB
 import connection from "./db/connection.js";
 
+// Korzystamy z morgana tylko w środowisku deweloperskim, a nie na produkcji
+if (process.env.NODE_ENV !== "Production") {
+    app.use(morgan('dev'));
+}
+  
 // Middleware do parsowania JSON-ów w przychodzących żądaniach HTTP
 app.use(express.json());
 
