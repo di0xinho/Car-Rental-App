@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import xss from "xss-clean";
+import mongoSanitize from "express-mongo-sanitize";
 
 // Tworzymy instancję aplikacji Express
 const app = express();
@@ -36,6 +38,11 @@ if (process.env.NODE_ENV !== "Production") {
 // Middleware do parsowania JSON-ów w przychodzących żądaniach HTTP
 app.use(express.json());
 
+// Aplikacja korzystać będzie z paczek zabezpieczających przed atakami xss oraz NoSQL injection
+app.use(xss());
+app.use(mongoSanitize());
+
+// Zezwalamy na żądania z przeglądarek za pomocą mechanizmu CORS
 app.use(cors());
 
 // Importujemy middleware do obsługi błędów serwera
