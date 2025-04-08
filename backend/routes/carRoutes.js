@@ -485,7 +485,11 @@ router.post("/predict-cluster", authMiddleware, asyncWrapper(async (req, res) =>
   const URL = process.env.FLASK_API_URL + "/predict";
 
   // Wysyłamy żądanie do serwera obsługującego model rekomendacji; wynik zapisujemy do zmiennej 'response'
-  const response = await axios.post(URL, req.body);
+  const response = await axios.post(URL, req.body, {
+    headers: {
+      "x-api-key": process.env.ML_API_KEY // Sekretny klucz API do modelu rekomendacji
+    }
+  });
 
   // W postaci pliku jsonowego przedstawiona zostanie odpowiedź serwera
   res.json(response.data);

@@ -20,6 +20,21 @@ except Exception as e: # W przypadku, gdy nie uda nam się wczytać modelu
     print(f"Błąd podczas wczytywania modelu: {e}")
     model = None
 
+# Middleware sprawdzający klucz API
+@app.before_request
+def verify_api_key():
+    allowed_path = "/"  # pozwalamy na dostęp do root bez klucza
+    if request.path == allowed_path:
+        return  # przepuszczamy bez sprawdzania
+
+    api_key = request.headers.get("x-api-key")
+    expected_key = os.getenv('ML_API_KEY')
+    
+    # W przypadku braku klucza API zwracamy odpowiedni komunikat
+    if not api_key or api_key != expected_key:
+        return jsonify({"error": "Nieautoryzowany dostęp – brak lub niepoprawny klucz API"}), 403
+
+# Endpoint powitalny
 @app.route("/", methods=["GET"])
 def hello_world():
     return "<p>Aplikacja została uruchomiona poprawnie. Miłego korzystania :)</p>"

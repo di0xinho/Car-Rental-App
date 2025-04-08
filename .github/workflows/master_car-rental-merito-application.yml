@@ -33,6 +33,7 @@ jobs:
           echo "COMMUNICATION_SERVICES_CONNECTION_STRING=${{ secrets.COMMUNICATION_SERVICES_CONNECTION_STRING }}" >> .env
           echo "EMAIL_SENDER=${{ secrets.EMAIL_SENDER }}" >> .env
           echo "FLASK_API_URL=${{ secrets.FLASK_API_URL }}" >> .env
+          echo "ML_API_KEY=${{ secrets.ML_API_KEY }}" >> .env
           echo "FRONT_END_URL=${{ secrets.FRONT_END_URL }}" >> .env
           echo "JWT_LIFETIME=${{ secrets.JWT_LIFETIME }}" >> .env
           echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
