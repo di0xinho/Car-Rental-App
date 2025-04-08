@@ -11,7 +11,7 @@ app = Flask(__name__)
 load_dotenv()
 
 # Zapisujemy do zmiennej odpowiadającej za ścieżkę do modelu odpowiednią wartość z pliku ze zmiennymi środowiskowymi (.env)        
-MODEL_PATH = os.getenv("MODEL_PATH")
+MODEL_PATH = os.getenv('MODEL_PATH')
 try: # Ładujemy model z pliku
     model = Model.load_model(MODEL_PATH)
     if model is None: # W przypadku, gdy model jest pusty - zwracamy odpowiedni komunikat
@@ -19,6 +19,10 @@ try: # Ładujemy model z pliku
 except Exception as e: # W przypadku, gdy nie uda nam się wczytać modelu
     print(f"Błąd podczas wczytywania modelu: {e}")
     model = None
+
+@app.route("/", methods=["GET"])
+def hello_world():
+    return "<p>Aplikacja została uruchomiona poprawnie. Miłego korzystania :)</p>"
 
 # Endpoint odpowiedzialny za zwrócenie w odpowiedzi przewidywanego klastra, do którego model zaliczył daną obserwację
 @app.route("/predict", methods=["POST"])
@@ -52,4 +56,4 @@ def predict():
         return jsonify({"error": f"Błąd przetwarzania danych: {str(e)}"}), 400
     
 if __name__ == "__main__": # Aplikacja jest dostępna na localhoście, na porcie 8001
-    app.run(host="127.0.0.1", port=8001, debug=True)
+    app.run(host="0.0.0.0", port=os.getenv('PORT'), debug=True)
