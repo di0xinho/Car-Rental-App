@@ -43,7 +43,12 @@ app.use(xss());
 app.use(mongoSanitize());
 
 // Zezwalamy na żądania z przeglądarek za pomocą mechanizmu CORS
-app.use(cors());
+app.use(
+    cors({
+      origin: ["http://localhost:5173", "https://yellow-ground-02ec85703.6.azurestaticapps.net"], // lista dozwolonych domen, które mogą wysyłać żądania do serwera
+      credentials: true,
+    })
+  );
 
 // Importujemy middleware do obsługi błędów serwera
 import errorMiddleware from "./middleware/errorMiddleware.js";
