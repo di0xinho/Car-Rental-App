@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { toDayMonthYear, toYearMonthDay } from '@/utilities/convertDateFormat';
+import { toDayMonthYear, fromDateTimeToDate } from '@/utilities/convertDateFormat';
 import type { UserData } from "@/utilities/models/userModel";
 import { User } from "@/utilities/models/userModel";
 
@@ -21,8 +21,8 @@ async function initializeUser () {
   if (responseData.success && responseData.data && Object.keys(responseData.data).length !== 0) { 
     console.log(responseData.data);
     // On frontend I use date format in 'date time string format' YYYY-MM-DD. However backend API use DD-MM-YYYY format
-    const yearMonthDayOfBirth = toYearMonthDay(responseData.data.dateOfBirth);
-    user.value = {...responseData.data, dateOfBirth: yearMonthDayOfBirth};
+    const dateOfBirth = fromDateTimeToDate(responseData.data.dateOfBirth);
+    user.value = {...responseData.data, dateOfBirth: dateOfBirth};
   } else {
     user.value = null;
   }
@@ -40,8 +40,8 @@ async function getUser () {
   // If response contains user data set user composable
   if (responseData.data && Object.keys(responseData.data).length !== 0) {
     // On frontend I use date format in 'date time string format' YYYY-MM-DD. However backend API use DD-MM-YYYY format
-    const yearMonthDayOfBirth = toYearMonthDay(responseData.data.dateOfBirth);
-    user.value = {...responseData.data, dateOfBirth: yearMonthDayOfBirth};
+    const dateOfBirth = fromDateTimeToDate(responseData.data.dateOfBirth);
+    user.value = {...responseData.data, dateOfBirth: dateOfBirth};
   } else {
     throw new Error('Nie udało się pobrać danych użytkownika.');
   }
