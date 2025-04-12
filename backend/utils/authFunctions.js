@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 
 // Metoda tworząca token JWT
 const createJWT = (user) => {
-    return jwt.sign( { userId: user._id }, process.env.JWT_SECRET_KEY, { 
+
+    const payload = { userId: user._id, email: user.email, role: user.isAdmin };
+
+    return jwt.sign( payload, process.env.JWT_SECRET_KEY, { 
         expiresIn: process.env.JWT_LIFETIME,
     });
 }
@@ -15,7 +18,8 @@ const attachCookie = ({ res, token }) => {
     res.cookie("token", token, {
         httpOnly: true,
         expiresIn: new Date(Date.now() + process.env.JWT_LIFETIME),
-        secure: process.env.NODE_ENV === "Production",
+        secure: true,
+        sameSite: "none"
     });
 };
 

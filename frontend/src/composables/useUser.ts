@@ -87,8 +87,8 @@ async function logInUser (email: string, password: string) {
   // If response contains user data set user composable
   if (responseData.data && Object.keys(responseData.data).length !== 0) {
     // On frontend I use date format in 'date time string format' YYYY-MM-DD. However backend API use DD-MM-YYYY format
-    const yearMonthDayOfBirth = toYearMonthDay(responseData.data.dateOfBirth);
-    user.value = {...responseData.data, dateOfBirth: yearMonthDayOfBirth};
+    const dateOfBirth = fromDateTimeToDate(responseData.data.dateOfBirth);
+    user.value = {...responseData.data, dateOfBirth: dateOfBirth};
   } else {
     throw new Error('Nie udało się pobrać danych użytkownika.');
   }
