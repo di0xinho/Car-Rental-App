@@ -1,9 +1,7 @@
 <script setup lang="ts">
-
-  const city = defineModel('city', {type: String, required: true });
+  const city = defineModel('city', {type: String, required: true});
   const dateFrom= defineModel('dateFrom', {type: String, required: true});
   const dateTo= defineModel('dateTo', {type: String, required: true});
-
 </script>
 
 <template>

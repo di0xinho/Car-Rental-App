@@ -2,7 +2,7 @@
   import CarsCollection from '@/components/cars-collection/CarsCollection.vue';
   import BodyTypeFilter from '@/components/filter-panels/filters/BodyTypeFilter.vue';
   import PriceFilter from '@/components/filter-panels/filters/PriceFilter.vue';
-  import { Car } from '@/utilities/carModel';
+  import { Car } from '@/utilities/models/carModel';
   import { ref, computed } from 'vue';
 
   const type = ref<string[]>([]);

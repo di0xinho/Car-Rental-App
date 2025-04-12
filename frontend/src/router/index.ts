@@ -52,6 +52,25 @@ const router = createRouter({
       },
     },
     {
+      path: '/rezerwacja',
+      name: 'booking',
+      component: () => import('../views/BookingView.vue'),
+      beforeEnter: (to, from) => {
+        console.log(to.query);
+        if (!to.query.car_id || !to.query.from || !to.query.to || !to.query.city) {
+          return {name: 'not-found'};
+        }
+        const { user } = useUser();
+        if (!user.value) {
+          return {name: 'login'};
+        }
+        return true;
+      },
+      meta: {
+        layout: 'DefaultLayout'
+      },
+    },
+    {
       path: '/samochody',
       name: 'cars-collection',
       component: () => import('../views/CarsCollectionViev.vue'),
@@ -79,6 +98,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+      beforeEnter: (to, from) => {
+        if (to.query.mode !== 'login' && to.query.mode !== 'signin') {
+          return {name: 'login', query: {mode: 'login'}};
+        } 
+      },
       meta: {
         layout: 'EmptyLayout'
       },

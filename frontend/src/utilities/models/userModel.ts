@@ -3,11 +3,12 @@ import { Car } from "./carModel";
 export class User {
   constructor (
     public _id: string,
-    public name: string,
-    public email: string,
+    public username: string,
     public firstName: string,
     public surname: string,
+    public email: string,
     public phoneNumber: string,
+    public address: string,
     public dateOfBirth: string,
     public gender: string,
     public favorites: Car[],
