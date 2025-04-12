@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { fuelTypes } from '@/utilities/carModel';
+  import { fuelTypes } from '@/utilities/models/carModel';
 
   const fuel = defineModel('fuel', {type: String, required: true});
 </script>

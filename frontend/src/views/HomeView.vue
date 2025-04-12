@@ -4,7 +4,7 @@
   import CompanyValues from '@/components/company-values/CompanyValues.vue';
   import CustomerOpinions from '@/components/customers_opinions/CustomerOpinions.vue';
   import ContactForm from '@/components/contact-form/ContactForm.vue';
-  import { Car } from '@/utilities/carModel';
+  import { Car } from '@/utilities/models/carModel';
 
   // Mocking cars data:
   import json from '../../../mock_data/db.json';

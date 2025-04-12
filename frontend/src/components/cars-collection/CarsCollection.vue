@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import CarViewCard from './CarViewCard.vue';
-  import { Car } from '@/utilities/carModel';
+  import { Car } from '@/utilities/models/carModel';
 
   defineProps({
     cars: {type: Array<Car>, required: true}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { RouterLink } from 'vue-router';
-  import { Car } from '@/utilities/carModel';
+  import { Car } from '@/utilities/models/carModel';
   import type { PropType } from 'vue';
 
   defineProps({

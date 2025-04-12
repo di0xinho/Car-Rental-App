@@ -5,7 +5,7 @@
   import CarRentCard from '@/components/cars-collection/CarRentCard.vue';
   import PreferencesWizard from '@/components/preferences-wizard/PreferencesWizard.vue';
   import useCarPreferences from '@/composables/useCarPreferences';
-  import { Car } from '@/utilities/carModel';
+  import { Car } from '@/utilities/models/carModel';
 
   const { preferences } = useCarPreferences();
 
@@ -42,7 +42,7 @@
       <div class="m-8">
         <ul class="grid grid-cols-[repeat(auto-fill,_minmax(20rem,_1fr))] gap-8">
           <li v-for="(car, index) in cars" :key="index">
-            <CarRentCard :car="car" card-bg="card-bg" />
+            <CarRentCard :car="car" card-bg="card-bg" :time-slot="{from: dateFrom, to: dateTo}" :city="city"/>
           </li>
         </ul>
       </div>
