@@ -6,11 +6,15 @@
 
   const router = useRouter();
 
-  const { user, logoutUser } = useUser();
+  const { user, logOutUser } = useUser();
 
-  function handleLogout() {
-    logoutUser();
-    router.push({name: 'home'});
+  async function handleLogOut() {
+    try {
+      const result = await logOutUser();
+      if (result.success) router.push({name: 'home'});
+    } catch (error) {
+      console.error(error);
+    }
   }
 </script>
 
@@ -100,7 +104,7 @@
             </li>
           </ul>
         </nav>
-        <button class="flex gap-3 items-center p-8 ml-5 self-start" @click="handleLogout">
+        <button class="flex gap-3 items-center p-8 ml-5 self-start" @click="handleLogOut">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8.90039 7.56023C9.21039 3.96023 11.0604 2.49023 15.1104 2.49023H15.2404C19.7104 2.49023 21.5004 4.28023 21.5004 8.75023V15.2702C21.5004 19.7402 19.7104 21.5302 15.2404 21.5302H15.1104C11.0904 21.5302 9.24039 20.0802 8.91039 16.5402" stroke="#FE8400" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M15 12H3.62" stroke="#FE8400" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

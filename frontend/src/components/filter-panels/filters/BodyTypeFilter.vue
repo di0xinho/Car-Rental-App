@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { carBodyTypes } from '@/utilities/carModel';
+  import { carBodyTypes } from '@/utilities/models/carModel';
   const type = defineModel('type', {type: Array<string>, required: true});
 </script>
 

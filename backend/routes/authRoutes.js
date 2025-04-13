@@ -447,6 +447,8 @@ router.delete(
     res.cookie("token", "logout", {
       httpOnly: true,
       expires: new Date(Date.now() + 1000), // ciasteczko wygasa po 1 sekundzie
+      secure: true,
+      sameSite: "none"
     });
 
     // Serwer zwraca odpowiedni komunikat

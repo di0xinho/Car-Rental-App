@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import type { CarPreferences } from "@/utilities/carModel";
+import type { CarPreferences } from "@/utilities/models/carModel";
 
 const preferences: CarPreferences = reactive({
   bodyType: [],

@@ -5,10 +5,11 @@ import moment from "moment";
 const emailSchema = Joi.string().email().required();
 
 // Definiujemy schemat według którego ma przebiegać walidacja nazwy użytkownika
+// Dodajemy obsługę polskich znaków w nazwie użytkownika
 const usernameSchema = Joi.string()
     .min(3)
     .max(30)
-    .pattern(/^[a-zA-Z][a-zA-Z0-9._]*$/, "valid characters")
+    .pattern(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ][a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ0-9._]*$/, "valid characters")
     .pattern(/^(?!.*[_.]{2})/, "no consecutive dots/underscores")
     .required()
     .messages({
@@ -43,9 +44,9 @@ const resetCodeSchema = Joi.string()
         "any.required": "Kod resetujący jest wymagany."
     });
 
-// Definiujemy schemat według którego ma przebiegać walidacja imienia
+// Definiujemy schemat według którego ma przebiegać walidacja imienia (z obsługą polskich znaków)
 const firstNameSchema = Joi.string()
-    .pattern(/^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/)
+    .pattern(/^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]+(?:[-\s][A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]+)*$/)
     .min(2)
     .max(30)
     .required()
@@ -54,12 +55,12 @@ const firstNameSchema = Joi.string()
         "string.empty": "Imię jest wymagane.",
         "string.min": "Imię musi mieć co najmniej {#limit} znaki.",
         "string.max": "Imię może mieć maksymalnie {#limit} znaków.",
-        "string.pattern.base": "Imię może zawierać tylko litery oraz pojedynczy myślnik lub spację.",
+        "string.pattern.base": "Imię może zawierać tylko litery (w tym polskie znaki) oraz pojedynczy myślnik lub spację.",
     });
 
-// Definiujemy schemat według którego ma przebiegać walidacja nazwiska
+// Definiujemy schemat według którego ma przebiegać walidacja nazwiska (z obsługą polskich znaków)
 const surnameSchema = Joi.string()
-    .pattern(/^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/)
+    .pattern(/^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]+(?:[-\s][A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]+)*$/)
     .min(2)
     .max(50)
     .required()
@@ -68,7 +69,7 @@ const surnameSchema = Joi.string()
         "string.empty": "Nazwisko jest wymagane.",
         "string.min": "Nazwisko musi mieć co najmniej {#limit} znaki.",
         "string.max": "Nazwisko może mieć maksymalnie {#limit} znaków.",
-        "string.pattern.base": "Nazwisko może zawierać tylko litery oraz pojedynczy myślnik lub spację.",
+        "string.pattern.base": "Nazwisko może zawierać tylko litery (w tym polskie znaki) oraz pojedynczy myślnik lub spację.",
     }); 
 
 // Definiujemy schemat według którego ma przebiegać walidacja numeru telefonu
