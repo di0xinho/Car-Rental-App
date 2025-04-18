@@ -8,7 +8,7 @@
   <h3 class="text-sm text-neutral-600 my-4">RODZAJ PALIWA</h3>
   <div>
     <div v-for="(fuelType, index) in fuelTypes" :key="index" class="my-8">
-      <input type="radio" :id="fuelType" :value="fuelType.toLowerCase()" v-model="fuel">
+      <input type="radio" :id="fuelType" :value="fuelType" v-model="fuel">
       <label :for="fuelType" class="ml-3">{{ fuelType }}</label>
     </div>
   </div>

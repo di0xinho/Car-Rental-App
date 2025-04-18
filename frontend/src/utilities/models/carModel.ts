@@ -10,7 +10,7 @@ export class Car {
     public gearboxType: string,
     public mileage: number,
     public fuelType: string,
-    public price: number,
+    public hourlyPrice: number,
     public imageUrl: string,
     public description: string,
     public bookedTimeSlots: {from: string, to:string}[],
@@ -20,14 +20,14 @@ export class Car {
 
 export type CarPreferences = {
   bodyType: string[];
-  capacity: number;
-  price: number;
+  minCapacity: number;
+  maxPrice: number;
   fuelType: string;
   gearboxType: string;
-  year: number;
-  mileage: number;
+  minYear: number;
+  maxMileage: number;
 }
 
-export const carBodyTypes = ['sport', 'suv', 'mpv', 'sedan', 'coupe', 'hatchback'];
+export const carBodyTypes = ['Sport', 'SUV', 'Crossover', 'Sedan', 'Coupe', 'Hatchback'];
 
 export const fuelTypes = ['Benzyna', 'Gaz', 'Diesel', 'Hybryda', 'Elektryczny'];

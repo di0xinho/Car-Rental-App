@@ -19,14 +19,14 @@
       Podaj maksymalny przebieg auta.
     </h3>
     <div class="flex my-8 gap-10">
-      <input type="range" v-model="mileage" id="mileage" min="50000" max="200000" step="10000" class="basis-1/2">
+      <input type="range" v-model="mileage" id="mileage" min="50000" max="250000" step="10000" class="basis-1/2">
       <label for="mileage">Maxymalny przebieg: {{ mileage }} km</label>
     </div>
     <h3 class="text-xl mt-12">
       Podaj maksymalną cenę za dzień/godzinę wynajmu.
     </h3>
     <div class="flex my-8 gap-10">
-      <input type="range" v-model="price" id="price" min="0" max="1000" step="50" class="basis-1/2">
+      <input type="range" v-model="price" id="price" min="0" max="250" step="25" class="basis-1/2" disabled>
       <label for="price">Maksymalna stawka za dzień/godzinę wynajmu: {{ price }} zł</label>
     </div>
   </form>

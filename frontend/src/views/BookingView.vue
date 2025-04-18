@@ -25,7 +25,7 @@
   });
 
   const totalPrice = computed(() => {
-    return hoursTotal.value * car.value!.price;
+    return hoursTotal.value * car.value!.hourlyPrice;
   });
 
   watch([from, to, city], ([newFrom, newTo, newCity]) => {
@@ -39,7 +39,8 @@
   // Mocking cars data
   import json from '../../../mock_data/db.json';
   const cars = json['get-all-cars'].data as Car[];
-  const searchCar = cars.find(car => car._id === route.query.car_id);
+  // const searchCar = cars.find(car => car._id === route.query.car_id);
+  const searchCar = cars.find(car => car._id === '67b35c8ef7ab3c470454c1ff');
   if (searchCar) {
     car.value = searchCar;
   } else {
@@ -119,7 +120,7 @@
             <th scope="row" class="text-left py-3 font-normal text-neutral-500">
               Cena za godzinę
             </th>
-            <td class="text-right py-3 font-medium">{{ car!.price }} PLN</td>
+            <td class="text-right py-3 font-medium">{{ car!.hourlyPrice }} PLN</td>
           </tr>
           <tr>
             <th scope="row" class="text-left py-3 font-normal text-neutral-500">

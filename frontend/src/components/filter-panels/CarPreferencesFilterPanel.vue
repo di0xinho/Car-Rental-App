@@ -13,49 +13,46 @@
   const  { preferences, setCarPreferences } = useCarPreferences();
 
   const bodyType = ref(preferences.bodyType); 
-  const capacity = ref(preferences.capacity.toString());
-  const price = ref(preferences.price.toString());
+  const minCapacity = ref(preferences.minCapacity.toString());
+  const maxPrice = ref(preferences.maxPrice.toString());
   const fuelType = ref(preferences.fuelType);
   const gearboxType = ref(preferences.gearboxType);
-  const year = ref(preferences.year.toString());
-  const mileage = ref(preferences.mileage.toString());
+  const minYear = ref(preferences.minYear.toString());
+  const maxMileage = ref(preferences.maxMileage.toString());
 
   watch( preferences, (newPreferences) => {
     if (bodyType.value.toString() !== newPreferences.bodyType.toString()) {
       bodyType.value = newPreferences.bodyType;
-      console.log('bodyType changed!');
     }
-    if (capacity.value !== newPreferences.capacity.toString()) {
-      capacity.value = newPreferences.capacity.toString();
+    if (minCapacity.value !== newPreferences.minCapacity.toString()) {
+      minCapacity.value = newPreferences.minCapacity.toString();
     }
-    if (price.value !== newPreferences.price.toString()) {
-      price.value = newPreferences.price.toString();
-      console.log('price changed!');
+    if (maxPrice.value !== newPreferences.maxPrice.toString()) {
+      maxPrice.value = newPreferences.maxPrice.toString();
     }
     if (fuelType.value !== newPreferences.fuelType) {
       fuelType.value = newPreferences.fuelType;
-      console.log('fuelType changed!');
     }
     if (gearboxType.value !== newPreferences.gearboxType) {
       gearboxType.value = newPreferences.gearboxType;
     }
-    if (year.value !== newPreferences.year.toString()) {
-      year.value = newPreferences.year.toString();
+    if (minYear.value !== newPreferences.minYear.toString()) {
+      minYear.value = newPreferences.minYear.toString();
     }
-    if (mileage.value !== newPreferences.mileage.toString()) {
-      mileage.value = newPreferences.mileage.toString();
+    if (maxMileage.value !== newPreferences.maxMileage.toString()) {
+      maxMileage.value = newPreferences.maxMileage.toString();
     }
   });
   
   const setNewCarPreferences = () => {
     setCarPreferences({
       bodyType: bodyType.value,
-      capacity: parseInt(capacity.value),
-      price: parseInt(price.value), 
+      minCapacity: parseInt(minCapacity.value),
+      maxPrice: parseInt(maxPrice.value),
       fuelType: fuelType.value,
       gearboxType: gearboxType.value,
-      year: parseInt(year.value),
-      mileage: parseInt(mileage.value)
+      minYear: parseInt(minYear.value),
+      maxMileage: parseInt(maxMileage.value)
     });
   }
 </script>
@@ -66,10 +63,10 @@
       <BodyTypeFilter v-model:type="bodyType" />
     </div>
     <div>
-      <CapacityFilter v-model:capacity="capacity" />
+      <CapacityFilter v-model:min-capacity="minCapacity" />
     </div>
     <div>
-      <PriceFilter v-model:price="price" />
+      <PriceFilter v-model:price="maxPrice" />
     </div>
     <div>
       <FuelTypeFilter v-model:fuel="fuelType" />
@@ -78,10 +75,10 @@
       <GearboxFilter v-model:gearbox="gearboxType" />
     </div>
     <div>
-      <YearFilter v-model:year="year" />
+      <YearFilter v-model:year="minYear" />
     </div>
     <div>
-      <MileageFilter v-model:mileage="mileage" />
+      <MileageFilter v-model:mileage="maxMileage" />
     </div>
     <button type="submit" class="btn">
       Sprawdź dostępne modele
