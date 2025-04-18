@@ -16,6 +16,10 @@
   const maxPrice = ref(preferences.maxPrice.toString());
   const fuelType = ref(preferences.fuelType);
 
+  // Mocking recommended cars data:
+  import json from '../../../mock_data/db.json';
+  const recommendedCars = json['get-all-cars'].data as Car[];
+
   const cars = ref<Car[]>([]);
   const page = ref(1);
   const totalPages = ref(1);
@@ -77,7 +81,7 @@
         Rekomendowane dla Ciebie
       </h2>
       <div class="mx-4 my-16">
-        <RecommendedCars :cars="cars"/>
+        <RecommendedCars :cars="recommendedCars"/>
       </div>
       <div class="mx-16">
         <PreferencesWizard :open-on-start="false"/>
@@ -93,7 +97,7 @@
             <PriceFilter v-model:price="maxPrice" />
           </div>
           <div>
-            <FuelTypeFilter :fuel="fuelType"/>
+            <FuelTypeFilter v-model:fuel="fuelType" />
           </div>
           <button type="submit" class="btn">
             Sprawdź dostępne modele

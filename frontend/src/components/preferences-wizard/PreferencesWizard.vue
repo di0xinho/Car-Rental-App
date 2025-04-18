@@ -39,6 +39,14 @@
   const openPreferencesWizard = () => {
     open.value = true;
     step.value = 1;
+    // Instead of setting watcher on preferences composable, each time we open Preferences Wizard we update Wizard's ref's to actual values of preferences
+    bodyType.value = preferences.bodyType; 
+    minCapacity.value = preferences.minCapacity.toString();
+    maxPrice.value = preferences.maxPrice.toString();
+    fuelType.value = preferences.fuelType;
+    gearboxType.value = preferences.gearboxType;
+    minYear.value = preferences.minYear.toString();
+    maxMileage.value = preferences.maxMileage.toString();
   }
 </script>
 

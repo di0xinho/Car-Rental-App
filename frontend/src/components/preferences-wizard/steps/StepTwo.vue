@@ -12,7 +12,7 @@
     </h3>
     <div class="grid grid-cols-2 lg:grid-cols-3 gap-8 my-8 mx-8">
       <div v-for="(fuelType, index) in fuelTypes" :key="index">
-        <input type="radio" :id="fuelType" :value="fuelType.toLowerCase()" v-model="fuel">
+        <input type="radio" :id="fuelType" :value="fuelType" v-model="fuel">
         <label :for="fuelType" class="ml-3">{{ fuelType }}</label>
       </div>
     </div>

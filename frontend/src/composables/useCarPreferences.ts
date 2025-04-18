@@ -10,7 +10,7 @@ const preferences: CarPreferences = reactive({
   gearboxType: 'Manualna',
   minYear: 2017,
   maxMileage: 200000,
-})
+});
 
 function setCarPreferences (newPreferences: Partial<CarPreferences>) {
   if (newPreferences.bodyType) preferences.bodyType = newPreferences.bodyType;
