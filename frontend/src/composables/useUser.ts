@@ -23,8 +23,10 @@ async function initializeUser () {
     // On frontend I use date format in 'date time string format' YYYY-MM-DD. However backend API use DD-MM-YYYY format
     const dateOfBirth = fromDateTimeToDate(responseData.data.dateOfBirth);
     user.value = {...responseData.data, dateOfBirth: dateOfBirth};
+    return true;
   } else {
     user.value = null;
+    return false;
   }
 }
 

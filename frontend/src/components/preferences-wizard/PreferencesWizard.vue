@@ -7,28 +7,32 @@
 
   import useCarPreferences from '@/composables/useCarPreferences';
 
-  const open = ref(true);
+  const { openOnStart } = defineProps({
+    openOnStart: {type: Boolean, required: true}
+  });
+
+  const open = ref(openOnStart);
   const step = ref(1);
 
   const  { preferences, setCarPreferences } = useCarPreferences();
 
   const bodyType = ref(preferences.bodyType); 
-  const capacity = ref(preferences.capacity.toString());
-  const price = ref(preferences.price.toString());
+  const minCapacity = ref(preferences.minCapacity.toString());
+  const maxPrice = ref(preferences.maxPrice.toString());
   const fuelType = ref(preferences.fuelType);
   const gearboxType = ref(preferences.gearboxType);
-  const year = ref(preferences.year.toString());
-  const mileage = ref(preferences.mileage.toString());
+  const minYear = ref(preferences.minYear.toString());
+  const maxMileage = ref(preferences.maxMileage.toString());
 
   const setNewCarPreferences = () => {
     setCarPreferences({
       bodyType: bodyType.value,
-      capacity: parseInt(capacity.value),
-      price: parseInt(price.value), 
+      minCapacity: parseInt(minCapacity.value),
+      maxPrice: parseInt(maxPrice.value),
       fuelType: fuelType.value,
       gearboxType: gearboxType.value,
-      year: parseInt(year.value),
-      mileage: parseInt(mileage.value)
+      minYear: parseInt(minYear.value),
+      maxMileage: parseInt(maxMileage.value)
     });
   }
 
@@ -39,7 +43,7 @@
 </script>
 
 <template>
-  <div class="p-18 bg-card-bg">
+  <div class="w-full">
     <h2 class="text-5xl text-neutral-500 mb-2">
       Odpowiedz na kilka pytań.
     </h2>
@@ -73,13 +77,13 @@
           <StepIndicator :step="step"/>
         </div>
         <div id="step_one" v-if="step === 1" class="mb-auto">
-          <StepOne v-model:body="bodyType" v-model:capacity="capacity" />
+          <StepOne v-model:body="bodyType" v-model:min-capacity="minCapacity" />
         </div>
         <div id="step_two" v-if="step === 2" class="mb-auto">
           <StepTwo v-model:fuel="fuelType" v-model:gearbox="gearboxType" />
         </div>
         <div id="step_three" v-if="step === 3" class="mb-auto">
-          <StepThree v-model:year="year" v-model:mileage="mileage" v-model:price="price" />
+          <StepThree v-model:year="minYear" v-model:mileage="maxMileage" v-model:price="maxPrice" />
         </div>
         <div class="flex justify-between">
           <div>

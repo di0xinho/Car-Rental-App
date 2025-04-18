@@ -2,7 +2,7 @@
   import { carBodyTypes } from '@/utilities/models/carModel';
 
   const body = defineModel('body', {type: Array<string>, required: true});
-  const capacity = defineModel('capacity', {type: String, required: true});
+  const minCapacity = defineModel('minCapacity', {type: String, required: true});
 </script>
 
 <template>
@@ -24,19 +24,19 @@
       </h3>
       <div class="grid grid-cols-2 gap-8 my-8 mx-8">
         <div>
-          <input type="radio" id="capacity-two" value="2" v-model="capacity">
+          <input type="radio" id="capacity-two" value="2" v-model="minCapacity">
           <label for="capacity-two" class="ml-3">2 osoby</label>
         </div>
         <div>
-          <input type="radio" id="capacity-four" value="4" v-model="capacity">
+          <input type="radio" id="capacity-four" value="4" v-model="minCapacity">
           <label for="capacity-four" class="ml-3">4 osoby</label>
         </div>
         <div>
-          <input type="radio" id="capacity-five" value="5" v-model="capacity">
+          <input type="radio" id="capacity-five" value="5" v-model="minCapacity">
           <label for="capacity-five" class="ml-3">5 osób</label>
         </div>
         <div>
-          <input type="radio" id="capacity-more" value="6" v-model="capacity">
+          <input type="radio" id="capacity-more" value="6" v-model="minCapacity">
           <label for="capacity-five" class="ml-3">6 osób</label>
         </div>
       </div>
