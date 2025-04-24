@@ -32,7 +32,7 @@
           </label>
           <div class="flex gap-4 items-center ml-16">
             <img src="/users/default_user.webp" alt="user avatar" class="h-15 rounded-full border border-dominant-primary">
-            <h4>{{ user!.firstName + ' ' + user!.surname }}</h4>
+            <h4>{{ user?.username }}</h4>
           </div>
         </div>
       </header>

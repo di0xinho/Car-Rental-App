@@ -1,5 +1,6 @@
 import express from "express";
 import axios from "axios";
+import jwt from "jsonwebtoken";
 import BadRequestError from "../errors/BadRequest.js";
 import NotFoundError from "../errors/NotFound.js";
 import asyncWrapper from "../utils/asyncWrapper.js";
@@ -90,7 +91,7 @@ router.get("/get-all-cars", asyncWrapper(async (req, res) => {
     if (minPrice || maxPrice) {
       queryObject.price = {};
       if (minPrice) queryObject.hourlyPrice.$gte = Number(minPrice);
-      if (maxPrice) queryObject.mileage.$lte = Number(maxPrice);
+      if (maxPrice) queryObject.hourlyPrice.$lte = Number(maxPrice);
     }
 
     // Szukamy wśród dostępnych aut
@@ -479,7 +480,7 @@ router.delete("/delete-car/:carId", authMiddleware, asyncWrapper(async (req, res
 }));
 
 // Endpoint odpowiedzialny za przewidywanie należenia konkretnej obserwacji do danego klastra
-router.post("/predict-cluster", authMiddleware, asyncWrapper(async (req, res) => {
+router.post("/predict-cluster", asyncWrapper(async (req, res) => {
 
   // Tworzymy URL, aby dostać się do ścieżki odpowiadającej za przewidywanie modelu
   const URL = process.env.FLASK_API_URL + "/predict";
@@ -491,6 +492,18 @@ router.post("/predict-cluster", authMiddleware, asyncWrapper(async (req, res) =>
     }
   });
 
+  // W przypadku, gdy użytkownik jest zalogowany, czyli MA CIASTECZKO, to wyszukujemy go i ustawiamy w jego rekordzie wartość zmiennej 'recommended_cluster'
+  // na tą którą przewidział model
+  if(req.cookies.token){
+    const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY);        
+    const user = await User.findById(decoded.userId);
+
+    user.recommended_cluster = response.data.predicted_cluster;
+
+    // Zapisanie stanu rekordu w bazie
+    await user.save();
+  }
+
   // W postaci pliku jsonowego przedstawiona zostanie odpowiedź serwera
   res.json(response.data);
 }));
@@ -498,7 +511,6 @@ router.post("/predict-cluster", authMiddleware, asyncWrapper(async (req, res) =>
 // Endpoint służący do pobrania kolekcji samochodów na podstawie preferencji użytkownika (na podstawie kolumny 'cluster')
 router.get(
   "/get-cars-by-cluster/:clusterId",
-  authMiddleware,
   asyncWrapper(async (req, res) => {
 
     // Pobranie ID klastra do którego został przypisany samochód z parametru ścieżki

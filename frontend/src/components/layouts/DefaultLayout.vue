@@ -42,7 +42,7 @@
         </nav>
         <RouterLink v-if="user" :to="{name: 'user-main'}" class="flex gap-4 items-center ml-16">
           <img src="/users/default_user.webp" alt="user avatar" class="h-15 rounded-full border border-dominant-primary">
-          <h4>{{ user.firstName + ' ' + user.surname }}</h4>
+          <h4>{{ user.username }}</h4>
         </RouterLink>
         <RouterLink v-else :to="{name: 'login'}" class="mx-8 btn">
           Zaloguj się | Zarejestruj się
