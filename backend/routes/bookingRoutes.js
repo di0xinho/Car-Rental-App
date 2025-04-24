@@ -104,6 +104,7 @@ router.post(
 
     // Znajdujemy użytkownika po ID
     const user = await User.findById(req.user.userId);
+
     if (!user) {
       throw new NotFoundError("Wybrany użytkownik nie figuruje w bazie danych");
     }
@@ -211,6 +212,7 @@ router.post(
         res.status(StatusCodes.OK).json({
           message:
             "Samochód został zarezerwowany. Opłatę uiścisz na miejscu.",
+            url: success_url,
           success: true,
         });
 
