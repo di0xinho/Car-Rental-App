@@ -511,7 +511,6 @@ router.post("/predict-cluster", asyncWrapper(async (req, res) => {
 // Endpoint służący do pobrania kolekcji samochodów na podstawie preferencji użytkownika (na podstawie kolumny 'cluster')
 router.get(
   "/get-cars-by-cluster/:clusterId",
-  authMiddleware,
   asyncWrapper(async (req, res) => {
 
     // Pobranie ID klastra do którego został przypisany samochód z parametru ścieżki
