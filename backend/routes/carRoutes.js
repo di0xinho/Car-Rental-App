@@ -89,7 +89,7 @@ router.get("/get-all-cars", asyncWrapper(async (req, res) => {
       if (maxMileage) queryObject.mileage.$lte = Number(maxMileage);
     }
     if (minPrice || maxPrice) {
-      queryObject.price = {};
+      queryObject.hourlyPrice = {};
       if (minPrice) queryObject.hourlyPrice.$gte = Number(minPrice);
       if (maxPrice) queryObject.hourlyPrice.$lte = Number(maxPrice);
     }
