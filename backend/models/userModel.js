@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema(
       ref: 'cars',
       default: [],
     },
+    recommended_cluster:{
+      type: Number,
+      default: null,
+    }
   },
 
   // Ustawiamy timestamps na 'true', by móc podejrzeć datę utworzenia i modyfikacji dokumentu

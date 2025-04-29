@@ -100,10 +100,11 @@ router.post(
   "/book-car",
   authMiddleware,
   asyncWrapper(async (req, res) => {
-    const { booking_details } = req.body;
+    const { booking_details, success_url, cancel_url } = req.body;
 
     // Znajdujemy użytkownika po ID
     const user = await User.findById(req.user.userId);
+
     if (!user) {
       throw new NotFoundError("Wybrany użytkownik nie figuruje w bazie danych");
     }
@@ -131,7 +132,6 @@ router.post(
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ["card"],
           mode: "payment",
-          ui_mode: "custom",
           line_items: [
             {
               price_data: {
@@ -144,6 +144,8 @@ router.post(
               quantity: 1,
             },
           ],
+          success_url: success_url, 
+          cancel_url: cancel_url,
           client_reference_id: req.user.userId,
           metadata: {
             carId: booking_details.carId,
@@ -210,6 +212,7 @@ router.post(
         res.status(StatusCodes.OK).json({
           message:
             "Samochód został zarezerwowany. Opłatę uiścisz na miejscu.",
+            url: success_url,
           success: true,
         });
 
