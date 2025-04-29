@@ -21,11 +21,11 @@
     </h3>
     <div class="grid grid-cols-2 gap-8 my-8 mx-8">
       <div>
-        <input type="radio" id="manual" value="manual" v-model="gearbox">
+        <input type="radio" id="manual" value="Manualna" v-model="gearbox">
         <label for="manual" class="ml-3">Manualna</label>
       </div>
       <div>
-        <input type="radio" id="automatic" value="automatic" v-model="gearbox">
+        <input type="radio" id="automatic" value="Automatyczna" v-model="gearbox">
         <label for="automatic" class="ml-3">Automatyczna</label>
       </div>
     </div>

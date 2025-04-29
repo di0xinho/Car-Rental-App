@@ -52,7 +52,7 @@
               </RouterLink>
             </li>
             <li>
-              <RouterLink :to="{name: 'user-orders'}" class="flex gap-3 items-center p-8 ml-5 rounded-l-full">
+              <RouterLink :to="{name: 'user-bookings'}" class="flex gap-3 items-center p-8 ml-5 rounded-l-full">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3.09264 9.40426H20.9166" stroke="#FE8400" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M16.4421 13.3097H16.4513" stroke="#FE8400" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

@@ -12,18 +12,18 @@ type Success = {
 }
 
 async function initializeUser () {
-  const response = await fetch(import.meta.env.VITE_API_USER_GET, {
+  const response = await fetch(import.meta.env.VITE_API_GET_USER, {
     method: "GET",
     credentials: 'include'
   });
   const responseData = await response.json();
     // If response is success and contains user data set user composable, else set user to null
   if (responseData.success && responseData.data && Object.keys(responseData.data).length !== 0) { 
-    console.log(responseData.data);
-    // On frontend I use date format in 'date time string format' YYYY-MM-DD. However backend API use DD-MM-YYYY format
+    // Removing time part from date time string (stays ony date part DD-MM-YYYY)
     const dateOfBirth = fromDateTimeToDate(responseData.data.dateOfBirth);
-    user.value = {...responseData.data, dateOfBirth: dateOfBirth};
-    return true;
+    const userData = {...responseData.data, dateOfBirth: dateOfBirth};
+    user.value = userData;
+    return userData as User;
   } else {
     user.value = null;
     return false;
@@ -31,7 +31,7 @@ async function initializeUser () {
 }
 
 async function getUser () {
-  const response = await fetch(import.meta.env.VITE_API_USER_GET, {
+  const response = await fetch(import.meta.env.VITE_API_GET_USER, {
     method: "GET",
     credentials: 'include'
   });
@@ -51,7 +51,7 @@ async function getUser () {
 }
 
 async function signInNewUser (username: string, email: string, password: string) {
-  const response = await fetch(import.meta.env.VITE_API_USER_SIGNIN, {
+  const response = await fetch(import.meta.env.VITE_API_SIGNIN_USER, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -71,7 +71,7 @@ async function signInNewUser (username: string, email: string, password: string)
 }
 
 async function logInUser (email: string, password: string) {
-  const response = await fetch(import.meta.env.VITE_API_USER_LOGIN, {
+  const response = await fetch(import.meta.env.VITE_API_LOGIN_USER, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -98,7 +98,7 @@ async function logInUser (email: string, password: string) {
 }
 
 async function logOutUser () {
-  const response = await fetch(import.meta.env.VITE_API_USER_DELETE, {
+  const response = await fetch(import.meta.env.VITE_API_DELETE_USER, {
     method: "DELETE",
     credentials: 'include'
   });
@@ -117,7 +117,7 @@ async function updateUser (firstName: string, surname: string, phoneNumber: stri
     const dayMonthYearOfBirth = toDayMonthYear(dateOfBirth);
     if(!dayMonthYearOfBirth) throw new Error('Nieprawidłowa data urodzin.');
   
-    const response = await fetch(import.meta.env.VITE_API_USER_UPDATE, {
+    const response = await fetch(import.meta.env.VITE_API_UPDATE_USER, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"

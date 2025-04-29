@@ -6,7 +6,7 @@ import LoginView from '@/views/LoginView.vue';
   // User Panel Views Chunk:
   // ( https://router.vuejs.org/guide/advanced/lazy-loading.html )
 import UserMainView from '@/views/user/UserMainView.vue';
-import UserOrdersView from '@/views/user/UserOrdersView.vue';
+import UserBookingsView from '@/views/user/UserBookingsView.vue';
 import UserAnaliticsView from '@/views/user/UserAnaliticsView.vue';
 import UserSettingsView from '@/views/user/UserSettingsView.vue';
 import UserRentCarView from '@/views/user/UserRentCarView.vue';
@@ -71,6 +71,28 @@ const router = createRouter({
       },
     },
     {
+      path: '/rezerwacja/dodano-rezerwacje',
+      name: 'booking-success',
+      component: () => import('../views/BookingSuccessView.vue'),
+      beforeEnter: (to, from) => {
+        if (!to.query.car_id || !to.query.from || !to.query.to || !to.query.city || !to.query.payment || !to.query.total_price) {
+          return {name: 'not-found'};
+        }
+        return true;
+      },
+      meta: {
+        layout: 'EmptyLayout'
+      }
+    },
+    {
+      path: '/rezerwacja/zakonczona-niepowodzeniem',
+      name: 'booking-failure',
+      component: () => import('../views/BookingFailureView.vue'),
+      meta: {
+        layout: 'EmptyLayout'
+      }
+    },
+    {
       path: '/samochody',
       name: 'cars-collection',
       component: () => import('../views/CarsCollectionViev.vue'),
@@ -111,7 +133,7 @@ const router = createRouter({
       path: '/user',
       children: [
         { path: '', name: 'user-main', component: UserMainView },
-        { path: 'zamowienia', name: 'user-orders', component: UserOrdersView },
+        { path: 'zamowienia', name: 'user-bookings', component: UserBookingsView },
         { path: 'analityka', name: 'user-analitics', component: UserAnaliticsView },
         { path: 'wynajem', name: 'user-rent', component: UserRentCarView },
         { path: 'ustawienia', name: 'user-settings', component: UserSettingsView },

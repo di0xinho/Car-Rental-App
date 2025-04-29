@@ -58,7 +58,7 @@
 </script>
 
 <template>
-  <form @submit.prevent="setNewCarPreferences" class="flex flex-col gap-2">
+  <form @submit.prevent="setNewCarPreferences" class="h-max flex flex-col gap-2">
     <div>
       <BodyTypeFilter v-model:type="bodyType" />
     </div>

@@ -7,18 +7,27 @@
   import RecommendedCars from '@/components/cars-collection/RecommendedCars.vue';
   import ListPaginator from '@/components/paginator/ListPaginator.vue';
   import { Car } from '@/utilities/models/carModel';
-  import { ref, computed, watch } from 'vue';
+  import { ref, watch, onMounted } from 'vue';
   import useCarPreferences from '@/composables/useCarPreferences';
+  import { getCarsByPreferences } from '@/utilities/carUtils';
+  import { getRecommendedCars } from '@/utilities/carUtils';
 
-  const { preferences, setCarPreferences, getCarsByPreferences } = useCarPreferences();
+  const { preferences, recommendedCarsCluster, setCarPreferences } = useCarPreferences();
 
   const bodyType = ref<string[]>(preferences.bodyType);
   const maxPrice = ref(preferences.maxPrice.toString());
   const fuelType = ref(preferences.fuelType);
 
-  // Mocking recommended cars data:
-  import json from '../../../mock_data/db.json';
-  const recommendedCars = json['get-all-cars'].data as Car[];
+  const recommendedCars = ref<Car[]|null>(null);
+
+  onMounted(async() => {
+    try {
+      const result = await getRecommendedCars(recommendedCarsCluster.value);
+      recommendedCars.value = result.data;
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   const cars = ref<Car[]>([]);
   const page = ref(1);
@@ -29,17 +38,15 @@
     bodyType.value = newBodyType;
     maxPrice.value = newMaxPrice.toString();
     fuelType.value = newFuelType;
-    // Every time we chnge filtering params we shoud fetch new cars starting from page 1
+    // Every time we change filtering params we shoud fetch new cars starting from page 1
     page.value = 1;
     totalPages.value = 1;
     try {
       const carsData = await getCarsByPreferences({
-        bodyType: bodyType.value,
-        maxPrice: maxPrice.value,
-        fuelType: fuelType.value,
-        page: page.value.toString(),
-        limit: "12"
-      });
+        bodyType: newBodyType,
+        maxPrice: newMaxPrice,
+        fuelType: newFuelType
+      }, page.value, 12);
       cars.value = carsData.cars;
       totalPages.value = carsData.numOfPages;
     } catch (error) {
@@ -59,12 +66,10 @@
     page.value = event;
     try {
       const carsData = await getCarsByPreferences({
-        bodyType: bodyType.value,
-        maxPrice: maxPrice.value,
-        fuelType: fuelType.value,
-        page: page.value.toString(),
-        limit: "12"
-      });
+        bodyType: preferences.bodyType,
+        maxPrice: preferences.maxPrice,
+        fuelType: preferences.fuelType
+      }, page.value, 12);
       cars.value = carsData.cars;
       console.log(`requested page = ${page.value} , `, `fetched page: ${carsData.currentPage}`);
       if (totalPages.value !== carsData.numOfPages) totalPages.value = carsData.numOfPages;
@@ -80,7 +85,7 @@
       <h2 class="text-5xl text-neutral-500 mx-16">
         Rekomendowane dla Ciebie
       </h2>
-      <div class="mx-4 my-16">
+      <div v-if="recommendedCars" class="mx-4 my-16">
         <RecommendedCars :cars="recommendedCars"/>
       </div>
       <div class="mx-16">

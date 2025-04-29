@@ -1,4 +1,16 @@
 <script setup lang="ts">
+// Preferences Wizard is used to gather user preferences for API recommendation model
+// Required fields should have format :
+// {
+  // capacity: number,
+  // year: number,
+  // bodyType: string,
+  // gearboxType: string,
+  // mileage: number,
+  // fuelType: string,
+  // hourlyPrice: number
+// }
+// After accepting preferences wizard form, user choices are saved to preferences composable and reflected in other components where user choose car characteristic eg. in filtering components
   import { ref } from 'vue';
   import StepOne from './steps/StepOne.vue';
   import StepTwo from './steps/StepTwo.vue';
@@ -14,9 +26,10 @@
   const open = ref(openOnStart);
   const step = ref(1);
 
-  const  { preferences, setCarPreferences } = useCarPreferences();
+  const  { preferences, setCarPreferences, determineRecommendedCarsCluster } = useCarPreferences();
 
-  const bodyType = ref(preferences.bodyType); 
+  // bodyType preference is array with multiple string possible, but recommendation model accepts single value. Therefore preferences wizard body type input is type radio with single string value
+  const bodyType = ref(preferences.bodyType[0] ?? 'Sedan');
   const minCapacity = ref(preferences.minCapacity.toString());
   const maxPrice = ref(preferences.maxPrice.toString());
   const fuelType = ref(preferences.fuelType);
@@ -24,23 +37,25 @@
   const minYear = ref(preferences.minYear.toString());
   const maxMileage = ref(preferences.maxMileage.toString());
 
-  const setNewCarPreferences = () => {
-    setCarPreferences({
-      bodyType: bodyType.value,
+  const setPreferencesAndRecommendations = () => {
+    const newPreferences = {
+      bodyType: [bodyType.value],
       minCapacity: parseInt(minCapacity.value),
       maxPrice: parseInt(maxPrice.value),
       fuelType: fuelType.value,
       gearboxType: gearboxType.value,
       minYear: parseInt(minYear.value),
       maxMileage: parseInt(maxMileage.value)
-    });
+    };
+    setCarPreferences(newPreferences);
+    determineRecommendedCarsCluster(newPreferences);
   }
 
   const openPreferencesWizard = () => {
     open.value = true;
     step.value = 1;
     // Instead of setting watcher on preferences composable, each time we open Preferences Wizard we update Wizard's ref's to actual values of preferences
-    bodyType.value = preferences.bodyType; 
+    bodyType.value = preferences.bodyType[0] ?? 'Sedan'; 
     minCapacity.value = preferences.minCapacity.toString();
     maxPrice.value = preferences.maxPrice.toString();
     fuelType.value = preferences.fuelType;
@@ -102,7 +117,7 @@
               Next <span class="text-xl">&#8594;</span>
             </button>
           </div>
-          <button @click="setNewCarPreferences(); open = false" class="btn self-end">
+          <button @click="setPreferencesAndRecommendations(); open = false" class="btn self-end">
             Sprawdź dostępne modele
           </button>
         </div>

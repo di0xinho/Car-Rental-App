@@ -1,16 +1,18 @@
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import type { CarPreferences } from "@/utilities/models/carModel";
-import { Car } from "@/utilities/models/carModel";
 
 const preferences: CarPreferences = reactive({
   bodyType: [],
   minCapacity: 4,
-  maxPrice: 200,
+  maxPrice: 100,
   fuelType: 'Benzyna',
   gearboxType: 'Manualna',
   minYear: 2017,
   maxMileage: 200000,
 });
+
+// If there is no user, default recommended cluster is number 0 
+const recommendedCarsCluster = ref(0);
 
 function setCarPreferences (newPreferences: Partial<CarPreferences>) {
   if (newPreferences.bodyType) preferences.bodyType = newPreferences.bodyType;
@@ -22,34 +24,50 @@ function setCarPreferences (newPreferences: Partial<CarPreferences>) {
   if (newPreferences.maxMileage) preferences.maxMileage = newPreferences.maxMileage;
 }
 
-async function getCarsByPreferences ({ bodyType, minCapacity, maxPrice, fuelType, gearboxType, minYear, maxMileage, page, limit }: {bodyType?: string[], minCapacity?: string, maxPrice?: string, fuelType?: string, gearboxType?: string, minYear?: string, maxMileage?: string, page?: string, limit?: string}) {
-  
-  const params = new URLSearchParams();
+function setRecommendedCarsCluster(cluster: number) {
+  recommendedCarsCluster.value = cluster;
+}
 
-  if (bodyType) bodyType.forEach((type) => params.append('bodyType', type));
-  if (minCapacity) params.append('minCapacity', minCapacity);
-  // if (maxPrice) params.append('maxPrice', maxPrice); to be fixed on backend!!!
-  if (fuelType) params.append('fuelType', fuelType);
-  if (gearboxType) params.append('gearboxType', gearboxType);
-  if (minYear) params.append('minYear', minYear);
-  if (maxMileage) params.append('maxMileage', maxMileage);
-  if (page) params.append('page', page);
-  if (limit) params.append('limit', limit);
+async function determineRecommendedCarsCluster (newPreferences: CarPreferences) {
+  // prefered year is calculated as a middle value between minYear selected by user and current year
+  const yearDifference = Math.floor((new Date().getFullYear() - newPreferences.minYear) / 2);
+  // prefered mileage is calculated as a middle value between 50000 as min value and selected by user max mileage
+  const mileageDifference = (newPreferences.maxMileage - 50000) / 2;
 
-  const url = import.meta.env.VITE_API_CARS_GET + '?' + params;
-  console.log('New request to: ', url);
-  const response = await fetch(url);
-  const responseData = await response.json();
-  if (!responseData.success) {
-    throw new Error(responseData.error);
+  const averagedPreferences = {
+    // API recommendation model accepts single string value for body type (In preferences wizard body type input is type radio. Setting preferences composable from preferences wizard, body type value is writen in array of body type strings at index 0)
+    bodyType: newPreferences.bodyType[0],
+    capacity: newPreferences.minCapacity,
+    hourlyPrice: newPreferences.maxPrice,
+    fuelType: newPreferences.fuelType,
+    gearboxType: newPreferences.gearboxType,
+    year: newPreferences.minYear + yearDifference,
+    mileage: newPreferences.maxMileage - mileageDifference
   }
-  return responseData as {message: string, success: boolean, cars: Car[], currentPage: number, numOfPages: number}
-};
+
+  const response = await fetch(import.meta.env.VITE_API_COMPUTE_RECOMMENDATION, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(averagedPreferences),
+    credentials: 'include'
+  });
+  if (!response.ok) {
+    throw new Error('Nie udało się ustalić rekomendowanej grupy samochodów!');
+  }
+  const responseData = await response.json();
+  recommendedCarsCluster.value = responseData.predicted_cluster;
+  console.log("Recommended cluster: ", recommendedCarsCluster.value);
+  return responseData.predicted_cluster as number;
+}
 
 export default function useCarPreferences() {
   return {
     preferences,
+    recommendedCarsCluster,
     setCarPreferences,
-    getCarsByPreferences
+    setRecommendedCarsCluster,
+    determineRecommendedCarsCluster
   };
-} 
+}

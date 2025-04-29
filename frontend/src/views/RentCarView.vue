@@ -7,8 +7,9 @@
   import ListPaginator from '@/components/paginator/ListPaginator.vue';
   import useCarPreferences from '@/composables/useCarPreferences';
   import { Car } from '@/utilities/models/carModel';
+  import { getCarsByPreferences } from '@/utilities/carUtils';
 
-  const { preferences, getCarsByPreferences } = useCarPreferences();
+  const { preferences } = useCarPreferences();
 
   const city = ref('');
   const dateFrom = ref('2025-03-01');
@@ -24,17 +25,7 @@
     page.value = 1;
     totalPages.value = 1;
     try {
-      const carsData = await getCarsByPreferences({
-        bodyType: newPreferences.bodyType,
-        minCapacity: newPreferences.minCapacity.toString(),
-        maxPrice: newPreferences.maxPrice.toString(),
-        fuelType: newPreferences.fuelType,
-        gearboxType: newPreferences.gearboxType,
-        minYear: newPreferences.minYear.toString(),
-        maxMileage: newPreferences.maxMileage.toString(),
-        page: page.value.toString(),
-        limit: "12"
-      });
+      const carsData = await getCarsByPreferences(newPreferences, page.value, 12);
       cars.value = carsData.cars;
       totalPages.value = carsData.numOfPages;
     } catch (error) {
@@ -45,17 +36,7 @@
   async function handleChangePage (event: number) {
     page.value = event;
     try {
-      const carsData = await getCarsByPreferences({
-        bodyType: preferences.bodyType,
-        minCapacity: preferences.minCapacity.toString(),
-        maxPrice: preferences.maxPrice.toString(),
-        fuelType: preferences.fuelType,
-        gearboxType: preferences.gearboxType,
-        minYear: preferences.minYear.toString(),
-        maxMileage: preferences.maxMileage.toString(),
-        page: page.value.toString(),
-        limit: "12"
-      });
+      const carsData = await getCarsByPreferences(preferences, page.value, 12);
       cars.value = carsData.cars;
       console.log(`requested page = ${page.value} , `, `fetched page: ${carsData.currentPage}`);
       if (totalPages.value !== carsData.numOfPages) totalPages.value = carsData.numOfPages;
@@ -63,7 +44,6 @@
       console.error(error);
     }
   }
-
 </script>
 
 <template>

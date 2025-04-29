@@ -26,7 +26,7 @@
       Podaj maksymalną cenę za dzień/godzinę wynajmu.
     </h3>
     <div class="flex my-8 gap-10">
-      <input type="range" v-model="price" id="price" min="0" max="250" step="25" class="basis-1/2" disabled>
+      <input type="range" v-model="price" id="price" min="0" max="120" step="10" class="basis-1/2">
       <label for="price">Maksymalna stawka za dzień/godzinę wynajmu: {{ price }} zł</label>
     </div>
   </form>
