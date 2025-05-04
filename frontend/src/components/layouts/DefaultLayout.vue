@@ -7,6 +7,7 @@
   import SocialMediaLinks from '@/components/layouts/default-components/SocialMediaLinks.vue';
   import DarkModeSwitch from '@/components/layouts/common-components/DarkModeSwitch.vue';
   import MobileNavigation from './default-components/MobileNavigation.vue';
+  import AddressPanel from '../address-panel/AddressPanel.vue';
   import useUser from '@/composables/useUser';
 
   const { user } = useUser();
@@ -67,29 +68,32 @@
     <section class="mx-6 sm:mx-18">
       <PromotedCarBanner />
     </section>
-    <footer class="bg-footer-bg text-light-txt dark:text-dominant-secondary flex flex-col pt-35 pb-20 px-30">
-      <nav class="flex gap-12 justify-between">
-        <LinksList title="Wynajem">
-          <li>Wynajmij Samochód</li>
-          <li>Modyfikuj Lub Anuluj</li>
-          <li>Pobierz Potwierdzenie</li>
-        </LinksList>
-        <LinksList title="Obsługa Użytkownika">
-          <li>Pomoc / FAQS</li>
-          <li>Prasa</li>
-          <li>Blog</li>
-          <li>Skontaktuj się z Nami</li>
-        </LinksList>
-        <LinksList title="Firma">
-          <li>O Nas</li>
-          <li>Praca</li>
-          <li>Dokumenty & Zarządzenia</li>
-        </LinksList>
-      </nav>
-      <hr class="border- my-6">
-      <div class="self-end">
-        <SocialMediaLinks />
+    <footer class="bg-footer-bg text-light-txt dark:text-dominant-secondary px-6 py-16 sm:p-16">
+      <div class="flex flex-col sm:flex-row lg:flex-col gap-16 justify-between max-w-xs sm:max-w-full mx-auto">
+        <AddressPanel />
+        <div class="flex flex-col lg:flex-row gap-x-16 gap-y-8 justify-between lg:items-end">
+          <h3 class="text-lg font-semibold">
+            Ciesz się jazdą dzięki<br>
+            naszym wygodnym samochodom.
+          </h3>
+          <div>
+            <h3 class="text-lg font-semibold mb-2">Przydatne linki</h3>
+            <nav>
+              <ul class="grid grid-cols-[repeat(2,_max-content)] md:grid-cols-[repeat(4,_max-content)] gap-x-8 gap-y-2 italic justify-between">
+                <li><RouterLink :to="{name: 'home'}">Główna</RouterLink></li>
+                <li><RouterLink :to="{name: 'about'}">O nas</RouterLink></li>
+                <li><RouterLink :to="{name: 'cars-collection'}">Samochody</RouterLink></li>
+                <li><RouterLink :to="{name: 'user-main'}">Panel użytkownika</RouterLink></li>
+              </ul>
+            </nav>
+          </div>
+          <SocialMediaLinks />
+        </div>
       </div>
+      <h5 class="text-center text-sm mt-16">
+        WSB MERITO Tworzenie aplikacji internetowych i mobilnych (Projekt&nbsp;zaliczeniowy)<br>
+        Autorzy: Michał Michalski, Nazar Mykhailiuk, Miłosz Gajda
+      </h5>
     </footer>
   </div>
 </template>
