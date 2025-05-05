@@ -24,10 +24,10 @@
 </script>
 
 <template>
-  <section class="mx-18 my-15">
+  <section class="mx-6 sm:mx-12 lg:mx-16 my-15">
     <CompanyValues />
   </section>
-  <section id="cars" class="mx-18 my-15">
+  <section id="cars" class="mx-6 sm:mx-12 lg:mx-16 my-15">
     <div v-if="recommendedCars">
       <CarsCollection :cars="recommendedCars"/>
       <RouterLink :to="{name: 'cars-collection'}" class="block w-max mx-auto mt-8 btn text-light-txt">
@@ -36,8 +36,8 @@
     </div>
     <div v-else>Loading...</div>
   </section>
-  <section class="mx-18 my-15">
-    <h3 class="text-5xl text-center my-10">Opinie naszych klientów</h3>
+  <section class="mx-6 sm:mx-12 lg:mx-16 my-15">
+    <h3 class="text-2xl sm:text-4xl lg:text-5xl text-center my-10">Opinie naszych klientów</h3>
     <CustomerOpinions />
   </section>
 </template>

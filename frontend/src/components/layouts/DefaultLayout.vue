@@ -17,7 +17,7 @@
   <div class="min-h-screen flex flex-col gap-15 dark:text-light-txt">
     <header>
       <div class="h-22 flex justify-between items-center">
-        <div class="w-2/5 min-w-3xs sm:min-w-sm h-full bg-dark-bg text-light-txt flex justify-between items-center px-6 sm:px-16">
+        <div class="w-2/5 min-w-3xs sm:min-w-sm h-full bg-dark-bg text-light-txt flex justify-between items-center px-6 sm:px-12 lg:px-16">
           <MobileNavigation class="lg:hidden"/>
           <h1 class="text-dominant-primary">
             CARENT
@@ -62,13 +62,13 @@
     <main class="grow">
       <slot/>
     </main>
-    <section class="mx-6 sm:mx-18">
+    <section class="mx-6 sm:mx-12 lg:mx-16">
       <DiscountBanner />
     </section>
-    <section class="mx-6 sm:mx-18">
+    <section class="mx-6 sm:mx-12 lg:mx-16">
       <PromotedCarBanner />
     </section>
-    <footer class="bg-footer-bg text-light-txt dark:text-dominant-secondary px-6 py-16 sm:p-16">
+    <footer class="bg-footer-bg text-light-txt dark:text-dominant-secondary px-6 py-16 sm:px-12 lg:px-16">
       <div class="flex flex-col sm:flex-row lg:flex-col gap-16 justify-between max-w-xs sm:max-w-full mx-auto">
         <AddressPanel />
         <div class="flex flex-col lg:flex-row gap-x-16 gap-y-8 justify-between lg:items-end">
