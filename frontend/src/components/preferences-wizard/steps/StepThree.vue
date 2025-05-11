@@ -8,26 +8,26 @@
 
 <template>
   <form>
-    <h3 class="text-xl mt-12">
+    <h3 class="pref-wiz-header">
       Podaj maksymalny rocznik auta.
     </h3>
-    <div class="flex my-8 gap-10">
+    <div class="flex flex-col md:flex-row lg:mx-8 my-4 xs:my-6 md:my-8 gap-y-1 gap-x-8 lg:gap-x-12">
       <input type="range" v-model="year" id="price" :min="currentYear - 10" :max="currentYear" step="1" class="basis-1/2">
       <label for="price">Auto nie starsze niż {{ year }} r.</label>
     </div>
-    <h3 class="text-xl mt-12">
+    <h3 class="pref-wiz-header">
       Podaj maksymalny przebieg auta.
     </h3>
-    <div class="flex my-8 gap-10">
+    <div class="flex flex-col md:flex-row lg:mx-8 my-4 xs:my-6 md:my-8 gap-y-1 gap-x-8 lg:gap-x-12">
       <input type="range" v-model="mileage" id="mileage" min="50000" max="250000" step="10000" class="basis-1/2">
-      <label for="mileage">Maxymalny przebieg: {{ mileage }} km</label>
+      <label for="mileage">Maks. przebieg: {{ mileage }} km</label>
     </div>
-    <h3 class="text-xl mt-12">
-      Podaj maksymalną cenę za dzień/godzinę wynajmu.
+    <h3 class="pref-wiz-header">
+      Podaj maksymalną cenę za godzinę wynajmu.
     </h3>
-    <div class="flex my-8 gap-10">
+    <div class="flex flex-col md:flex-row lg:mx-8 my-4 xs:my-6 md:my-8 gap-y-1 gap-x-8 lg:gap-x-12">
       <input type="range" v-model="price" id="price" min="0" max="120" step="10" class="basis-1/2">
-      <label for="price">Maksymalna stawka za dzień/godzinę wynajmu: {{ price }} zł</label>
+      <label for="price">Maksymalna cena: {{ price }} zł/godz.</label>
     </div>
   </form>
 </template>

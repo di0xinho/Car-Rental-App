@@ -14,7 +14,7 @@
         <rect y="34" width="48" height="6" fill="white"/>
       </svg>
     </button>
-    <div class="fixed z-20 top-0 left-0 w-screen bg-neutral-100/75 transition-opacity duration-1000 ease-linear" :class="{'h-screen': open}">
+    <div class="fixed z-30 top-0 left-0 w-screen bg-neutral-100/75 transition-opacity duration-1000 ease-linear" :class="{'h-screen': open}">
       <Transition
         enter-from-class="-translate-x-full"
         leave-to-class="-translate-x-full"

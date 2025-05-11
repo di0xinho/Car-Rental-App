@@ -7,7 +7,7 @@
         class="absolute rotate-15 md:rotate-none min-w-50 lg:min-w-64 bottom-0 -left-6 md:left-0"
       > 
     </div>
-    <div class="relative z-20 p-2 rounded-l-xl basis-80 grow min-w-[280px] max-w-150 h-60 sm:h-65 lg:h-70 flex flex-col justify-between bg-dominant-primary/80">
+    <div class="relative z-10 p-2 rounded-l-xl basis-80 grow min-w-[280px] max-w-150 h-60 sm:h-65 lg:h-70 flex flex-col justify-between bg-dominant-primary/80">
       <header>
         <h4 class="text-2xl sm:text-3xl lg:text-5xl">
           Mercedes CLS

@@ -67,10 +67,10 @@
 
 <template>
   <div class="w-full">
-    <h2 class="text-5xl text-neutral-500 mb-2">
+    <h2 class="text-2xl sm:text-4xl lg:text-5xl text-neutral-500 mb-2">
       Odpowiedz na kilka pytań.
     </h2>
-    <h3 class="text-4xl text-neutral-500">
+    <h3 class="text-xl sm:text-3xl text-4xl text-neutral-500">
       Pozwól nam wybrać auto najlepiej dopasowane do Twoich potrzeb.
     </h3>
     <button @click="openPreferencesWizard" class="btn mt-10 text-light-txt block ml-auto">
@@ -79,14 +79,14 @@
   </div>
   <!-- modal window -->
   <Teleport to="body">
-    <div id="modal_container" v-if="open" class="fixed top-0 w-screen h-screen bg-neutral-100/75 dark:bg-neutral-900/75 z-30">
-      <div id="modal_window" class="w-4/5 max-w-288 mx-auto my-[10vh] h-4/5 bg-light-bg p-8 flex flex-col">
-        <div class="flex gap-10 justify-between items-start mb-10">
+    <div id="modal_container" v-if="open" class="fixed top-0 w-full h-screen bg-neutral-100/75 dark:bg-neutral-900/75 z-30">
+      <div id="modal_window" class="w-9/10 sm:w-4/5 max-w-288 mx-auto my-[5vh] sm:my-[10vh] h-9/10 sm:h-4/5 bg-light-bg p-4 sm:p-8 flex flex-col">
+        <div class="flex gap-10 justify-between items-start mb-6 xs:mb-8 md:mb-10">
           <div>
-            <h2 class="text-3xl">
+            <h2 class="text-xl xs:text-2xl md:text-3xl">
               Odpowiedz na pytania.
             </h2>
-            <h3 class="text-2xl">
+            <h3 class="text-base xs:text-xl md:text-2xl">
               Pomóż nam przedstawić ofertę najlepiej dopasowaną do twoich potrzeb.
             </h3>
           </div>
@@ -96,7 +96,7 @@
             </svg>
           </button>
         </div>
-        <div class="mx-20">
+        <div class="xs:mx-10 md:mx-20">
           <StepIndicator :step="step"/>
         </div>
         <div id="step_one" v-if="step === 1" class="mb-auto">
@@ -108,12 +108,12 @@
         <div id="step_three" v-if="step === 3" class="mb-auto">
           <StepThree v-model:year="minYear" v-model:mileage="maxMileage" v-model:price="maxPrice" />
         </div>
-        <div class="flex justify-between">
-          <div>
-            <button @click="() => {if (step > 1) step--}" class="py-[10px] px-6 mr-40">
+        <div class="flex flex-col md:flex-row justify-between gap-x-8 gap-y-4">
+          <div class="flex justify-between grow">
+            <button @click="() => {if (step > 1) step--}" class="md:py-[10px] px-4 lg:px-6">
               <span class="text-xl">&#8592;</span> Previous
             </button>
-            <button @click="() => {if (step < 3) step++}" class="py-[10px] px-6">
+            <button @click="() => {if (step < 3) step++}" class="md:py-[10px] px-4 lg:px-6">
               Next <span class="text-xl">&#8594;</span>
             </button>
           </div>

@@ -16,9 +16,9 @@
 <template>
   <div class="w-full">
     <h3 class="text-xl font-semibold">Podsumowanie zamówienia</h3>
-    <div class="flex items-center gap-6 my-8">
-      <img :src="car.imageUrl" alt="Selected car model" class="w-2/5 bg-dominant-primary rounded-lg">
-      <h4 class="text-3xl font-semibold">{{ car.make + ' ' + car.model }}</h4>
+    <div class="flex items-center gap-4 my-8">
+      <img :src="car.imageUrl" alt="Selected car model" class="w-3/5 bg-dominant-primary rounded-lg">
+      <h4 class="p-2 mx-auto text-2xl font-semibold">{{ car.make + ' ' + car.model }}</h4>
     </div>
     <hr class="my-8 border-neutral-500">
     <table class="w-full">
@@ -33,10 +33,18 @@
         </tr>
         <tr>
           <th scope="row" class="text-left py-3 font-normal text-neutral-500">
-            Data
+            Data rozpoczęcia
           </th>
           <td class="text-right py-3 font-medium">
-            od {{ from }} do {{ to }}
+            <span class="font-normal">od </span>{{ from }}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row" class="text-left py-3 font-normal text-neutral-500">
+            Data zakończenia
+          </th>
+          <td class="text-right py-3 font-medium">
+            <span class="font-normal">do </span>{{ to }}
           </td>
         </tr>
         <tr>
@@ -67,7 +75,7 @@
           <th scope="row" class="text-left pt-8 pb-3 text-xl font-semibold">
             Cena całkowita
           </th>
-          <td class="text-right pt-8 pb-3 text-3xl font-semibold">
+          <td class="text-right pt-8 pb-3 text-2xl font-semibold">
             {{ totalPrice }} PLN
           </td>
         </tr>

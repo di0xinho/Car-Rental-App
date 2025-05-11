@@ -7,30 +7,30 @@
 </script>
 
 <template>
-  <form  class="grid grid-cols-2 gap-8">
+  <form  class="grid grid-cols-1 xs:grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-8">
     <div>
       <label for="from" class="block font-semibold">
         Data rozpoczęcia wynajmu
       </label>
-      <input id="from" type="date" v-model="from" class="my-4 mx-8" :disabled="disabled">
+      <input id="from" type="date" v-model="from" class="my-2 sm:my-4 lg:mx-8" :disabled="disabled">
     </div>
     <div>
       <label for="to" class="block font-semibold">
         Data zakończenia wynajmu
       </label>
-      <input id="to" type="date" v-model="to" class="my-4 mx-8" :disabled="disabled">
+      <input id="to" type="date" v-model="to" class="my-2 sm:my-4 lg:mx-8" :disabled="disabled">
     </div>
-    <div>
+    <div class="col-span-full">
       <label for="city" class="block font-semibold">Miasto</label>
-      <select id="city" v-model="city" class="my-4 mx-8" :disabled="disabled">
+      <select id="city" v-model="city" class="my-2 sm:my-4 lg:mx-8" :disabled="disabled">
         <option disabled value="">Wybierz swoje miasto</option>
         <option>Wrocław</option>
         <option>Warszawa</option>
         <option>Kraków</option>
       </select>
     </div>
-    <div class="self-end col-start-1">
-      <input type="checkbox" v-model="driver" id="driver" class="my-4 mr-8" :disabled="disabled">
+    <div class="col-span-full">
+      <input type="checkbox" v-model="driver" id="driver" class="my-2 sm:my-4 mr-8" :disabled="disabled">
       <label for="driver">Wynajmij samochód z kierowcą</label>
     </div>
   </form>

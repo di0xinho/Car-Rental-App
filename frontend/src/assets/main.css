@@ -7,6 +7,8 @@ html, body {
 }
 
 @theme {
+  /* responsive design breakpoints */
+  --breakpoint-xs: 30rem;
   /* fonts */
   --font-roboto: "Roboto", sans-serif;
   --font-dm-serif: "DM Serif Display", serif;
@@ -39,6 +41,16 @@ html, body {
 }
 
 @layer components {
+  .section {
+    margin-inline: 1rem;
+    @variant sm {
+      margin-inline: 2rem;
+    }
+    @variant lg {
+      margin-inline: 4rem;
+    }
+  }
+
   .card {
     background-color: var(--color-card-bg);
     border-radius: var(--radius-3xl);
@@ -77,10 +89,37 @@ html, body {
   }
 
   .pagination-tab {
-    width: 2rem;
-    height: 2rem;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    line-height: 1;
     border: 1px solid var(--color-neutral-500);
     border-radius: var(--radius-sm);
+    @variant md {
+      font-size: 20px;
+      width: 2rem;
+      height: 2rem;
+    }
   }
+
+  .pref-wiz-header {
+    font-size: var(--text-base);
+    font-weight: 500;
+    margin-top: calc(var(--spacing) * 6);
+    @variant xs {
+      font-size: var(--text-lg);
+      font-weight: 400;
+      margin-top: calc(var(--spacing) * 8);
+    }
+    @variant md {
+      font-size: var(--text-xl);
+      margin-top: calc(var(--spacing) * 12);
+    }
+  }
+}
+
+@utility text-vertical {
+  writing-mode: vertical-lr;
+  text-orientation: upright;
 }
 

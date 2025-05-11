@@ -96,10 +96,9 @@
 </script>
 
 <template>
-  <section class="flex gap-8 m-8">
-    <!-- User Details -->
-    <div class="grow-1">
-      <div class="p-6 bg-light-secondary-bg rounded-3xl">
+  <section class="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-x-8 gap-y-16 xl:gap-16 mx-5 xs:mx-6 lg:mx-8 my-8">
+      <!-- User Details -->
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl">
         <h3 class="text-xl font-semibold">Dane użytkownika</h3>
         <h4 class="text-sm text-neutral-500">
           Dane użytkownika możesz zmienić w panelu użytkownika w zakładce ustawienia.
@@ -109,7 +108,7 @@
         </div>
       </div>
       <!-- Booking Details -->
-      <div class="p-6 mt-12 bg-light-secondary-bg rounded-3xl" :class="[step === 'details' ? 'scale-105 shadow-lg' : '']">
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[step === 'details' ? 'scale-105 shadow-lg' : '']">
         <h3 class="text-xl font-semibold">Rezerwacja</h3>
         <h4 class="text-sm text-neutral-500">
           Uzupełnij dane dotyczące rezerwacji.
@@ -122,22 +121,22 @@
         </button>
       </div>
       <!-- Pyment Method -->
-      <div class="p-6 mt-12 bg-light-secondary-bg rounded-3xl" :class="[step === 'payment' ? 'scale-105 shadow-lg' : '']">
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[step === 'payment' ? 'scale-105 shadow-lg' : '']">
         <h3 class="text-xl font-semibold">Płatność</h3>
         <h4 class="text-sm text-neutral-500">
           Wybierz formę płatności.
         </h4>
         <div class="my-8">
           <PickPayment v-model:payment="payment" :disabled="step !== 'payment'"/>
-          <form class="my-8">
-            <input type="checkbox" name="accept-policy" id="accept-policy" v-model="policyAccepted" :disabled="step !== 'payment'" class="my-4 mr-8">
+          <form class="flex my-8 gap-8">
+            <input type="checkbox" name="accept-policy" id="accept-policy" v-model="policyAccepted" :disabled="step !== 'payment'">
             <label for="accept-policy">
               Zgadzam się z regulaminem i polityką prywatności
             </label>
           </form>
         </div>
-        <div class="flex justify-between">
-          <button type="button" @click="step='details'; detailsAccepted=false" class="px-6 py-3">
+        <div class="flex justify-between gap-8">
+          <button type="button" @click="step='details'; detailsAccepted=false" class="lg:px-6 py-3">
             <span class="mr-4">&#10229;</span>Cofnij
           </button>
           <button type="button" class="btn" :disabled="step !== 'payment'" @click="handleBooking">
@@ -145,9 +144,8 @@
           </button>
         </div>
       </div>
-    </div>
     <!-- Booking Summary -->
-    <div v-if="car" class="basis-2/5 p-6">
+    <div v-if="car" class="row-[1] md:col-start-2 md:row-[1_/_span_3] min-w-xs px-4 py-6">
       <BookingSummary :car="car" :from="from" :to="to" :driver="driver" :city="city" :total-hours="totalHours" :total-price="totalPrice"/>
     </div>
   </section>

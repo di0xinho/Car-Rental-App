@@ -24,10 +24,10 @@
 </script>
 
 <template>
-  <section class="mx-6 sm:mx-12 lg:mx-16 my-15">
+  <section class="section">
     <CompanyValues />
   </section>
-  <section id="cars" class="mx-6 sm:mx-12 lg:mx-16 my-15">
+  <section id="cars" class="section my-12 sm:my-20">
     <div v-if="recommendedCars">
       <CarsCollection :cars="recommendedCars"/>
       <RouterLink :to="{name: 'cars-collection'}" class="block w-max mx-auto mt-8 btn text-light-txt">
@@ -36,8 +36,11 @@
     </div>
     <div v-else>Loading...</div>
   </section>
-  <section class="mx-6 sm:mx-12 lg:mx-16 my-15">
-    <h3 class="text-2xl sm:text-4xl lg:text-5xl text-center my-10">Opinie naszych klientów</h3>
+  <!-- Opinion section has a little bigger left and right margin in mobile view to adjust it to resolution 360px width (20px + card 320px + 20px = mobile 360px) -->
+  <section class="mx-5 sm:mx-8 lg:mx-16">
+    <h3 class="text-2xl sm:text-4xl lg:text-5xl text-center my-10">
+      Opinie naszych klientów
+    </h3>
     <CustomerOpinions />
   </section>
 </template>

@@ -58,7 +58,7 @@
       </li>
     </ul>
   </div>
-  <div class="flex justify-between my-8 mx-12 text-neutral-700">
+  <div class="flex justify-between my-8 mx-6 sm:mx-12 text-neutral-700">
     <button type="button" @click="scrollToPrevious">
         <span class="text-2xl mr-2">&#8592;</span>
         <span class="text-lg">Previous</span>

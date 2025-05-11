@@ -21,39 +21,48 @@
 </script>
 
 <template>
-   <section class="max-w-3xl mx-auto">
-    <h2 class="text-4xl font-semibold mb-24 text-center">
+   <section class="max-w-3xl mx-auto p-4 sm:p-8">
+    <h2 class="text-2xl sm:text-3xl md:text-4xl font-semibold text-center">
       Rezerwacja zakończona sukcesem !
     </h2>
     <div v-if="car">
-      <div class="flex items-center gap-12 my-24 bg-light-secondary-bg rounded-3xl overflow-hidden">
-        <img :src="car.imageUrl" :alt="car.make + ' ' + car.model" class="w-3/5">
-        <h3 class="text-4xl font-semibold">
+      <div class="flex items-center justify-between my-12 xs:my-16 bg-light-secondary-bg rounded-3xl overflow-hidden shadow-lg">
+        <img :src="car.imageUrl" :alt="car.make + ' ' + car.model" class="w-3/5 min-h-40 object-cover">
+        <h3 class="text-2xl sm:text-3xl md:text-4xl font-semibold p-4 mx-auto">
           {{ car.make + ' ' + car.model }}
         </h3>
       </div>
-      <dl class="w-full text-2xl">
-        <dt class="font-semibold mt-16">Termin wypożyczenia samochodu</dt>
-        <dd class="flex justify-between my-6">
+      <dl class="w-full">
+        <dt class="font-medium mt-8 md:mt-12 text-lg sm:text-xl md:text-2xl text-neutral-600">
+          Termin wypożyczenia samochodu
+        </dt>
+        <dd class="flex justify-between m-4 sm:m-6 text-base sm:text-lg md:text-xl">
           <div>od <span class="font-medium">{{ route.query.from }}</span></div>
           <div>do <span class="font-medium">{{ route.query.to }}</span></div>
         </dd>
-        <dt class="font-semibold mt-16">Płatność</dt>
-        <dd v-if="route.query.payment === 'stripe'" class="my-6">
-          Rezerwacja opłacona (zapłacono <span class="font-medium">{{ route.query.total_price }} ZŁ</span>)
+        <dt class="font-medium mt-8 md:mt-12 text-base text-lg sm:text-xl md:text-2xl text-neutral-600">
+          Płatność
+        </dt>
+        <dd v-if="route.query.payment === 'stripe'" class="m-4 sm:m-6 text-base sm:text-lg md:text-xl">
+          Rezerwacja opłacona
+          <span class="inline-block">
+            (zapłacono <span class="font-medium">{{ route.query.total_price }} ZŁ</span>)
+          </span> 
         </dd>
-        <dd v-else class="my-6">
-          Rezerwację opłać na miejscu (kwota do zapłaty <span class="font-medium">{{ route.query.total_price }} ZŁ</span>)
+        <dd v-else class="m-4 sm:m-6 text-base sm:text-lg md:text-xl">
+          Rezerwację opłać na miejscu
+          <span class="inline-block">
+            (kwota do zapłaty <span class="font-medium">{{ route.query.total_price }} ZŁ)</span>
+          </span>
         </dd>
       </dl>
-      <p class="text-end mt-24 text-xl">
+      <p class="text-end mt-12 sm:mt-16 md:mt-24 text-base sm:text-lg md:text-xl">
         Swoje rezerwacje możesz sprawdzić
         <RouterLink :to="{name: 'user-bookings'}" class="text-sky-800">
           tutaj
-          <span class="mx-2 text-2xl">&#10230;</span>
+          <span class="sm:mx-2 text-lg sm:text-xl md:text-2xl">&#10230;</span>
         </RouterLink>
       </p>
     </div>
    </section>
-  
 </template>
