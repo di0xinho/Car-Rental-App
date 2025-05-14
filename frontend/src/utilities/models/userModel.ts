@@ -12,7 +12,8 @@ export class User {
     public dateOfBirth: string,
     public gender: string,
     public favorites: Car[],
-    public avatar: string
+    public avatar: string,
+    public recommended_cluster: number
   ) {}
 }
 

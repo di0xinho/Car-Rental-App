@@ -1,11 +1,14 @@
 <script setup lang="ts">
   import UserDetails from '@/components/booking-form/UserDetails.vue';
   import BookingDetailsForm from '@/components/booking-form/BookingDetailsForm.vue';
+  import BookingSummary from '@/components/booking-form/BookingSummary.vue';
+  import PickPayment from '@/components/booking-form/PickPayment.vue';
+  import type { CreateBookingDetails } from '@/utilities/models/bookingModel';
   import { useRoute, useRouter } from 'vue-router';
   import { onMounted, ref, computed, watch } from 'vue';
   import { Car } from '@/utilities/models/carModel';
-  import useUser from '@/composables/useUser';
-  import useStripePayments from '@/composables/useStripePayments';
+  import { getCarById } from '@/utilities/carUtils';
+  import { bookCar } from '@/utilities/bookingUtils';
 
   const route = useRoute();
   const router = useRouter();
@@ -16,138 +19,134 @@
   const driver = ref<boolean>(false);
   const car = ref<Car|null>(null);
 
-  const step = ref<'check'|'pay'>('check');
-
-  const hoursTotal = computed(() => {
+  const totalHours = computed(() => {
     const fromTimestamp =  Date.parse(from.value);
     const toTimestamp =  Date.parse(to.value);
     return (toTimestamp - fromTimestamp) / 3600000;
   });
 
   const totalPrice = computed(() => {
-    return hoursTotal.value * car.value!.hourlyPrice;
+    return totalHours.value * car.value!.hourlyPrice;
   });
+
+  const step = ref<'details'|'payment'>('details');
+  const payment = ref<'stripe'|'on-the-spot'>('stripe');
+  const policyAccepted = ref(false);
+  let detailsAccepted = false;
 
   watch([from, to, city], ([newFrom, newTo, newCity]) => {
     router.replace({name: 'booking', query: {car_id: car.value!._id, from: newFrom, to: newTo, city: newCity}});
   })
 
-  const { user } = useUser();
-
-  const { stripe, checkout, paymentElement, initializeStripe, requestCheckoutSession, renderPaymentForm, confirmPayment } = useStripePayments();
-
-  // Mocking cars data
-  import json from '../../../mock_data/db.json';
-  const cars = json['get-all-cars'].data as Car[];
-  // const searchCar = cars.find(car => car._id === route.query.car_id);
-  const searchCar = cars.find(car => car._id === '67b35c8ef7ab3c470454c1ff');
-  if (searchCar) {
-    car.value = searchCar;
-  } else {
-    router.replace({name: 'not-found'})
-  }
-
-  // Loading Srtipe.js and initializing 
-  initializeStripe();
-
-  async function confirmOrderDetails() {
+  onMounted(async () => {
     try {
-      step.value = 'pay';
-      // Request for new checkout session
-      await requestCheckoutSession('carId', 'from', 'to', 'city', 24, 1000, true);
-      renderPaymentForm();
-    } catch(error) {
+      const result = await getCarById(route.query.car_id as string);
+      car.value = result.data;
+    } catch (error) {
       console.error(error);
+      router.replace({name: 'not-found'});
     }
+  });
+
+  function handleAcceptDetails () {
+    detailsAccepted = true;
+    step.value = 'payment';
   }
 
-  async function pay() {
+  async function handleBooking () {
+    if (!detailsAccepted || !policyAccepted) {
+      return console.error('Accept booking details and company policy to proceede!');
+    }
+
+    const details: CreateBookingDetails = {
+      carId: car.value!._id,
+      totalHours: totalHours.value,
+      totalPrice: totalPrice.value,
+      driver: driver.value,
+      bookedTimeSlots: {from: from.value, to: to.value},
+      city: city.value
+    }
+
+    const successQueryParams = new URLSearchParams();
+    successQueryParams.append('car_id', car.value!._id);
+    successQueryParams.append('payment', payment.value);
+    successQueryParams.append('total_price', totalPrice.value.toString());
+    successQueryParams.append('from', from.value);
+    successQueryParams.append('to', to.value);
+    successQueryParams.append('city', city.value);
+
+    let success_url = '/rezerwacja/dodano-rezerwacje?' + successQueryParams;
+    let cancel_url = '/rezerwacja/zakonczona-niepowodzeniem';
+
     try {
-      confirmPayment();
-    } catch(error) {
+      const result = await bookCar(details, success_url, cancel_url, payment.value);
+      if (payment.value === 'stripe' && result.url) {
+        // Redirecting user to Stripe Checkout Page
+        window.location.assign(result.url);
+      } else if (payment.value === 'on-the-spot' && result.url) {
+        router.push(result.url);
+      } else {
+        throw new Error('Niepoprawna odpowedź serwera.');
+      }
+    } catch (error) {
       console.error(error);
+      router.push({name: 'booking-failure'});
     }
   }
 </script>
 
 <template>
-  <section class="flex gap-8 m-8">
-    <div class="grow-1">
-      <div class="p-6">
+  <section class="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-x-8 gap-y-16 xl:gap-16 mx-5 xs:mx-6 lg:mx-8 my-8">
+      <!-- User Details -->
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl">
         <h3 class="text-xl font-semibold">Dane użytkownika</h3>
         <h4 class="text-sm text-neutral-500">
-          Podane dane użytkownika zostaną użyte w procesie płatności<br>
-          (dane użytkownika możesz zmienić w panelu użytkownika w zakładce ustawienia).
+          Dane użytkownika możesz zmienić w panelu użytkownika w zakładce ustawienia.
         </h4>
         <div class="mt-8">
           <UserDetails />
         </div>
       </div>
-      <div v-if="step === 'check'" class="p-6 mt-8">
+      <!-- Booking Details -->
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[step === 'details' ? 'scale-105 shadow-lg' : '']">
         <h3 class="text-xl font-semibold">Rezerwacja</h3>
         <h4 class="text-sm text-neutral-500">
           Uzupełnij dane dotyczące rezerwacji.
         </h4>
-        <div class="mt-8">
-          <BookingDetailsForm v-model:from="from" v-model:to="to" v-model:city="city" v-model:driver="driver" @accept="confirmOrderDetails"/>
+        <div class="my-8">
+          <BookingDetailsForm v-model:from="from" v-model:to="to" v-model:city="city" v-model:driver="driver" :disabled="step !== 'details'" />
         </div>
+        <button type="button" @click="handleAcceptDetails" class="btn block ml-auto" :disabled="step !== 'details'">
+          Potwierdzam i przechodzę do wyboru płatności
+        </button>
       </div>
-      <div v-if="step === 'pay'" class="p-6">
+      <!-- Pyment Method -->
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[step === 'payment' ? 'scale-105 shadow-lg' : '']">
         <h3 class="text-xl font-semibold">Płatność</h3>
         <h4 class="text-sm text-neutral-500">
-          Uzupełnij dane dotyczące płatności online.
+          Wybierz formę płatności.
         </h4>
-        <form id="payment-form" @submit.prevent="pay">
-          <div id="payment-element">
-            <!--Stripe.js injects the Payment Element-->
-          </div>
-          <button type="submit" class="btn">Zapłać</button>
-          <div id="payment-message" class="hidden"></div>
-        </form>
+        <div class="my-8">
+          <PickPayment v-model:payment="payment" :disabled="step !== 'payment'"/>
+          <form class="flex my-8 gap-8">
+            <input type="checkbox" name="accept-policy" id="accept-policy" v-model="policyAccepted" :disabled="step !== 'payment'">
+            <label for="accept-policy">
+              Zgadzam się z regulaminem i polityką prywatności
+            </label>
+          </form>
+        </div>
+        <div class="flex justify-between gap-8">
+          <button type="button" @click="step='details'; detailsAccepted=false" class="lg:px-6 py-3">
+            <span class="mr-4">&#10229;</span>Cofnij
+          </button>
+          <button type="button" class="btn" :disabled="step !== 'payment'" @click="handleBooking">
+            {{ payment === 'stripe' ? 'Zarezerwuj i zapłać online' : 'Zarezerwuj i zapłać na miejscu' }}
+          </button>
+        </div>
       </div>
-    </div>
-    <!-- Podsumowanie -->
-    <div class="basis-2/5 p-6">
-      <h3 class="text-xl font-semibold">Podsumowanie zamówienia</h3>
-      <div class="flex items-center gap-6 my-8">
-        <img :src="`/cars/${car!.imageUrl}`" alt="Selected car model" class="w-2/5 bg-dominant-primary rounded-lg">
-        <h4 class="text-3xl font-semibold">{{ car!.make + ' ' + car!.model }}</h4>
-      </div>
-      <hr class="my-8 border-neutral-500">
-      <table class="w-full">
-        <tbody>
-          <tr>
-            <th scope="row" class="text-left py-3 font-normal text-neutral-500">
-              Cena za godzinę
-            </th>
-            <td class="text-right py-3 font-medium">{{ car!.hourlyPrice }} PLN</td>
-          </tr>
-          <tr>
-            <th scope="row" class="text-left py-3 font-normal text-neutral-500">
-              Data
-            </th>
-            <td class="text-right py-3 font-medium">od {{ from }} do {{ to }}</td>
-          </tr>
-          <tr>
-            <th scope="row" class="text-left py-3 font-normal text-neutral-500">
-              Ilość godzin
-            </th>
-            <td class="text-right py-3 font-medium">{{ hoursTotal }}</td>
-          </tr>
-          <tr>
-            <th scope="row" class="text-left py-3 font-normal text-neutral-500">
-              Samochód z kierowcą
-            </th>
-            <td class="text-right py-3 font-medium">{{ driver ? 'Tak' : 'Nie' }}</td>
-          </tr>
-          <tr>
-            <th scope="row" class="text-left pt-8 pb-3 text-xl font-semibold">
-              Cena całkowita
-            </th>
-            <td class="text-right pt-8 pb-3 text-3xl font-semibold">{{ totalPrice }} PLN</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Booking Summary -->
+    <div v-if="car" class="row-[1] md:col-start-2 md:row-[1_/_span_3] min-w-xs px-4 py-6">
+      <BookingSummary :car="car" :from="from" :to="to" :driver="driver" :city="city" :total-hours="totalHours" :total-price="totalPrice"/>
     </div>
   </section>
 </template>

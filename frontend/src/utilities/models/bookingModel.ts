@@ -26,3 +26,12 @@ export default class Booking {
     public isPaid: boolean
   ) {}
 }
+
+export type CreateBookingDetails = {
+  carId: string,
+  totalHours: number,
+  totalPrice: number,
+  driver: boolean,
+  bookedTimeSlots: {from: string, to: string},
+  city: string,
+}

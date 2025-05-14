@@ -8,8 +8,8 @@
 </script>
 
 <template>
-  <ul class="grid grid-cols-[repeat(auto-fill,_minmax(20rem,_1fr))] gap-8">
-    <li v-for="(car, index) in cars" :key="index">
+  <ul class="grid grid-cols-[repeat(auto-fill,_minmax(20rem,_max-content))] gap-6 xl:gap-8 justify-center">
+    <li v-for="(car, index) in cars" :key="index" class="max-w-md">
       <CarViewCard :car="car" />
     </li>
   </ul>

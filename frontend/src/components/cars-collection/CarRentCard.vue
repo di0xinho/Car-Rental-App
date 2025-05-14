@@ -5,14 +5,14 @@
 
   defineProps({
     car: {type: Object as PropType<Car>, required: true},
-    cardBackground: {type: String},
+    backgroundClass: {type: String, default: 'bg-card-bg'},
     timeSlot: {type: Object as PropType<{from: string, to: string}>, required: true},
     city: {type: String, required: true}
   });
 </script>
 
 <template>
-  <div class="card min-w-xs" :class="cardBackground ?? ''">
+  <div class="card min-w-xs" :class="backgroundClass">
     <div class="flex justify-between m-4">
       <div>
         <h4 class="text-xl font-semibold">

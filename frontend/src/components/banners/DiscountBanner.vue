@@ -3,8 +3,10 @@
 </script>
 
 <template>
-  <div class="banner pt-20 pb-10 px-22 bg-[url('/images/discount-banner/car-blured.webp')] bg-[position:bottom_right_20%] bg-[length:40%] bg-no-repeat">
-    <h4 class="text-5xl">Zarejestruj się i odbierz 10% rabatu!</h4>
+  <div class="banner py-10 px-6 sm:px-10 lg:px-20 bg-[url('/images/discount-banner/car-blured.webp')] bg-[position:bottom_left_7rem] md:bg-[position:bottom_left_100%] lg:bg-[position:bottom_left_80%] bg-[length:32rem] bg-no-repeat text-sm sm:text-base">
+    <h4 class="text-2xl sm:text-3xl lg:text-5xl">
+      Zarejestruj się i odbierz 10%&nbsp;rabatu!
+    </h4>
     <p class="my-4">
       Dołącz do naszej społeczności i ciesz się wyjątkowymi korzyściami! Zarejestruj się na naszej stronie już dziś, a otrzymasz 10% zniżki na pierwszy wynajem samochodu.
     </p>

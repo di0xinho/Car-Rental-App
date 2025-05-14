@@ -14,14 +14,14 @@
 </script>
 
 <template>
-  <div class="text-xl flex justify-center items-center gap-16">
-    <button @click="handleClickPage(activePage - 1)">
+  <div class="flex justify-center items-center gap-16">
+    <button @click="handleClickPage(activePage - 1)" class="hidden sm:block" :disabled="activePage <= 1">
       <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M27 30L15 16L27 2" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M14 30L2 16L14 2" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
-    <ul class="w-lg flex justify-center gap-8">
+    <ul class="sm:w-sm md:w-lg flex justify-center gap-4 md:gap-8">
       <li v-if="activePage > 3"> <!-- First page -->
         <button @click="handleClickPage(1)" class="pagination-tab">
           1
@@ -58,7 +58,7 @@
         </button>
       </li>
     </ul>
-    <button @click="handleClickPage(activePage + 1)">
+    <button @click="handleClickPage(activePage + 1)" class="hidden sm:block" :disabled="activePage >= totalPages">
       <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M5 30L17 16L5 2" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M18 30L30 16L18 2" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
