@@ -76,7 +76,7 @@
       <div class="mx-2 xs:mx-6 my-6 xl:m-8">
         <ul class="grid grid-cols-[repeat(auto-fill,_minmax(20rem,_max-content))] gap-6 xl:gap-8 justify-center">
           <li v-for="(car, index) in cars" :key="index" class="max-w-md">
-            <CarRentCard :car="car" card-bg="card-bg" :time-slot="{from: dateFrom, to: dateTo}" :city="city"/>
+            <CarRentCard :car="car" :time-slot="{from: dateFrom, to: dateTo}" :city="city"/>
           </li>
         </ul>
       </div>

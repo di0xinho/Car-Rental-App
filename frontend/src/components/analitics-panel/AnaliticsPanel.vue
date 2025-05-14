@@ -1,21 +1,23 @@
 <template>
-  <div class="h-88 flex gap-8 ">
-    <div class="h-88 basis-88 bg-light-bg text-dark-txt rounded-3xl">
-      <h3 class="text-2xl my-4 mx-8">Dystans</h3>
-      <p class="m-8">Dystans ostatniej trasy i dystans od początku wypożyczenia auta. Dla każdego dystansu podane orientacyjne zużycie paliwa.</p>
-    </div>
-    <div class="h-88 basis-178 bg-light-bg text-dark-txt rounded-3xl">
-      <h3 class="text-2xl my-4 mx-8">Ostatnia trasa</h3>
-      <a href="https://developers.google.com/maps/documentation/javascript/examples/polyline-simple#maps_polyline_simple-javascript" class="block m-8">
-        Można spróbować zaimplementować GooleMaps JavaScript API i wyświetlić ostatnią trasę (od włączenia auta do wyłączenia, tras podczas okresu wynajmu może być kilka)
-      </a>
-    </div>
-    <div class="h-88 basis-88 bg-light-bg text-dark-txt rounded-3xl">
-      <div class="flex justify-between">
-        <h3 class="text-2xl my-4 mx-8">Koszt wynajmu</h3>
+  <div class="flex flex-col lg:flex-row gap-8">
+    <div class="basis-3xs shrink-0 grow min-h-80 bg-light-bg text-dark-txt rounded-3xl p-8">
+      <div>
+        <h3 class="text-2xl my-4 mx-8">Dystans</h3>
         <h4>od 01.01.2025 do 05.01.2025</h4>
       </div>
-      <p class="m-8">* Podany koszt nie uwzględnia kosztów paliwa. Tylko koszt wypożyczenia. Koszty paliwa klient zobowiązany jest pokryć we własnym zakresie.</p>
+      <p>
+        Dystans ostatniej trasy i dystans od początku wypożyczenia auta. Dla każdego dystansu podane orientacyjne zużycie paliwa.
+      </p>
+    </div>
+    <div class="basis-3/5 min-h-80 bg-light-bg text-dark-txt rounded-3xl p-8">
+      <h3 class="text-2xl my-4 mx-8">Ostatnia trasa</h3>
+      <p>
+        Można spróbować zaimplementować
+        <a href="https://developers.google.com/maps/documentation/javascript/examples/polyline-simple#maps_polyline_simple-javascript">
+          GooleMaps JavaScript API
+        </a>
+        i wyświetlić ostatnią trasę (od włączenia auta do wyłączenia, tras podczas okresu wynajmu może być kilka)
+      </p>
     </div>
   </div>
 </template>

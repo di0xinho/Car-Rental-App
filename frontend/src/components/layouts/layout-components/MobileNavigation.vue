@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import DarkModeSwitch from '../common-components/DarkModeSwitch.vue';
+  import DarkModeSwitch from './DarkModeSwitch.vue';
   
   const open = ref(false);
 </script>
 
 <template>
-  <div>
+  <div> 
     <button type="button" @click="open = true">
       <svg width="48" height="40" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="48" height="6" fill="white"/>

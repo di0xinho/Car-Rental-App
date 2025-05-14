@@ -5,8 +5,8 @@
 </script>
 
 <template>
-  <section class="p-6">
-    <div class="h-105">
+  <section class="p-4 xl:p-8">
+    <div>
       <LastOrderCar />
     </div>
     <div class="my-8">
@@ -14,13 +14,19 @@
       <nav>
         <ul class="flex gap-5">
           <li>
-            <button>Ostatnio wybrany samochód</button>
+            <RouterLink :to="{name: 'user-analitics'}" class="text-sm xs:text-base">
+              Analityka
+            </RouterLink>
           </li>
           <li>
-            <button>Analityka</button>
+            <RouterLink :to="{name: 'user-bookings'}" class="text-sm xs:text-base">
+              <span class="hidden xs:inline-block">Twoje</span> <span class="capitalize xs:normal-case">zamówienia</span>
+            </RouterLink>
           </li>
           <li>
-            <button>Twoje Ostatnie Zamówienia</button>
+            <RouterLink :to="{name: 'user-rent'}" class="text-sm xs:text-base">
+              Wynajmij <span class="hidden xs:inline-block">samochód</span>
+            </RouterLink>
           </li>
         </ul>
       </nav>

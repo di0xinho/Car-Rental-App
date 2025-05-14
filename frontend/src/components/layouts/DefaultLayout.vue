@@ -1,12 +1,11 @@
 <script setup lang="ts">
   import { RouterLink } from 'vue-router';
   import HeroPanel from '@/components/hero-panel/HeroPanel.vue';
-  import LinksList from './default-components/LinksList.vue';
   import PromotedCarBanner from '../banners/PromotedCarBanner.vue';
   import DiscountBanner from '@/components/banners/DiscountBanner.vue';
-  import SocialMediaLinks from '@/components/layouts/default-components/SocialMediaLinks.vue';
-  import DarkModeSwitch from '@/components/layouts/common-components/DarkModeSwitch.vue';
-  import MobileNavigation from './default-components/MobileNavigation.vue';
+  import SocialMediaLinks from '@/components/layouts/layout-components/SocialMediaLinks.vue';
+  import DarkModeSwitch from '@/components/layouts/layout-components/DarkModeSwitch.vue';
+  import MobileNavigation from '@/components/layouts/layout-components/MobileNavigation.vue';
   import AddressPanel from '../address-panel/AddressPanel.vue';
   import useUser from '@/composables/useUser';
 
@@ -16,16 +15,16 @@
 <template>
   <div class="min-h-screen flex flex-col gap-12 sm:gap-20 dark:text-light-txt">
     <header>
-      <div class="h-22 flex justify-between items-center">
-        <div class="w-2/5 min-w-3xs sm:min-w-sm h-full bg-dark-bg text-light-txt flex justify-between items-center px-6 sm:px-12 lg:px-16">
+      <div class="h-22 flex justify-between gap-5 items-center">
+        <div class="w-2/5 min-w-3xs sm:min-w-sm shrink-0 h-full bg-dark-bg text-light-txt flex justify-between items-center px-6 sm:pl-12 lg:pl-16">
           <MobileNavigation class="lg:hidden"/>
-          <h1 class="text-dominant-primary">
+          <h1 class="text-dominant-primary text-2xl sm:text-3xl">
             CARENT
           </h1>
           <DarkModeSwitch class="hidden lg:flex" />
         </div>
         <nav class="hidden lg:block">
-          <ul class="flex gap-6 mx-6 xl:gap-8 xl:mx-8">
+          <ul class="flex gap-5 xl:gap-8">
             <li>
               <RouterLink :to="{name: 'home'}">Główna</RouterLink>
             </li>
@@ -43,11 +42,11 @@
             </li>
           </ul>
         </nav>
-        <RouterLink v-if="user" :to="{name: 'user-main'}" class="mx-6 flex gap-4 items-center">
-            <img src="/users/default_user.webp" alt="user avatar" class="h-15 rounded-full border border-dominant-primary">
+        <RouterLink v-if="user" :to="{name: 'user-main'}" class="mr-6 flex gap-4 items-center">
+            <img src="/users/default_user.webp" alt="user avatar" class="h-14 rounded-full border border-dominant-primary">
             <h4 class="hidden sm:block">{{ user.username }}</h4>
         </RouterLink>
-        <RouterLink v-else :to="{name: 'login'}" class="mx-6">
+        <RouterLink v-else :to="{name: 'login'}" class="mr-6">
           <div class="hidden sm:block btn">Zaloguj się</div>
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="sm:hidden">
             <circle cx="20" cy="10" r="8" stroke="#FE8400" stroke-width="3"/>
