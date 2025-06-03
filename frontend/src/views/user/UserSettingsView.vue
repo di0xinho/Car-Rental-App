@@ -35,7 +35,6 @@
     dateOfBirth.value = user.value?.dateOfBirth;
     gender.value = user.value?.gender;
   }
-
 </script>
 
 <template>
@@ -43,7 +42,7 @@
     <div v-if="message" class="text-center mx-8 p-2 border rounded-lg" :class="[message.success ? 'text-lime-500' : 'text-red-400']">
       {{ message.message }}
     </div>
-    <div class="max-w-md mx-auto my-10">
+    <div class="max-w-md mx-auto my-10 p-6">
       <div class="flex justify-between">
           <h3 class="font-medium text-neutral-500">{{ user?.username }}</h3>
           <h3 class="font-medium text-neutral-500">{{ user?.email }}</h3>
@@ -72,13 +71,19 @@
         </div>
         <div class="my-5">
           <label for="gender">Płeć</label>
-          <fieldset id="gender" class="p-2 mt-2">
-            <input type="radio" value="Mężczyzna" id="man" required v-model="gender">
-            <label for="man" class="ml-4">Mężczyzna</label>
-            <input type="radio" value="Kobieta" id="woman" required v-model="gender" class="ml-12">
-            <label for="woman" required class="ml-4">Kobieta</label>
-            <input type="radio" value="Inna" id="other" required v-model="gender" class="ml-12">
-            <label for="other" required class="ml-4">Inna</label>
+          <fieldset id="gender" class="xs:p-2 mt-2 flex justify-between">
+            <div>
+              <input type="radio" value="Mężczyzna" id="man" required v-model="gender">
+              <label for="man" class="ml-4">Mężczyzna</label>
+            </div>
+            <div>
+              <input type="radio" value="Kobieta" id="woman" required v-model="gender">
+              <label for="woman" required class="ml-4">Kobieta</label>
+            </div>
+            <div>
+              <input type="radio" value="Inna" id="other" required v-model="gender">
+              <label for="other" required class="ml-4">Inna</label>
+            </div>
           </fieldset>
         </div>
         <div class="my-5 text-right">

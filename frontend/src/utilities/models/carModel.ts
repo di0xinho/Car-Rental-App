@@ -13,8 +13,9 @@ export class Car {
     public hourlyPrice: number,
     public imageUrl: string,
     public description: string,
+    public cluster: number,
     public bookedTimeSlots: {from: string, to:string}[],
-    public isAvailable: boolean,
+    public isAvailable: boolean
   ) {}
 }
 
@@ -31,3 +32,5 @@ export type CarPreferences = {
 export const carBodyTypes = ['Sport', 'SUV', 'Crossover', 'Sedan', 'Coupe', 'Hatchback'];
 
 export const fuelTypes = ['Benzyna', 'Gaz', 'Diesel', 'Hybryda', 'Elektryczny'];
+
+export const carMakers = ['Audi', 'BMW', 'Fiat', 'Ford', 'Honda', 'Toyota', 'Volkswagen'];

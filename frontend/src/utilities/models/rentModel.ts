@@ -14,34 +14,23 @@
 import { Car } from "./carModel";
 import { User } from "./userModel";
 
-export class Booking {
+export class Rent {
   constructor (
     public _id: string,
     public car: Car,
     public user: User,
-    public bookedTimeSlots: { from: string, to: string },
-    public totalHours: number,
-    public totalPrice: number,
-    public transactionId: string,
-    public driver: boolean,
-    public isPaid: boolean
+    public booking: {
+      _id: string,
+      bookedTimeSlots: { from: string, to: string },
+      totalHours: number,
+      totalPrice: number,
+      transactionId: string,
+      driver: boolean,
+      isPaid: boolean
+    },
+    public rentPeriod: { start: string, end: string|undefined },
+    public carMileage: { atStart: number, atEnd: number|undefined },
+    public payment: number,
+    public status: 'active'|'complete'
   ) {}
-}
-
-export type CreateBookingDetails = {
-  carId: string,
-  totalHours: number,
-  totalPrice: number,
-  driver: boolean,
-  bookedTimeSlots: {from: string, to: string},
-  city: string,
-}
-
-export type GetBookingsSuccess = {
-  message: string,
-  totalBookings: number,
-  numOfPages: number,
-  currentPage: number,
-  bookings: Booking[],
-  success:  boolean
 }

@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <h1>ADMIN__DASHBOARD</h1>
+  <h1>ADMIN__RENTS</h1>
 </template>

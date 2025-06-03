@@ -40,7 +40,7 @@
           <div>od <span class="font-medium">{{ route.query.from }}</span></div>
           <div>do <span class="font-medium">{{ route.query.to }}</span></div>
         </dd>
-        <dt class="font-medium mt-8 md:mt-12 text-base text-lg sm:text-xl md:text-2xl text-neutral-600">
+        <dt class="font-medium mt-8 md:mt-12 text-lg sm:text-xl md:text-2xl text-neutral-600">
           Płatność
         </dt>
         <dd v-if="route.query.payment === 'stripe'" class="m-4 sm:m-6 text-base sm:text-lg md:text-xl">

@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <h1>ADMIN__DASHBOARD</h1>
+  <h1>ADMIN__ADD_CAR</h1>
 </template>

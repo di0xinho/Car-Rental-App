@@ -1,4 +1,5 @@
-import type { CreateBookingDetails } from "./models/bookingModel";
+import type { GetBookingsSuccess, CreateBookingDetails } from "./models/bookingModel";
+
 
 export async function bookCar (
   details: CreateBookingDetails,
@@ -25,9 +26,23 @@ export async function bookCar (
     credentials: 'include'
   });
   const responseData = await response.json();
-  console.log('response data: ', responseData);
+  console.log('bookCar response data: ', responseData);
   if (!responseData.success) {
     throw new Error(responseData.error);
   }
   return responseData as {success: boolean, message: string, url: string};
+}
+
+export async function getBookings () {
+  const url = import.meta.env.VITE_API_GET_BOOKINGS;
+  const response = await fetch(url, {
+    method: 'GET',
+    credentials: 'include'
+  });
+  const responseData = await response.json();
+  console.log('getBookings response data: ', responseData);
+  if (!responseData.success) {
+    throw new Error(responseData.error);
+  }
+  return responseData as GetBookingsSuccess;
 }
