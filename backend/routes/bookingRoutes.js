@@ -102,33 +102,43 @@ router.post(
   asyncWrapper(async (req, res) => {
     const { booking_details, success_url, cancel_url } = req.body;
 
-    // Znajdujemy użytkownika po ID
     const user = await User.findById(req.user.userId);
-
     if (!user) {
       throw new NotFoundError("Wybrany użytkownik nie figuruje w bazie danych");
     }
 
-    // Znajdujemy samochód po ID
     const bookingCar = await Car.findById(booking_details.carId);
-
-    // Sprawdzamy, czy samochód znajduje się w bazie wypożyczalni
     if (!bookingCar) {
       throw new NotFoundError("Nie znaleziono samochodu o takim numerze id");
     }
 
-    // Sprawdzamy, czy samochód jest dostępny do wypożyczenia
     if (!bookingCar.isAvailable) {
       throw new BadRequestError(
         "Samochód jest tymczasowo niedostępny w ofercie wypożyczalni. Za utrudnienia przepraszamy."
       );
     }
 
-    // Switch odpowiedzialny za wybór odpowiedniej metody płatności; mamy 2 możliwości - płatność przez platformę Stripe oraz płatność na miejscu
+    // Sprawdzanie kolizji rezerwacji
+    const requestedFrom = new Date(booking_details.bookedTimeSlots.from);
+    const requestedTo = new Date(booking_details.bookedTimeSlots.to);
+
+    if (requestedFrom >= requestedTo) {
+      throw new BadRequestError("Data rozpoczęcia musi być wcześniejsza niż data zakończenia.");
+    }
+
+    const hasConflict = bookingCar.bookedTimeSlots.some(slot => {
+      const existingFrom = new Date(slot.from);
+      const existingTo = new Date(slot.to);
+      return existingFrom < requestedTo && existingTo > requestedFrom;
+    });
+
+    if (hasConflict) {
+      throw new BadRequestError("Samochód jest już zarezerwowany w podanym przedziale czasu.");
+    }
+
+    // Wybór metody płatności
     switch (req.query.payment_type) {
-      // Płatność przez platformę Stripe
       case "stripe":
-        // Tworzenie sesji Stripe
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ["card"],
           mode: "payment",
@@ -144,7 +154,7 @@ router.post(
               quantity: 1,
             },
           ],
-          success_url: success_url, 
+          success_url: success_url,
           cancel_url: cancel_url,
           client_reference_id: req.user.userId,
           metadata: {
@@ -156,75 +166,61 @@ router.post(
           },
         });
 
-        // Zwrócenie odpowiedzi z url sesji rozliczeniowej
-        res.status(StatusCodes.OK).json({
+        return res.status(StatusCodes.OK).json({
           message:
             "Tworzenie sesji rozliczeniowej zostało zrealizowane pomyślnie. Adres url sesji znajduje się w ciele odpowiedzi",
           url: session.url,
           success: true,
         });
 
-        break;
-
-      // Płatność na miejscu
-      case 'on-the-spot':
-        // Aktualizacja danych samochodu (data użytkowania samochodu przez innego użytkownika, dostępność samochodu)
+      case "on-the-spot":
         bookingCar.bookedTimeSlots.push({
-          from: booking_details.bookedTimeSlots.from,
-          to: booking_details.bookedTimeSlots.to,
+          from: requestedFrom,
+          to: requestedTo,
         });
-        bookingCar.isAvailable = false;
         await bookingCar.save();
 
-        // Tworzymy nową rezerwację i uzupełniamy ją o wartości pól, które zdefiniowane zostały w schemacie Mongoose
         const newBooking = new Booking({
           user: user._id,
           car: bookingCar._id,
           totalHours: booking_details.totalHours,
           bookedTimeSlots: {
-            from: booking_details.bookedTimeSlots.from,
-            to: booking_details.bookedTimeSlots.to,
+            from: requestedFrom,
+            to: requestedTo,
           },
           driver: booking_details.driver,
           totalPrice: booking_details.totalPrice,
-          isPaid: false, // WAŻNE - wartość 'isPaid' ustawione jest jako false, gdyż płatność odbywać się będzie w siedzibie wypożyczalni
+          isPaid: false,
         });
 
-        // Zapisujemy rekord w bazie danych
         await newBooking.save();
 
-        // Wysyłanie emaila przez Azure
-          try {
-            const emailSent = await emailService.sendBookingDetails(
-              user.email,
-              booking_details,
-              bookingCar
-            );
-        
-            if (!emailSent) {
-              console.warn(`Nie udało się wysłać emaila do ${user.email}`);
-            }
-          } catch (error) {
-            console.error("Błąd podczas wysyłania emaila:", error);
-          }
+        try {
+          const emailSent = await emailService.sendBookingDetails(
+            user.email,
+            booking_details,
+            bookingCar
+          );
 
-        // Zwrócenie odpowiedzi 
-        res.status(StatusCodes.OK).json({
-          message:
-            "Samochód został zarezerwowany. Opłatę uiścisz na miejscu.",
-            url: success_url,
+          if (!emailSent) {
+            console.warn(`Nie udało się wysłać emaila do ${user.email}`);
+          }
+        } catch (error) {
+          console.error("Błąd podczas wysyłania emaila:", error);
+        }
+
+        return res.status(StatusCodes.OK).json({
+          message: "Samochód został zarezerwowany. Opłatę uiścisz na miejscu.",
+          url: success_url,
           success: true,
         });
 
-        break;
-      
-        // Zabezpieczenie na wypadek wybrania niepoprawnej metody płatności
       default:
         throw new BadRequestError("Wybierz poprawną formę płatności");
-        break;
     }
   })
 );
+
 
 // Endpoint zwracający szczegóły dotyczące rezerwacji
 router.get(

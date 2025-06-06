@@ -55,7 +55,7 @@ router.post(
             from: session.metadata.from,
             to: session.metadata.to,
           });
-          bookingCar.isAvailable = false;
+          
           await bookingCar.save();
 
           // Tworzymy nową rezerwację i uzupełniamy ją o wartości pól, które zdefiniowane zostały w schemacie Mongoose

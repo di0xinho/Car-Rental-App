@@ -30,113 +30,123 @@ const router = express.Router();
 // Endpoint zwracający wszystkie pojazdy z filtrowaniem i paginacją
 // Przykład: localhost:8000/api/cars/get-all-cars?make=Toyota&minYear=2000&maxYear=2021&gearboxType=Automatyczna&sort=latest&page=2
 router.get("/get-all-cars", asyncWrapper(async (req, res) => {
-  
-    const {
-      make,
-      model,
-      fuelType,
-      gearboxType,
-      color,
-      bodyType,
-      minYear,
-      maxYear,
-      minCapacity,
-      maxCapacity,
-      minMileage,
-      maxMileage,
-      minPrice,
-      maxPrice,
-      sort,
-      search,
-      page,
-      limit,
-    } = req.query;
+  const {
+    make,
+    model,
+    fuelType,
+    gearboxType,
+    color,
+    bodyType,
+    minYear,
+    maxYear,
+    minCapacity,
+    maxCapacity,
+    minMileage,
+    maxMileage,
+    minPrice,
+    maxPrice,
+    sort,
+    search,
+    page,
+    limit,
+    startDate,
+    endDate
+  } = req.query;
 
-    // Tworzymy obiekt zapytania dynamicznie na podstawie parametrów
-    const queryObject = {};
+  const queryObject = {};
 
-    if (make) {
-      queryObject.make = { $regex: make, $options: "i" }; // Wyszukiwanie ignorujące wielkość liter
-    }
-    if (model) {
-      queryObject.model = { $regex: model, $options: "i" };
-    }
-    if (fuelType) {
-      queryObject.fuelType = fuelType;
-    }
-    if (gearboxType) {
-      queryObject.gearboxType = gearboxType;
-    }
-    if (color) {
-      queryObject.color = color;
-    }
-    if (bodyType) {
-      queryObject.bodyType = bodyType;
-    }
-    if (minYear || maxYear) {
-      queryObject.year = {};
-      if (minYear) queryObject.year.$gte = Number(minYear);
-      if (maxYear) queryObject.year.$lte = Number(maxYear);
-    }
-    if (minCapacity || maxCapacity) {
-      queryObject.capacity = {};
-      if (minCapacity) queryObject.capacity.$gte = Number(minCapacity);
-      if (maxCapacity) queryObject.capacity.$lte = Number(maxCapacity);
-    }
-    if (minMileage || maxMileage) {
-      queryObject.mileage = {};
-      if (minMileage) queryObject.mileage.$gte = Number(minMileage);
-      if (maxMileage) queryObject.mileage.$lte = Number(maxMileage);
-    }
-    if (minPrice || maxPrice) {
-      queryObject.hourlyPrice = {};
-      if (minPrice) queryObject.hourlyPrice.$gte = Number(minPrice);
-      if (maxPrice) queryObject.hourlyPrice.$lte = Number(maxPrice);
-    }
+  // Filtrowanie po polach tekstowych / liczbowych
+  if (make) queryObject.make = { $regex: make, $options: "i" };
+  if (model) queryObject.model = { $regex: model, $options: "i" };
+  if (fuelType) queryObject.fuelType = fuelType;
+  if (gearboxType) queryObject.gearboxType = gearboxType;
+  if (color) queryObject.color = color;
+  if (bodyType) queryObject.bodyType = bodyType;
+  if (minYear || maxYear) {
+    queryObject.year = {};
+    if (minYear) queryObject.year.$gte = Number(minYear);
+    if (maxYear) queryObject.year.$lte = Number(maxYear);
+  }
+  if (minCapacity || maxCapacity) {
+    queryObject.capacity = {};
+    if (minCapacity) queryObject.capacity.$gte = Number(minCapacity);
+    if (maxCapacity) queryObject.capacity.$lte = Number(maxCapacity);
+  }
+  if (minMileage || maxMileage) {
+    queryObject.mileage = {};
+    if (minMileage) queryObject.mileage.$gte = Number(minMileage);
+    if (maxMileage) queryObject.mileage.$lte = Number(maxMileage);
+  }
+  if (minPrice || maxPrice) {
+    queryObject.hourlyPrice = {};
+    if (minPrice) queryObject.hourlyPrice.$gte = Number(minPrice);
+    if (maxPrice) queryObject.hourlyPrice.$lte = Number(maxPrice);
+  }
 
-    // Szukamy wśród dostępnych aut
-    queryObject.isAvailable = true;
+  // Tylko dostępne auta
+  queryObject.isAvailable = true;
 
-    // Znalezienie pasujących pojazdów według wprowadzonych parametrów
-    let result = Car.find(queryObject);
+  // Filtrowanie po dostępności w danym zakresie czasu
+  if (startDate && endDate) {
+    const from = new Date(startDate);
+    const to = new Date(endDate);
 
-    // Obsługa sortowania
-    if (sort === "latest") {
+    if (!isNaN(from.getTime()) && !isNaN(to.getTime())) {
+      queryObject.bookedTimeSlots = {
+        $not: {
+          $elemMatch: {
+            from: { $lt: to },
+            to: { $gt: from }
+          }
+        }
+      };
+    }
+  }
+
+  // Budowanie zapytania
+  let result = Car.find(queryObject);
+
+  // Sortowanie
+  switch (sort) {
+    case "latest":
       result = result.sort("-year");
-    } else if (sort === "oldest") {
+      break;
+    case "oldest":
       result = result.sort("year");
-    } else if (sort === "price-asc") {
-      result = result.sort("price");
-    } else if (sort === "price-desc") {
-      result = result.sort("-price");
-    } else if (sort === "mileage-asc") {
+      break;
+    case "price-asc":
+      result = result.sort("hourlyPrice");
+      break;
+    case "price-desc":
+      result = result.sort("-hourlyPrice");
+      break;
+    case "mileage-asc":
       result = result.sort("mileage");
-    } else if (sort === "mileage-desc") {
+      break;
+    case "mileage-desc":
       result = result.sort("-mileage");
-    }
+      break;
+  }
 
-    // Obsługa paginacji
-    const pageNum = Number(page) || 1;
-    const limitNum = Number(limit) || 10;
-    const skip = (pageNum - 1) * limitNum;
-    result = result.skip(skip).limit(limitNum);
+  // Paginacja
+  const pageNum = Number(page) || 1;
+  const limitNum = Number(limit) || 10;
+  const skip = (pageNum - 1) * limitNum;
+  result = result.skip(skip).limit(limitNum);
 
-    // Pobranie wyników
-    const cars = await result;
+  // Wyniki
+  const cars = await result;
+  const totalCars = await Car.countDocuments(queryObject);
+  const numOfPages = Math.ceil(totalCars / limitNum);
 
-    // Liczba dostępnych rekordów po przefiltrowaniu
-    const totalCars = await Car.countDocuments(queryObject);
-    const numOfPages = Math.ceil(totalCars / limitNum);
-
-    // Zwrócenie odpowiedzi
-    res.status(StatusCodes.OK).json({
-      message: "Lista pojazdów została zwrócona",
-      totalCars,
-      numOfPages,
-      currentPage: pageNum,
-      cars: cars,
-      success: true
-    });
+  res.status(StatusCodes.OK).json({
+    message: "Lista pojazdów została zwrócona",
+    totalCars,
+    numOfPages,
+    currentPage: pageNum,
+    cars,
+    success: true
+  });
 }));
 
 // Endpoint odpowiadający za zwrócenie informacji o danym samochodzie wykorzystując jego id
