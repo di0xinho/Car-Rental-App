@@ -70,6 +70,7 @@ router.post(
             driver: session.metadata.driver,
             totalPrice: session.amount_total / 100,
             isPaid: true,
+            status: "awaiting"
           });
 
           // Zapisujemy rekord w bazie danych

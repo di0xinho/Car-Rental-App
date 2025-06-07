@@ -9,6 +9,7 @@ import User from "../models/userModel.js";
 import Car from "../models/carModel.js";
 import Booking from "../models/bookingModel.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import checkPermissions from "../utils/checkPermissions.js";
 import emailService from "../utils/emailService.js";
 import dotenv from "dotenv";
 
@@ -30,7 +31,7 @@ router.get(
   "/get-all-bookings",
   authMiddleware,
   asyncWrapper(async (req, res) => {
-    const { carId, isPaid, startDate, endDate, page, limit } = req.query;
+    const { carId, isPaid, startDate, endDate, page, limit, status } = req.query;
 
     // Pobieramy id użytkownika
     const userId = req.user.userId;
@@ -47,6 +48,10 @@ router.get(
     if (isPaid !== undefined) {
       queryObject.isPaid = isPaid; // Filtrujemy po statusie opłaty
     }
+
+    if (status){
+      queryObject.status = status // Filtrujemy po statusie zamówienia
+    } 
 
     if (startDate || endDate) {
       const fromDate = startDate
@@ -131,7 +136,7 @@ router.post(
       const existingTo = new Date(slot.to);
       return existingFrom < requestedTo && existingTo > requestedFrom;
     });
-
+    
     if (hasConflict) {
       throw new BadRequestError("Samochód jest już zarezerwowany w podanym przedziale czasu.");
     }
@@ -160,8 +165,8 @@ router.post(
           metadata: {
             carId: booking_details.carId,
             totalHours: booking_details.totalHours,
-            from: booking_details.bookedTimeSlots.from,
-            to: booking_details.bookedTimeSlots.to,
+            from: requestedFrom,
+            to: requestedTo,
             driver: booking_details.driver,
           },
         });
@@ -191,6 +196,7 @@ router.post(
           driver: booking_details.driver,
           totalPrice: booking_details.totalPrice,
           isPaid: false,
+          status: "awaiting"
         });
 
         await newBooking.save();
@@ -221,7 +227,6 @@ router.post(
   })
 );
 
-
 // Endpoint zwracający szczegóły dotyczące rezerwacji
 router.get(
   "/get-booking-details/:bookingId",
@@ -247,5 +252,166 @@ router.get(
     });
   })
 );
+
+// Endpoint zmieniający stan wybranej rezerwacji
+router.patch("/update-booking-status/:bookingId",
+  authMiddleware,
+  asyncWrapper(async (req, res) => {
+    // Sprawdzenie, czy uprawnienia użytkownika są wystarczające (czy jest adminem)
+    checkPermissions(req.user);
+
+    const bookingId = req.params.bookingId;
+    const newStatus = req.body.status;
+
+    // Szukamy rezerwacji z podanym ID
+    const booking = await Booking.findById(bookingId).populate("car");
+
+    if (!booking) {
+      throw new NotFoundError("Nie znaleziono rezerwacji o takim numerze id");
+    }
+
+    // Zmieniamy status rezerwacji
+    booking.status = newStatus;
+
+    // Jeśli rezerwacja została anulowana lub nie doszła do skutku — usuwamy jej daty z samochodu
+    if (newStatus === 'canceled' || newStatus === 'missing') {
+      const foundCar = await Car.findById(booking.car._id);
+
+      if (!foundCar) {
+        throw new NotFoundError("Nie znaleziono samochodu o takim numerze id");
+      }
+
+      // Usunięcie slotu czasowego z bookedTimeSlots
+      const fromDate = new Date(booking.bookedTimeSlots.from);
+      const toDate = new Date(booking.bookedTimeSlots.to);
+
+      foundCar.bookedTimeSlots = foundCar.bookedTimeSlots.filter(slot => {
+        return !(slot.from.getTime() === fromDate.getTime() && slot.to.getTime() === toDate.getTime());
+      });
+
+      await foundCar.save();
+    }
+
+    await booking.save();
+
+    res.status(StatusCodes.OK).json({
+      message: "Wybrana rezerwacja została zmodyfikowana pomyślnie",
+      data: booking,
+      success: true,
+    });
+  })
+);
+
+// Endpoint rozpoczynający wypożyczenie
+router.patch("/start-a-rental/:bookingId",
+  authMiddleware,
+  asyncWrapper(async (req, res) => {
+
+    // Sprawdzenie, czy uprawnienia użytkownika są wystarczające (czy jest adminem)
+    checkPermissions(req.user);
+
+    // Pobranie ID wypożyczenia z parametru ścieżki
+    const bookingId = req.params.bookingId;
+
+    // Szukamy wypożyczenia o podanym w parametrze id dołączając do rezultatu auto, na które została przeprowadzona rezerwacja
+    const booking = await Booking.findById(bookingId).populate("car");
+
+    // Jeśli takowego nie ma, to zwracamy odpowiedni komunikat
+    if (!booking) {
+      throw new NotFoundError("Nie znaleziono rezerwacji o takim numerze id");
+    }
+
+    // Pobranie daty rozpoczęcia wypożyczenia z ciała żądania
+    const { from } = req.body;
+
+    // Sprawdzamy, czy data jest obecna
+    if (!from || isNaN(new Date(from))) {
+      throw new BadRequestError("Nieprawidłowy format daty rozpoczęcia");
+    }
+
+    // W przypadku, gdy status rezerwacji jest inny niż 'awaiting', wtedy zwracamy odpowiedni wyjątek
+    if (booking.status !== "awaiting") {
+      throw new BadRequestError("Tylko rezerwacja o statusie 'awaiting' może zostać aktywowana");
+    }
+
+    // Aktualizacja danych o wypożyczeniu
+    booking.status = "active"; // Zmiana statusu wypożyczenia na aktywny
+    booking.rent.from = new Date(from); // Data faktycznego wypożyczenia
+    booking.rent.carMileageAtStart = booking.car.mileage; // Obecny stan przebiegu
+
+    // Zapisujemy zmieniony rekord
+    await booking.save();
+
+    // Zwracamy odpowiednią odpowiedź
+    res.status(StatusCodes.OK).json({
+      message: "Wybrana rezerwacja została zmodyfikowana pomyślnie - wynajem został rozpoczęty",
+      data: booking,
+      success: true,
+    });
+  })
+);
+
+// Endpoint kończący wypożyczenie
+router.patch("/end-the-rental/:bookingId",
+  authMiddleware,
+  asyncWrapper(async (req, res) => {
+
+    // Sprawdzenie, czy uprawnienia użytkownika są wystarczające (czy jest adminem)
+    checkPermissions(req.user);
+
+    // Pobranie ID wypożyczenia z parametru ścieżki
+    const bookingId = req.params.bookingId;
+
+    // Szukamy wypożyczenia o podanym w parametrze id dołączając do rezultatu auto, na które została przeprowadzona rezerwacja
+    const booking = await Booking.findById(bookingId).populate("car");
+
+    // Jeśli takowego nie ma, to zwracamy odpowiedni komunikat
+    if (!booking) {
+      throw new NotFoundError("Nie znaleziono rezerwacji o takim numerze id");
+    }
+
+    // Pobranie daty zakończenia wypożyczenia oraz przebiegu z ciała żądania
+    const { to, carMileageAtEnd } = req.body;
+
+    // Sprawdzamy, czy data jest obecna
+    if (!to || isNaN(new Date(to))) {
+      throw new BadRequestError("Nieprawidłowy format daty zakończenia");
+    }
+
+    // Sprawdzamy, czy przebieg jest liczbą oraz czy nie jest on mniejszy niż przebieg początkowy
+    if (typeof carMileageAtEnd !== "number" || carMileageAtEnd < booking.rent.carMileageAtStart) {
+      throw new BadRequestError("Przebieg końcowy musi być liczbą i nie może być mniejszy niż początkowy");
+    }
+
+    // Aktualizacja danych o wypożyczeniu
+    booking.status = "complete"; // Zmiana statusu wypożyczenia na zakończone
+    booking.rent.to = new Date(to); // Data faktycznego wypożyczenia zakończenia wypożyczenia
+    booking.rent.carMileageAtEnd = carMileageAtEnd; // Stan przebiegu po wypożyczeniu
+
+    // Wyszukiwanie samochodu po numerze id, w celu zaktualizowania jego przebiegu
+    const foundCar = await Car.findById(booking.car._id);
+
+    // Jeśli takowego samochodu nie ma w bazie danych, to zwracamy odpowiedni wyjątek
+    if (!foundCar) {
+      throw new NotFoundError("Nie znaleziono samochodu o takim numerze id");
+    }
+
+    // Nadpisanie przebiegu
+    foundCar.mileage = carMileageAtEnd;
+
+    // Zapisujemy zmiany zmodyfikowanych zasobów
+    await booking.save();
+    await foundCar.save();
+
+    // Zwracamy odpowiednią odpowiedź
+    res.status(StatusCodes.OK).json({
+      message: "Wybrana rezerwacja została zmodyfikowana pomyślnie - wynajem został zakończony",
+      data: booking,
+      success: true,
+    });
+  })
+);
+
+
 
 export default router;
