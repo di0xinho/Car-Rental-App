@@ -58,6 +58,10 @@ router.post(
           
           await bookingCar.save();
 
+          console.log(session.metadata.from)
+          console.log("\n")
+          console.log(session.metadata.to)
+
           // Tworzymy nową rezerwację i uzupełniamy ją o wartości pól, które zdefiniowane zostały w schemacie Mongoose
           const newBooking = new Booking({
             user: user._id,

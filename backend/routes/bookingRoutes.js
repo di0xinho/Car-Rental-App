@@ -123,20 +123,27 @@ router.post(
       );
     }
 
-    // Sprawdzanie kolizji rezerwacji
-    const requestedFrom = new Date(booking_details.bookedTimeSlots.from);
-    const requestedTo = new Date(booking_details.bookedTimeSlots.to);
+    // Sprawdzanie kolizji rezerwacji z wykorzystaniem moment.js
+    const requestedFrom = moment(booking_details.bookedTimeSlots.from, "YYYY-MM-DD HH:mm", true);
+    const requestedTo = moment(booking_details.bookedTimeSlots.to, "YYYY-MM-DD HH:mm", true);
 
-    if (requestedFrom >= requestedTo) {
+    // Walidacja poprawności dat
+    if (!requestedFrom.isValid() || !requestedTo.isValid()) {
+      throw new BadRequestError("Nieprawidłowy format daty. Użyj formatu 'YYYY-MM-DD HH:mm'.");
+    }
+
+    if (requestedFrom.isSameOrAfter(requestedTo)) {
       throw new BadRequestError("Data rozpoczęcia musi być wcześniejsza niż data zakończenia.");
     }
 
+    // Sprawdzenie kolizji z istniejącymi rezerwacjami
     const hasConflict = bookingCar.bookedTimeSlots.some(slot => {
-      const existingFrom = new Date(slot.from);
-      const existingTo = new Date(slot.to);
-      return existingFrom < requestedTo && existingTo > requestedFrom;
+    const existingFrom = moment(slot.from);
+    const existingTo = moment(slot.to);
+
+    return existingFrom.isBefore(requestedTo) && existingTo.isAfter(requestedFrom);
     });
-    
+
     if (hasConflict) {
       throw new BadRequestError("Samochód jest już zarezerwowany w podanym przedziale czasu.");
     }
@@ -165,8 +172,8 @@ router.post(
           metadata: {
             carId: booking_details.carId,
             totalHours: booking_details.totalHours,
-            from: requestedFrom,
-            to: requestedTo,
+            from: requestedFrom.toDate(),
+            to: requestedTo.toDate(),
             driver: booking_details.driver,
           },
         });
@@ -180,8 +187,8 @@ router.post(
 
       case "on-the-spot":
         bookingCar.bookedTimeSlots.push({
-          from: requestedFrom,
-          to: requestedTo,
+          from: requestedFrom.toDate(),
+          to: requestedTo.toDate(),
         });
         await bookingCar.save();
 
@@ -190,8 +197,8 @@ router.post(
           car: bookingCar._id,
           totalHours: booking_details.totalHours,
           bookedTimeSlots: {
-            from: requestedFrom,
-            to: requestedTo,
+            from: requestedFrom.toDate(),
+            to: requestedTo.toDate(),
           },
           driver: booking_details.driver,
           totalPrice: booking_details.totalPrice,
@@ -265,7 +272,6 @@ router.patch("/update-booking-status/:bookingId",
 
     // Szukamy rezerwacji z podanym ID
     const booking = await Booking.findById(bookingId).populate("car");
-
     if (!booking) {
       throw new NotFoundError("Nie znaleziono rezerwacji o takim numerze id");
     }
@@ -276,17 +282,21 @@ router.patch("/update-booking-status/:bookingId",
     // Jeśli rezerwacja została anulowana lub nie doszła do skutku — usuwamy jej daty z samochodu
     if (newStatus === 'canceled' || newStatus === 'missing') {
       const foundCar = await Car.findById(booking.car._id);
-
       if (!foundCar) {
         throw new NotFoundError("Nie znaleziono samochodu o takim numerze id");
       }
 
       // Usunięcie slotu czasowego z bookedTimeSlots
-      const fromDate = new Date(booking.bookedTimeSlots.from);
-      const toDate = new Date(booking.bookedTimeSlots.to);
+      // Zamiana dat na obiekty Date za pomocą moment (zachowanie kompatybilności z MongoDB)
+      const fromDate = moment(booking.bookedTimeSlots.from).toDate();
+      const toDate = moment(booking.bookedTimeSlots.to).toDate();
 
       foundCar.bookedTimeSlots = foundCar.bookedTimeSlots.filter(slot => {
-        return !(slot.from.getTime() === fromDate.getTime() && slot.to.getTime() === toDate.getTime());
+        // Porównanie dat przy użyciu getTime()
+        return !(
+          moment(slot.from).toDate().getTime() === fromDate.getTime() &&
+          moment(slot.to).toDate().getTime() === toDate.getTime()
+        );
       });
 
       await foundCar.save();
@@ -324,8 +334,9 @@ router.patch("/start-a-rental/:bookingId",
     // Pobranie daty rozpoczęcia wypożyczenia z ciała żądania
     const { from } = req.body;
 
-    // Sprawdzamy, czy data jest obecna
-    if (!from || isNaN(new Date(from))) {
+    // Walidacja daty i konwersja przez moment
+    const rentFromMoment = moment(from, moment.ISO_8601, true);
+    if (!from || !rentFromMoment.isValid()) {
       throw new BadRequestError("Nieprawidłowy format daty rozpoczęcia");
     }
 
@@ -336,7 +347,7 @@ router.patch("/start-a-rental/:bookingId",
 
     // Aktualizacja danych o wypożyczeniu
     booking.status = "active"; // Zmiana statusu wypożyczenia na aktywny
-    booking.rent.from = new Date(from); // Data faktycznego wypożyczenia
+    booking.rent.from = rentFromMoment.toDate(); // Data faktycznego wypożyczenia (Date)
     booking.rent.carMileageAtStart = booking.car.mileage; // Obecny stan przebiegu
 
     // Zapisujemy zmieniony rekord
@@ -373,8 +384,9 @@ router.patch("/end-the-rental/:bookingId",
     // Pobranie daty zakończenia wypożyczenia oraz przebiegu z ciała żądania
     const { to, carMileageAtEnd } = req.body;
 
-    // Sprawdzamy, czy data jest obecna
-    if (!to || isNaN(new Date(to))) {
+    // Walidacja daty przez moment
+    const rentToMoment = moment(to, moment.ISO_8601, true);
+    if (!to || !rentToMoment.isValid()) {
       throw new BadRequestError("Nieprawidłowy format daty zakończenia");
     }
 
@@ -385,7 +397,7 @@ router.patch("/end-the-rental/:bookingId",
 
     // Aktualizacja danych o wypożyczeniu
     booking.status = "complete"; // Zmiana statusu wypożyczenia na zakończone
-    booking.rent.to = new Date(to); // Data faktycznego wypożyczenia zakończenia wypożyczenia
+    booking.rent.to = rentToMoment.toDate(); // Data faktycznego zakończenia wypożyczenia (Date)
     booking.rent.carMileageAtEnd = carMileageAtEnd; // Stan przebiegu po wypożyczeniu
 
     // Wyszukiwanie samochodu po numerze id, w celu zaktualizowania jego przebiegu
