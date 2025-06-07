@@ -132,8 +132,14 @@ router.post(
       throw new BadRequestError("Nieprawidłowy format daty. Użyj formatu 'YYYY-MM-DD HH:mm'.");
     }
 
+    // Sprawdzenie czy data rozpoczęcia rezerwacji nie jest później od daty zakończenia rezerwacji
     if (requestedFrom.isSameOrAfter(requestedTo)) {
       throw new BadRequestError("Data rozpoczęcia musi być wcześniejsza niż data zakończenia.");
+    }
+
+    // Sprawdzenie, czy data rozpoczęcia nie jest wcześniejsza niż teraz
+    if (requestedFrom.isBefore(moment())) {
+      throw new BadRequestError("Nie można dokonać rezerwacji na przeszły termin.");
     }
 
     // Sprawdzenie kolizji z istniejącymi rezerwacjami
@@ -172,8 +178,8 @@ router.post(
           metadata: {
             carId: booking_details.carId,
             totalHours: booking_details.totalHours,
-            from: requestedFrom.toDate(),
-            to: requestedTo.toDate(),
+            from: booking_details.bookedTimeSlots.from,
+            to: booking_details.bookedTimeSlots.to,
             driver: booking_details.driver,
           },
         });
@@ -332,10 +338,11 @@ router.patch("/start-a-rental/:bookingId",
     }
 
     // Pobranie daty rozpoczęcia wypożyczenia z ciała żądania
-    const { from } = req.body;
+    const from = req.body.from;
 
     // Walidacja daty i konwersja przez moment
-    const rentFromMoment = moment(from, moment.ISO_8601, true);
+    const rentFromMoment = moment(from, "YYYY-MM-DD HH:mm", true);
+
     if (!from || !rentFromMoment.isValid()) {
       throw new BadRequestError("Nieprawidłowy format daty rozpoczęcia");
     }
@@ -385,7 +392,7 @@ router.patch("/end-the-rental/:bookingId",
     const { to, carMileageAtEnd } = req.body;
 
     // Walidacja daty przez moment
-    const rentToMoment = moment(to, moment.ISO_8601, true);
+    const rentToMoment = moment(to, "YYYY-MM-DD HH:mm", true);
     if (!to || !rentToMoment.isValid()) {
       throw new BadRequestError("Nieprawidłowy format daty zakończenia");
     }

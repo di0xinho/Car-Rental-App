@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import User from "../models/userModel.js";
 import Car from "../models/carModel.js";
 import Booking from "../models/bookingModel.js";
+import moment from "moment";
 
 const router = express.Router();
 
@@ -52,15 +53,13 @@ router.post(
         if (user && bookingCar) {
           // Aktualizacja danych samochodu (data użytkowania samochodu przez innego użytkownika, dostępność samochodu)
           bookingCar.bookedTimeSlots.push({
-            from: session.metadata.from,
-            to: session.metadata.to,
+            from: moment(session.metadata.from.from, "YYYY-MM-DD HH:mm", true),
+            to: moment(session.metadata.from.to, "YYYY-MM-DD HH:mm", true)
           });
           
           await bookingCar.save();
 
-          console.log(session.metadata.from)
-          console.log("\n")
-          console.log(session.metadata.to)
+          
 
           // Tworzymy nową rezerwację i uzupełniamy ją o wartości pól, które zdefiniowane zostały w schemacie Mongoose
           const newBooking = new Booking({

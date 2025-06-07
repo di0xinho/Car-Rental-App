@@ -18,7 +18,6 @@ const bookingSchema = new mongoose.Schema(
     driver: { type: Boolean }, // Czy wynajem obejmuje ofertę z kierowcą
     isPaid: { type: Boolean }, // Czy wynajem został już opłacony
     rent: {
-      type: {
         from: { // Realna data wypożyczenia (odbiór z punktu)
           type: Date
         },
@@ -33,7 +32,6 @@ const bookingSchema = new mongoose.Schema(
           type: Number,
           min: 0
         }
-      }
   },
   status: { type: String, enum: ['awaiting', 'active', 'canceled', 'missing', 'complete'], default: 'awaiting' }, // Status wypożyczenia (awaiting, active, canceled, missing, complete)
   },
