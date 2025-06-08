@@ -228,6 +228,10 @@ router.post(
           console.error("Błąd podczas wysyłania emaila:", error);
         }
 
+        // Dodanie id zamówienia do tablicy zamówień użytkownika
+        user.bookings.push(newBooking._id);
+        await user.save();
+
         return res.status(StatusCodes.OK).json({
           message: "Samochód został zarezerwowany. Opłatę uiścisz na miejscu.",
           url: success_url,
@@ -430,7 +434,5 @@ router.patch("/end-the-rental/:bookingId",
     });
   })
 );
-
-
 
 export default router;

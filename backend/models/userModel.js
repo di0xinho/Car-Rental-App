@@ -61,6 +61,12 @@ const userSchema = new mongoose.Schema(
       ref: 'cars',
       default: [],
     },
+    // Lista dokonanych wypożyczeń
+    bookings: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'bookings',
+      default: [],
+    },
     recommended_cluster:{
       type: Number,
       default: null,

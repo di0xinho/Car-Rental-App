@@ -95,6 +95,10 @@ router.post(
           }
         }
 
+        // Dodanie id zamówienia do tablicy zamówień użytkownika
+        user.bookings.push(newBooking._id);
+        await user.save();
+
         // Poniżej możemy obsłużyć inne typy zdarzeń...
         break;
       default:
