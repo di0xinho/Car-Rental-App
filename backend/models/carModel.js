@@ -19,8 +19,8 @@ const carSchema = new mongoose.Schema(
         description: { type: String }, // Opis samochodu
         bookedTimeSlots: [ // Lista rezerwacji w postaci przedziałów czasowych
           {
-            from: { type: String, required: true }, // Data i godzina rozpoczęcia rezerwacji
-            to: { type: String, required: true }, // Data i godzina zakończenia rezerwacji
+            from: { type: Date, required: true }, // Data i godzina rozpoczęcia rezerwacji
+            to: { type: Date, required: true }, // Data i godzina zakończenia rezerwacji
           },
         ],
         isAvailable: { type: Boolean, required: true, default: true }, // Czy samochód jest dostępny do wynajmu (zmienna boolowska) 
