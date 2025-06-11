@@ -3,7 +3,6 @@
 </script>
 
 <template>
-  <h3 class="text-sm text-neutral-600 my-4">SKRZYNIA BIEGÓW</h3>
   <div>
     <div class="my-8">
       <input type="radio" id="manual" value="Manualna" v-model="gearbox">

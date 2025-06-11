@@ -19,6 +19,7 @@
       const result = await logInUser(email.value, password.value);
       if (result.success) {
         console.log(result.message);
+        console.log(result.data);
         router.push({name: 'home'});
       }
     } catch (error) {

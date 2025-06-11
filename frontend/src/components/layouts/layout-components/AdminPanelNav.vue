@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import HomeSvg from './icons/HomeSvg.vue';
-  import CarSvg from './icons/CarSvg.vue';
-  import CallendarSvg from './icons/CallendarSvg.vue';
-  import KeySvg from './icons/KeySvg.vue';
+  import HomeSvg from '@/components/icons/HomeSvg.vue';
+  import CarSvg from '@/components/icons/CarSvg.vue';
+  import CallendarSvg from '@/components/icons/CallendarSvg.vue';
+  import KeySvg from '@/components/icons/KeySvg.vue';
 </script>
 
 <template>

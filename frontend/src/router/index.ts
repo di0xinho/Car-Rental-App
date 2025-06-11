@@ -159,13 +159,13 @@ const router = createRouter({
       children: [
         {path: '', name: 'admin-dashboard', component: AdminDashboardView},
         {path: 'samochody', name: 'admin-cars', component: AdminCarsView},
-        {path: 'samochody/nowy-samochod', name: 'admin-add-car', component: AdminAddCar},
-        {path: 'samochody/:id/edytuj-samochod', name: 'admin-update-car', component: AdminUpdateCar},
+        {path: 'samochody/nowy', name: 'admin-add-car', component: AdminAddCar},
+        {path: 'samochody/edytuj/:id', name: 'admin-edit-car', component: AdminUpdateCar},
         {path: 'rezerwacje', name: 'admin-bookings', component: AdminBookingsView},
         {path: 'wynajem', name: 'admin-rents', component: AdminRentsView},
       ],
       beforeEnter: (to, from) => {
-
+        console.log('entering ADMIN ROUTES');
       },
       meta: {
         layout: 'AdminLayout'

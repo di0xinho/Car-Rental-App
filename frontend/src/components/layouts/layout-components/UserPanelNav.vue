@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import HomeSvg from './icons/HomeSvg.vue';
-  import CallendarSvg from './icons/CallendarSvg.vue';
-  import ChartSvg from './icons/ChartSvg.vue';
-  import CarSvg from './icons/CarSvg.vue';
-  import GearSvg from './icons/GearSvg.vue';
+  import HomeSvg from '@/components/icons/HomeSvg.vue';
+  import CallendarSvg from '@/components/icons/CallendarSvg.vue';
+  import ChartSvg from '@/components/icons/ChartSvg.vue';
+  import CarSvg from '@/components/icons/CarSvg.vue';
+  import GearSvg from '@/components/icons/GearSvg.vue';
 
   defineProps({
     listClass: {type: String, default: ''},

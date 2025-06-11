@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import LogInForm from '@/components/login-forms/LogInForm.vue';
+  import LogInForm from '@/components/login-forms/LoginForm.vue';
   import SignInForm from '@/components/login-forms/SignInForm.vue';
 
   const message = ref<{success: boolean, message: string}|null>(null);

@@ -4,24 +4,22 @@
 
   defineProps({
     cars: {type: Array as PropType<Array<Car>>, required: true},
-    selectedCarIndex: {type: Number}
+    selectedCarIndex: {type: [Number, null]}
   });
 
-  defineEmits({
-    selectCarIndex: (carIndex: number) => {}
-  });
+  defineEmits<{selectCarIndex: [carIndex: number]}>();
 </script>
 
 <template>
   <table class="table-fixed w-full text-sm md:text-base">
         <colgroup>
-          <col class="w-32"/>
           <col class="w-26 xs:w-32"/>
-          <col class="w-20 xs:w-26"/>
-          <col class="w-20 xs:w-26"/>
+          <col class="w-20 xs:w-24"/>
+          <col class="w-20 xs:w-24"/>
+          <col class="w-12 xs:w-16"/>
           <col class="w-12 xs:w-16 hidden md:table-column"/>
-          <col class="w-12 xs:w-16 hidden md:table-column"/>
-          <col class="w-12 sm:w-20 hidden md:table-column" />
+          <col class="w-16 xs:w-20 hidden md:table-column"/>
+          <col class="w-12 sm:w-16 hidden md:table-column" />
         </colgroup>
         <thead class="text-left">
           <tr class="bg-gray-100">
@@ -36,7 +34,7 @@
         </thead>
         <tbody>
           <tr v-for="(car, index) in cars" class="border-t border-gray-300 cursor-pointer" @click="$emit('selectCarIndex', index)" :class="[selectedCarIndex === index ? 'bg-dominant-secondary' : 'bg-light-bg']">
-            <td class="overflow-hidden text-ellipsis py-2 px-2">{{ car._id }}</td>
+            <td class="overflow-hidden text-ellipsis py-2 px-1 xs:px-2">{{ car._id }}</td>
             <td class="py-2 px-1 xs:px-2">{{ car.make }}</td>
             <td class="py-2 px-1 xs:px-2">{{ car.model }}</td>
             <td class="py-2 px-1 xs:px-2">{{ car.year }}</td>

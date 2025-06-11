@@ -9,6 +9,7 @@ const userData = ref<UserData|null>(null);
 type Success = {
   message: string,
   success: boolean,
+  data?: User
 }
 
 async function initializeUser () {
@@ -94,7 +95,7 @@ async function logInUser (email: string, password: string) {
   } else {
     throw new Error('Nie udało się pobrać danych użytkownika.');
   }
-  return {success: responseData.success, message: responseData.message} as Success;
+  return {success: responseData.success, message: responseData.message } as Success;
 }
 
 async function logOutUser () {

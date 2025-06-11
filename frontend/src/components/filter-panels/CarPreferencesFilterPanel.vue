@@ -58,27 +58,34 @@
 </script>
 
 <template>
-  <form @submit.prevent="setNewCarPreferences" class="h-max flex flex-col gap-2">
+  <form @submit.prevent="setNewCarPreferences" class="h-max flex flex-col gap-4">
     <div>
-      <BodyTypeFilter v-model:type="bodyType" />
+      <h3 class="text-sm text-neutral-600">TYP</h3>
+      <BodyTypeFilter v-model:type="bodyType" class="my-8" />
     </div>
     <div>
-      <CapacityFilter v-model:min-capacity="minCapacity" />
+      <h3 class="text-sm text-neutral-600">ILOŚĆ MIEJSC</h3>
+      <CapacityFilter v-model:min-capacity="minCapacity" class="my-8" />
     </div>
     <div>
-      <PriceFilter v-model:price="maxPrice" />
+      <h3 class="text-sm text-neutral-600">CENA</h3>
+      <PriceFilter v-model:price="maxPrice" class="my-8" />
     </div>
     <div>
-      <FuelTypeFilter v-model:fuel="fuelType" />
+      <h3 class="text-sm text-neutral-600">RODZAJ PALIWA</h3>
+      <FuelTypeFilter v-model:fuel="fuelType" class="my-8" />
     </div>
     <div>
-      <GearboxFilter v-model:gearbox="gearboxType" />
+      <h3 class="text-sm text-neutral-600">SKRZYNIA BIEGÓW</h3>
+      <GearboxFilter v-model:gearbox="gearboxType" class="my-8" />
     </div>
     <div>
-      <YearFilter v-model:year="minYear" />
+      <h3 class="text-sm text-neutral-600">ROCZNIK</h3>
+      <YearFilter v-model:year="minYear" class="my-8" />
     </div>
     <div>
-      <MileageFilter v-model:mileage="maxMileage" />
+      <h3 class="text-sm text-neutral-600">PRZEBIEG</h3>
+      <MileageFilter v-model:mileage="maxMileage" class="my-8" />
     </div>
     <button type="submit" class="btn">
       Sprawdź dostępne modele

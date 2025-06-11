@@ -99,17 +99,20 @@
       <div class="relative w-full h-full">
         <div class="flex gap-2 text-dark-txt w-2xs md:h-full absolute z-20 left-0 top-0 md:static transition-transform md:translate-none" :class="{'-translate-x-62': !openFilterPanel}">
           <!-- Filtering parameters panel -->
-          <form @submit.prevent="handleFilterCars" class="py-8 px-6 md:px-8 flex flex-col gap-2 bg-card-bg md:shadow-[none]" :class="{'shadow-[10px_0_20px_#00000050]': openFilterPanel}">
+          <form @submit.prevent="handleFilterCars" class="py-8 px-6 md:px-8 flex flex-col gap-4 bg-card-bg md:shadow-[none]" :class="{'shadow-[10px_0_20px_#00000050]': openFilterPanel}">
             <div>
-              <BodyTypeFilter v-model:type="bodyType" />
+              <h3 class="text-sm text-neutral-600">TYP</h3>
+              <BodyTypeFilter v-model:type="bodyType" class=" my-8" />
             </div>
             <div>
-              <PriceFilter v-model:price="maxPrice" />
+              <h3 class="text-sm text-neutral-600">CENA</h3>
+              <PriceFilter v-model:price="maxPrice" class=" my-8" />
             </div>
             <div>
-              <FuelTypeFilter v-model:fuel="fuelType" />
+              <h3 class="text-sm text-neutral-600">RODZAJ PALIWA</h3>
+              <FuelTypeFilter v-model:fuel="fuelType" class=" my-8" />
             </div>
-            <button type="submit" class="btn">
+            <button type="submit" class="btn my-8">
               Sprawdź dostępne modele
             </button>
           </form>

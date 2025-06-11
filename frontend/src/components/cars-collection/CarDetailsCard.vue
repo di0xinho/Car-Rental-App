@@ -3,6 +3,8 @@
   import CarFuelDetail from '@/components/cars-collection/car-details/CarFuelDetail.vue';
   import CarGearboxDetail from '@/components/cars-collection/car-details/CarGearboxDetail.vue';
   import CarYearDetail from '@/components/cars-collection/car-details/CarYearDetail.vue';
+  import CarMileageDetail from '@/components/cars-collection/car-details/CarMileageDetail.vue';
+  import CarColorDetail from '@/components/cars-collection/car-details/CarColorDetail.vue';
   import type { Car } from '@/utilities/models/carModel';
   import { ref, type PropType } from 'vue';
 
@@ -38,11 +40,13 @@
         </h5>
       </div>
     </div>
-    <dl class="xs:mx-4 my-8 grid grid-cols-2 gap-x-4 xs:gap-x-8 gap-y-4">
+    <dl class="xs:mx-4 mt-6 mb-2 grid grid-cols-2 gap-x-4 xs:gap-x-8 gap-y-4">
       <CarFuelDetail :fuel-type="car.fuelType" />
       <CarGearboxDetail :gearbox-type="car.gearboxType" />
       <CarYearDetail :year="car.year" />
       <CarCapacityDetail :capacity="car.capacity" />
+      <CarMileageDetail :mileage="car.mileage" />
+      <CarColorDetail :color="car.color" />
     </dl>
   </div>
 </template>
