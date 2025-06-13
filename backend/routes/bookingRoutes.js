@@ -28,7 +28,7 @@ const stripe = new Stripe(stripe_secret_key, {
 // Endpoint zwracający rezerwacje z filtrowaniem i paginacją
 // Przykład: localhost:8000/api/bookings/get-all-bookings?user=123&car=456&isPaid=true&startDate=2025-01-01&endDate=2025-03-01&page=2
 router.get(
-  "/get-all-bookings",
+  "/get-my-bookings",
   authMiddleware,
   asyncWrapper(async (req, res) => {
     const { carId, isPaid, startDate, endDate, page, limit, status } = req.query;
@@ -91,6 +91,82 @@ router.get(
     // Zwrócenie odpowiedzi
     res.status(StatusCodes.OK).json({
       message: "Lista rezerwacji została zwrócona",
+      totalBookings,
+      numOfPages,
+      currentPage: pageNum,
+      bookings: bookings,
+      success: true,
+    });
+  })
+);
+
+// Endpoint zwracający WSZYSTKIE rezerwacje z filtrowaniem i paginacją
+router.get(
+  "/get-all-bookings",
+  authMiddleware,
+  asyncWrapper(async (req, res) => {
+    const { carId, isPaid, startDate, endDate, page, limit, status, userId } = req.query;
+
+    // Sprawdzenie, czy uprawnienia użytkownika są wystarczające (czy jest adminem)
+    checkPermissions(req.user);
+
+    // Tworzymy dynamiczny obiekt zapytania
+    const queryObject = {};
+
+    // Możliwość przefiltrowania po ID użytkownika (opcjonalnie)
+    if (userId) {
+      queryObject.user = userId;
+    }
+
+    if (carId) {
+      queryObject.car = carId;
+    }
+
+    if (isPaid !== undefined) {
+      queryObject.isPaid = isPaid;
+    }
+
+    if (status) {
+      queryObject.status = status;
+    }
+
+    if (startDate || endDate) {
+      const fromDate = startDate
+        ? moment(startDate, "YYYY-MM-DD HH:mm").format("YYYY-MM-DD HH:mm")
+        : "1970-01-01 00:00";
+
+      const toDate = endDate
+        ? moment(endDate, "YYYY-MM-DD HH:mm").format("YYYY-MM-DD HH:mm")
+        : "3000-01-01 00:00";
+
+      queryObject["bookedTimeSlots.from"] = { $lte: toDate };
+      queryObject["bookedTimeSlots.to"] = { $gte: fromDate };
+    }
+
+    // Budujemy zapytanie do bazy
+    let result = Booking.find(queryObject);
+
+    // Paginacja
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 10;
+    const skip = (pageNum - 1) * limitNum;
+    result = result.skip(skip).limit(limitNum);
+
+    // Pobranie danych + dołączenie info o użytkowniku i aucie
+    const bookings = await result
+      .populate({
+        path: "user",
+        select: "firstName surname phoneNumber",
+      })
+      .populate("car");
+
+    // Liczenie wszystkich pasujących rekordów
+    const totalBookings = await Booking.countDocuments(queryObject);
+    const numOfPages = Math.ceil(totalBookings / limitNum);
+
+    // Odpowiedź
+    res.status(StatusCodes.OK).json({
+      message: "Wszystkie rezerwacje zostały zwrócone pomyślnie",
       totalBookings,
       numOfPages,
       currentPage: pageNum,

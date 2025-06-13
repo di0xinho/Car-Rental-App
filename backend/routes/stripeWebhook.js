@@ -53,13 +53,11 @@ router.post(
         if (user && bookingCar) {
           // Aktualizacja danych samochodu (data użytkowania samochodu przez innego użytkownika, dostępność samochodu)
           bookingCar.bookedTimeSlots.push({
-            from: moment(session.metadata.from.from, "YYYY-MM-DD HH:mm", true),
-            to: moment(session.metadata.from.to, "YYYY-MM-DD HH:mm", true)
+            from: moment(session.metadata.from, "YYYY-MM-DD HH:mm", true),
+            to: moment(session.metadata.to, "YYYY-MM-DD HH:mm", true)
           });
           
           await bookingCar.save();
-
-          
 
           // Tworzymy nową rezerwację i uzupełniamy ją o wartości pól, które zdefiniowane zostały w schemacie Mongoose
           const newBooking = new Booking({
@@ -67,8 +65,8 @@ router.post(
             car: bookingCar._id,
             totalHours: session.metadata.totalHours,
             bookedTimeSlots: {
-              from: session.metadata.from,
-              to: session.metadata.to,
+              from: moment(session.metadata.from, "YYYY-MM-DD HH:mm", true),
+              to: moment(session.metadata.to, "YYYY-MM-DD HH:mm", true)
             },
             driver: session.metadata.driver,
             totalPrice: session.amount_total / 100,
