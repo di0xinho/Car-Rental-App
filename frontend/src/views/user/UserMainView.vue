@@ -1,15 +1,22 @@
 <script setup lang="ts">
-  import { Rent } from '@/utilities/models/rentModel';
-  import { getActiveRent } from '@/utilities/rentUtilis';
+  import { Booking, type BookingStatus } from '@/utilities/models/bookingModel';
+  import { getUserBookings } from '@/utilities/bookingUtils';
   import { RouterLink } from 'vue-router';
   import { onMounted, ref } from 'vue';
   import LastOrderCar from '@/components/banners/LastOrderCar.vue';
-  import RentInfoPanel from '@/components/rent-info-panel/RentInfoPanel.vue';
+  import ActiveBookingPanel from '@/components/admin/bookings/ActiveBookingPanel.vue';
 
-  const activeRent = ref<Rent|undefined>();
+  const activeBooking = ref<Booking|undefined>();
 
-  onMounted (() => {
-    activeRent.value = getActiveRent();
+  onMounted(async() => {
+    try {
+      const bookingStatus: BookingStatus[] = ['active'];
+      const result = await getUserBookings(bookingStatus);
+      console.log(result);
+      activeBooking.value = result.bookings[0];
+    } catch (error) {
+      console.error(error);
+    }
   });
 </script>
 
@@ -38,9 +45,9 @@
       </ul>
     </nav>
     <h2 class="text-xl xs:text-2xl">Aktywne wypożyczenia</h2>
-    <div v-if="activeRent" class="my-auto">
+    <div v-if="activeBooking" class="my-auto">
       <!-- Actual ongoing rent -->
-      <RentInfoPanel :rent="activeRent" />
+      <ActiveBookingPanel :booking="activeBooking" />
     </div>
     <div v-else class="my-auto">
       <h3 class="text-lg xs:text-xl text-center my-12">Brak aktywnych wypożyczeń</h3>

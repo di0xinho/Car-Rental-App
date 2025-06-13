@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import CarForm from '@/components/admin/CarForm.vue';
+  import CarForm from '@/components/admin/cars/CarForm.vue';
   import { Car, type CarData } from '@/utilities/models/carModel';
   import { updateCar, getCarById } from '@/utilities/carUtils';
   import { onMounted, ref } from 'vue';

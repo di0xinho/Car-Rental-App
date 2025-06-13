@@ -19,14 +19,26 @@ export class Booking {
     public _id: string,
     public car: Car,
     public user: User,
-    public bookedTimeSlots: { from: string, to: string },
+    public bookedTimeSlots: { 
+      from: string,
+      to: string
+    },
     public totalHours: number,
     public totalPrice: number,
     public transactionId: string,
     public driver: boolean,
-    public isPaid: boolean
+    public isPaid: boolean,
+    public rent: {
+      from: string,
+      to: string,
+      carMileageAtStart: number,
+      carMileageAtEnd: number
+    },
+    public status: BookingStatus
   ) {}
 }
+
+export type BookingStatus = 'awaiting'|'active'|'canceled'|'missing'|'complete';
 
 export type CreateBookingDetails = {
   carId: string,
@@ -34,7 +46,6 @@ export type CreateBookingDetails = {
   totalPrice: number,
   driver: boolean,
   bookedTimeSlots: {from: string, to: string},
-  city: string,
 }
 
 export type GetBookingsSuccess = {

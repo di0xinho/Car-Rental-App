@@ -98,10 +98,3 @@ export async function deleteCar (carId: string) {
   }
   return responseData as {success: boolean, message: string, data: Car};
 }
-
-export function getCarTelemetryData () {
-  return {
-    position: { lat: 51.113763, lng: 17.004502 },
-    mileage: 549941
-  }
-}

@@ -3,13 +3,12 @@
   import { ref, onMounted, computed, useTemplateRef } from 'vue';
   import { getCarsByPreferences } from '@/utilities/carUtils';
   import ListPaginator from '@/components/paginator/ListPaginator.vue';
-  import CarsTable from '@/components/admin/CarsTable.vue';
+  import CarsTable from '@/components/admin/cars/CarsTable.vue';
   import CarMakerSelect from '@/components/filter-panels/filters/CarMakerSelect.vue';
   import PriceFilter from '@/components/filter-panels/filters/PriceFilter.vue';
   import FuelTypeSelect from '@/components/filter-panels/filters/FuelTypeSelect.vue';
   import CarDetailsCard from '@/components/cars-collection/CarDetailsCard.vue';
-  import DeleteCarModal from '@/components/admin/DeleteCarModal.vue';
-  import BinSvg from '@/components/icons/BinSvg.vue';
+  import DeleteCarModal from '@/components/admin/cars/DeleteCarModal.vue';
   import PenSvg from '@/components/icons/PenSvg.vue';
   import { RouterLink } from 'vue-router';
 

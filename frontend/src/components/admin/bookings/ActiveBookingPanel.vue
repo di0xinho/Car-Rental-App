@@ -1,20 +1,22 @@
 <script setup lang="ts">
-  import { Rent } from '@/utilities/models/rentModel';
+  import { Booking, type BookingStatus } from '@/utilities/models/bookingModel';
   import { onMounted, ref, computed, type PropType } from 'vue';
   import { Loader } from '@googlemaps/js-api-loader';
-  import { getCarTelemetryData } from '@/utilities/carUtils';
+  import { getCarTelemetryData } from '@/utilities/carTelemetryUtils';
 
-  const { rent } = defineProps({
-    rent: {type: Object as PropType<Rent>, required: true}
+  const { booking } = defineProps({
+    booking: {type: Object as PropType<Booking>, required: true}
   });
 
   const currentMileage = ref<number|null>(null);
 
   const distance = computed(() => {
-    if (currentMileage.value) {
-      return currentMileage.value - rent.carMileage.atStart
+    if (currentMileage.value && booking.rent.carMileageAtStart) {
+      return currentMileage.value - booking.rent.carMileageAtStart;
+    } else {
+      return 'brak danych';
     }
-  })
+  });
 
   let map: google.maps.Map | undefined;
   let position: {lat: number, lng: number} | undefined;
@@ -87,18 +89,20 @@
       <dl class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-1 gap-4">
         <div>
           <dt class="text-sm text-neutral-600 mb-4">Wynajem</dt>
-          <dd class="mx-4"><span class="text-sm text-neutral-600">od</span> {{ rent.rentPeriod.start }}</dd>
+          <dd class="mx-4">
+            <span class="text-sm text-neutral-600">od</span> {{ booking.rent.from }}
+          </dd>
         </div>
         <div>
           <dt class="text-sm text-neutral-600 mb-4">Rezerwacja</dt>
           <dd class="mx-4 flex flex-col gap-x-8 gap-y-2">
-            <span><span class="text-sm text-neutral-600">od</span> {{ rent.booking.bookedTimeSlots.from }}</span>
-            <span><span class="text-sm text-neutral-600">do</span> {{ rent.booking.bookedTimeSlots.to }}</span>
+            <span><span class="text-sm text-neutral-600">od</span> {{ booking.bookedTimeSlots.from }}</span>
+            <span><span class="text-sm text-neutral-600">do</span> {{ booking.bookedTimeSlots.to }}</span>
           </dd>
         </div>
         <div>
           <dt class="text-sm text-neutral-600 mb-4">Zapłacono</dt>
-          <dd class="mx-4">{{ rent.payment }} ZŁ</dd>
+          <dd class="mx-4">{{ booking.totalPrice}} ZŁ</dd>
         </div>
         <div>
           <dt class="text-sm text-neutral-600 mb-4">Przejechane kilometry</dt>

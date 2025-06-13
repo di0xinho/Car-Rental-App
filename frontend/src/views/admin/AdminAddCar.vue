@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import CarForm from '@/components/admin/CarForm.vue';
+  import CarForm from '@/components/admin/cars/CarForm.vue';
   import { createCar } from '@/utilities/carUtils';
   import type { CarData } from '@/utilities/models/carModel';
   import { ref } from 'vue';

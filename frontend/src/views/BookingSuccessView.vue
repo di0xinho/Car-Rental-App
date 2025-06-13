@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import { useRoute, useRouter, RouterLink } from 'vue-router';
   import { getCarById } from '@/utilities/carUtils';
   import { Car } from '@/utilities/models/carModel';
@@ -8,6 +8,16 @@
 
   const route = useRoute();
   const router = useRouter();
+
+  const from = computed(() => {
+    const fromDate = (route.query.from as string|undefined)?.split('T');
+    if (fromDate) return {day: fromDate[0], hour: fromDate[1]};
+  });
+
+  const to = computed(() => {
+    const toDate = (route.query.to as string|undefined)?.split('T');
+    if (toDate) return {day: toDate[0], hour: toDate[1]};
+  });
 
   onMounted(async () => {
     try {
@@ -36,23 +46,29 @@
         <dt class="font-medium mt-8 md:mt-12 text-lg sm:text-xl md:text-2xl text-neutral-600">
           Termin wypożyczenia samochodu
         </dt>
-        <dd class="flex justify-between m-4 sm:m-6 text-base sm:text-lg md:text-xl">
-          <div>od <span class="font-medium">{{ route.query.from }}</span></div>
-          <div>do <span class="font-medium">{{ route.query.to }}</span></div>
+        <dd class="flex justify-between gap-8 m-4 sm:m-6 text-base sm:text-lg md:text-xl">
+          <div class="text-right">
+            <span class="block sm:inline-block">od <span class="font-medium">{{ from?.day }}</span></span>
+            <span class="inline-block ml-3">godz. {{ from?.hour }}</span>
+          </div>
+          <div class="text-right">
+            <span class="block sm:inline-block">do <span class="font-medium">{{ to?.day }}</span></span>
+            <span class="inline-block ml-3">godz. {{ to?.hour }}</span>
+          </div>
         </dd>
         <dt class="font-medium mt-8 md:mt-12 text-lg sm:text-xl md:text-2xl text-neutral-600">
           Płatność
         </dt>
-        <dd v-if="route.query.payment === 'stripe'" class="m-4 sm:m-6 text-base sm:text-lg md:text-xl">
+        <dd v-if="$route.query.payment === 'stripe'" class="m-4 sm:m-6 text-base sm:text-lg md:text-xl">
           Rezerwacja opłacona
           <span class="inline-block">
-            (zapłacono <span class="font-medium">{{ route.query.total_price }} ZŁ</span>)
+            (zapłacono <span class="font-medium">{{ $route.query.total_price }} ZŁ</span>)
           </span> 
         </dd>
         <dd v-else class="m-4 sm:m-6 text-base sm:text-lg md:text-xl">
           Rezerwację opłać na miejscu
           <span class="inline-block">
-            (kwota do zapłaty <span class="font-medium">{{ route.query.total_price }} ZŁ)</span>
+            (kwota do zapłaty <span class="font-medium">{{ $route.query.total_price }} ZŁ)</span>
           </span>
         </dd>
       </dl>

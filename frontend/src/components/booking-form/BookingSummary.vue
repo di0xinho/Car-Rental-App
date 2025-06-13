@@ -1,15 +1,24 @@
 <script setup lang="ts">
-  import type { PropType } from 'vue';
+  import { computed, type PropType } from 'vue';
   import { Car } from '@/utilities/models/carModel';
 
-  defineProps({
+  const props = defineProps({
     car: {type: Object as PropType<Car>, required: true},
     from: {type: String, required: true},
     to: {type: String, required: true},
     driver: {type: Boolean, required: true},
-    city: {type: String, required: true},
     totalHours: {type: Number, required: true},
     totalPrice: {type: Number, required: true}
+  });
+
+  const bookingFrom = computed(() => {
+    const [day, hour] = props.from.split('T');
+    return {day: day, hour: hour};
+  });
+
+  const bookingTo = computed(() => {
+    const [day, hour] = props.to.split('T');
+    return {day: day, hour: hour};
   });
 </script>
 
@@ -32,19 +41,21 @@
           </td>
         </tr>
         <tr>
-          <th scope="row" class="text-left py-3 font-normal text-neutral-500">
+          <th scope="row" class="text-left align-top py-3 font-normal text-neutral-500">
             Data rozpoczęcia
           </th>
-          <td class="text-right py-3 font-medium">
-            <span class="font-normal">od </span>{{ from }}
+          <td class="text-right py-3">
+            <span class="font-medium inline-block">{{ bookingFrom.day }}</span>
+            <span class="inline-block ml-3">godz. {{ bookingFrom.hour }}</span>
           </td>
         </tr>
         <tr>
-          <th scope="row" class="text-left py-3 font-normal text-neutral-500">
+          <th scope="row" class="text-left align-top py-3 font-normal text-neutral-500">
             Data zakończenia
           </th>
-          <td class="text-right py-3 font-medium">
-            <span class="font-normal">do </span>{{ to }}
+          <td class="text-right py-3">
+            <span class="font-medium inline-block">{{ bookingTo.day }}</span>
+            <span class="inline-block ml-3">godz. {{ bookingTo.hour }}</span>
           </td>
         </tr>
         <tr>
@@ -61,14 +72,6 @@
           </th>
           <td class="text-right py-3 font-medium">
             {{ driver ? 'Tak' : 'Nie' }}
-          </td>
-        </tr>
-        <tr>
-          <th scope="row" class="text-left py-3 font-normal text-neutral-500">
-            Miasto
-          </th>
-          <td class="text-right py-3 font-medium">
-            {{ city }}
           </td>
         </tr>
         <tr>

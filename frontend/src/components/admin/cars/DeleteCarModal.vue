@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref, type PropType, computed } from 'vue';
   import { Car } from '@/utilities/models/carModel';
-  import BinSvg from '../icons/BinSvg.vue';
+  import BinSvg from '@/components/icons/BinSvg.vue';
   import CarDetailsCard from '@/components/cars-collection/CarDetailsCard.vue';
   import { deleteCar } from '@/utilities/carUtils';
 

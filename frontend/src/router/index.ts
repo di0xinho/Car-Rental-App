@@ -64,7 +64,7 @@ const router = createRouter({
       component: () => import('../views/BookingView.vue'),
       beforeEnter: (to, from) => {
         console.log(to.query);
-        if (!to.query.car_id || !to.query.from || !to.query.to || !to.query.city) {
+        if (!to.query.car_id || !to.query.from || !to.query.to) {
           return {name: 'not-found'};
         }
         const { user } = useUser();
@@ -82,7 +82,7 @@ const router = createRouter({
       name: 'booking-success',
       component: () => import('../views/BookingSuccessView.vue'),
       beforeEnter: (to, from) => {
-        if (!to.query.car_id || !to.query.from || !to.query.to || !to.query.city || !to.query.payment || !to.query.total_price) {
+        if (!to.query.car_id || !to.query.from || !to.query.to || !to.query.payment || !to.query.total_price) {
           return {name: 'not-found'};
         }
         return true;
