@@ -11,6 +11,7 @@ export class User {
     public address: string,
     public dateOfBirth: string,
     public gender: string,
+    public isAdmin: boolean,
     public favorites: Car[],
     public avatar: string,
     public recommended_cluster: number

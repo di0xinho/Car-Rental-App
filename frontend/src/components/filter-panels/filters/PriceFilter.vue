@@ -3,9 +3,8 @@
 </script>
 
 <template>
-    <h3 class="text-sm text-neutral-600 my-4">CENA</h3>
-    <div class="my-8">
-      <input type="range" v-model="price" id="price" min="0" max="120" step="10" class="block my-3">
+    <div>
+      <input type="range" v-model="price" id="price" min="0" max="120" step="10" class="w-full block my-3">
       <label for="price">Max {{ price }} zł</label>
     </div>
 </template> 

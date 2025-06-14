@@ -16,10 +16,10 @@
 <template>
   <div class="flex justify-center items-center gap-16">
     <button @click="handleClickPage(activePage - 1)" class="hidden sm:block" :disabled="activePage <= 1">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M27 30L15 16L27 2" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M14 30L2 16L14 2" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22 2L12 12L22 22" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M11 2L1 12L11 22" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
     </button>
     <ul class="sm:w-sm md:w-lg flex justify-center gap-4 md:gap-8">
       <li v-if="activePage > 3"> <!-- First page -->
@@ -59,9 +59,9 @@
       </li>
     </ul>
     <button @click="handleClickPage(activePage + 1)" class="hidden sm:block" :disabled="activePage >= totalPages">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 30L17 16L5 2" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M18 30L30 16L18 2" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 2L12 12L2 22" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M13 2L23 12L13 22" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
   </div>

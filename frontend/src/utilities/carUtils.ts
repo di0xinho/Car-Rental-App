@@ -1,15 +1,16 @@
 import { Car } from "./models/carModel";
-import type { CarPreferences } from "./models/carModel";
+import type { CarPreferences, CarData } from "./models/carModel";
 
 export async function getCarsByPreferences (
   preferences: Partial<CarPreferences>,
   page: number,
   limit: number
 ) {
-  const {bodyType, minCapacity, maxPrice, fuelType, gearboxType, minYear, maxMileage} = preferences;
+  const {carMaker, bodyType, minCapacity, maxPrice, fuelType, gearboxType, minYear, maxMileage} = preferences;
   
   const params = new URLSearchParams();
 
+  if (carMaker) carMaker.forEach((maker) => params.append('make', maker));
   if (bodyType) bodyType.forEach((type) => params.append('bodyType', type));
   if (minCapacity) params.append('minCapacity', minCapacity.toString());
   if (maxPrice) params.append('maxPrice', maxPrice.toString());
@@ -50,4 +51,50 @@ export async function getRecommendedCars (clusterId?: number) {
     throw new Error(responseData.error);
   }
   return responseData as {success: boolean, message: string, data: Car[]}
+}
+
+export async function createCar (newCar: CarData) {
+  const url = import.meta.env.VITE_API_CREATE_CAR;
+  const response = await fetch(url, { 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newCar),
+    credentials: 'include'
+  });
+  const responseData = await response.json();
+  console.log('createCar response data: ', responseData);
+  if (!responseData.success) {
+    throw new Error(responseData.error);
+  }
+  return responseData as {success: boolean, message: string, data: Car};
+}
+
+export async function updateCar (carId: string, updatedCar: CarData) {
+  const url = import.meta.env.VITE_API_UPDATE_CAR + carId;
+  const response = await fetch(url, { 
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedCar),
+    credentials: 'include'
+  });
+  const responseData = await response.json();
+  console.log('updateCar response data: ', responseData);
+  if (!responseData.success) {
+    throw new Error(responseData.error);
+  }
+  return responseData as {success: boolean, message: string, data: Car};
+}
+
+export async function deleteCar (carId: string) {
+  const url = import.meta.env.VITE_API_DELETE_CAR + carId;
+  const response = await fetch(url, { 
+    method: 'DELETE',
+    credentials: 'include'
+  });
+  const responseData = await response.json();
+  console.log('deleteCar response data: ', responseData);
+  if (!responseData.success) {
+    throw new Error(responseData.error);
+  }
+  return responseData as {success: boolean, message: string, data: Car};
 }

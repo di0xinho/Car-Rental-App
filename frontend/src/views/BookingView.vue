@@ -15,14 +15,13 @@
 
   const from = ref<string>(route.query.from as string);
   const to = ref<string>(route.query.to as string);
-  const city = ref<string>(route.query.city as string);
   const driver = ref<boolean>(false);
   const car = ref<Car|null>(null);
 
   const totalHours = computed(() => {
     const fromTimestamp =  Date.parse(from.value);
     const toTimestamp =  Date.parse(to.value);
-    return (toTimestamp - fromTimestamp) / 3600000;
+    return Math.ceil((toTimestamp - fromTimestamp) / 3600000);
   });
 
   const totalPrice = computed(() => {
@@ -34,8 +33,8 @@
   const policyAccepted = ref(false);
   let detailsAccepted = false;
 
-  watch([from, to, city], ([newFrom, newTo, newCity]) => {
-    router.replace({name: 'booking', query: {car_id: car.value!._id, from: newFrom, to: newTo, city: newCity}});
+  watch([from, to], ([newFrom, newTo]) => {
+    router.replace({name: 'booking', query: {car_id: car.value!._id, from: newFrom, to: newTo}});
   })
 
   onMounted(async () => {
@@ -63,8 +62,10 @@
       totalHours: totalHours.value,
       totalPrice: totalPrice.value,
       driver: driver.value,
-      bookedTimeSlots: {from: from.value, to: to.value},
-      city: city.value
+      bookedTimeSlots: {
+        from: from.value.replace('T', ' '),
+        to: to.value.replace('T', ' ')
+      },
     }
 
     const successQueryParams = new URLSearchParams();
@@ -73,7 +74,6 @@
     successQueryParams.append('total_price', totalPrice.value.toString());
     successQueryParams.append('from', from.value);
     successQueryParams.append('to', to.value);
-    successQueryParams.append('city', city.value);
 
     let success_url = '/rezerwacja/dodano-rezerwacje?' + successQueryParams;
     let cancel_url = '/rezerwacja/zakonczona-niepowodzeniem';
@@ -114,7 +114,7 @@
           Uzupełnij dane dotyczące rezerwacji.
         </h4>
         <div class="my-8">
-          <BookingDetailsForm v-model:from="from" v-model:to="to" v-model:city="city" v-model:driver="driver" :disabled="step !== 'details'" />
+          <BookingDetailsForm v-model:from="from" v-model:to="to" v-model:driver="driver" :disabled="step !== 'details'" />
         </div>
         <button type="button" @click="handleAcceptDetails" class="btn block ml-auto" :disabled="step !== 'details'">
           Potwierdzam i przechodzę do wyboru płatności
@@ -146,7 +146,7 @@
       </div>
     <!-- Booking Summary -->
     <div v-if="car" class="row-[1] md:col-start-2 md:row-[1_/_span_3] min-w-xs px-4 py-6">
-      <BookingSummary :car="car" :from="from" :to="to" :driver="driver" :city="city" :total-hours="totalHours" :total-price="totalPrice"/>
+      <BookingSummary :car="car" :from="from" :to="to" :driver="driver" :total-hours="totalHours" :total-price="totalPrice"/>
     </div>
   </section>
 </template>

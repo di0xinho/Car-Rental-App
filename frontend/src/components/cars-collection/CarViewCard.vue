@@ -10,7 +10,7 @@
 </script>
 
 <template>
-  <div class="card min-w-xs" :class="cardBackground ?? ''">
+  <div class="card min-w-2xs" :class="cardBackground ?? ''">
     <img 
       :src="car.imageUrl"
       alt="car in our offer"

@@ -1,19 +1,21 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
   import CarPreferencesFilterPanel from '@/components/filter-panels/CarPreferencesFilterPanel.vue';
-  import DatePlaceFilterPanel from '@/components/filter-panels/DatePlaceFilterPanel.vue';
+  import DateFilterPanel from '@/components/filter-panels/DateFilterPanel.vue';
   import CarRentCard from '@/components/cars-collection/CarRentCard.vue';
   import PreferencesWizard from '@/components/preferences-wizard/PreferencesWizard.vue';
   import ListPaginator from '@/components/paginator/ListPaginator.vue';
   import useCarPreferences from '@/composables/useCarPreferences';
   import { Car } from '@/utilities/models/carModel';
   import { getCarsByPreferences } from '@/utilities/carUtils';
+    import { dateToNormalizedString } from '@/utilities/convertDateFormat';
 
   const { preferences } = useCarPreferences();
-
-  const city = ref('');
-  const dateFrom = ref('2025-03-01');
-  const dateTo = ref('2025-04-01');
+  
+  // date/time format accepted by API "YYYY-MM-DD HH:mm"
+  const currentDateString = dateToNormalizedString(new Date(), "T");
+  const dateFrom = ref(currentDateString);
+  const dateTo = ref(currentDateString);
 
   const cars = ref<Car[]>([]);
   const page = ref(1);
@@ -71,12 +73,12 @@
         </div>
       </div>
       <div class="col-start-2 mx-2 xs:mx-6 xl:mx-8 px-6 sm:px-8 py-8 xs:justify-self-start bg-card-bg text-dark-txt">
-        <DatePlaceFilterPanel v-model:city="city" v-model:date-from="dateFrom" v-model:date-to="dateTo" />
+        <DateFilterPanel v-model:date-from="dateFrom" v-model:date-to="dateTo" />
       </div>
       <div class="mx-2 xs:mx-6 my-6 xl:m-8">
         <ul class="grid grid-cols-[repeat(auto-fill,_minmax(20rem,_max-content))] gap-6 xl:gap-8 justify-center">
           <li v-for="(car, index) in cars" :key="index" class="max-w-md">
-            <CarRentCard :car="car" :time-slot="{from: dateFrom, to: dateTo}" :city="city"/>
+            <CarRentCard :car="car" :time-slot="{from: dateFrom, to: dateTo}"/>
           </li>
         </ul>
       </div>

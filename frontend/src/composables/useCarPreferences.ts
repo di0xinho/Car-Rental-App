@@ -2,6 +2,7 @@ import { reactive, ref } from "vue";
 import type { CarPreferences } from "@/utilities/models/carModel";
 
 const preferences: CarPreferences = reactive({
+  carMaker: [],
   bodyType: [],
   minCapacity: 4,
   maxPrice: 100,
@@ -15,6 +16,7 @@ const preferences: CarPreferences = reactive({
 const recommendedCarsCluster = ref(0);
 
 function setCarPreferences (newPreferences: Partial<CarPreferences>) {
+  if (newPreferences.carMaker) preferences.carMaker = newPreferences.carMaker;
   if (newPreferences.bodyType) preferences.bodyType = newPreferences.bodyType;
   if (newPreferences.minCapacity) preferences.minCapacity = newPreferences.minCapacity;
   if (newPreferences.maxPrice) preferences.maxPrice = newPreferences.maxPrice;

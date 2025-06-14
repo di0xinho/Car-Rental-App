@@ -12,6 +12,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@googlemaps/js-api-loader": "^1.16.8",
     "@stripe/stripe-js": "^7.0.0",
     "@tailwindcss/vite": "^4.0.6",
     "swrv": "^1.1.0",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@azure/static-web-apps-cli": "^2.0.4",
     "@tsconfig/node22": "^22.0.0",
+    "@types/google.maps": "^3.58.1",
     "@types/node": "^22.13.1",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/eslint-config-typescript": "^14.3.0",

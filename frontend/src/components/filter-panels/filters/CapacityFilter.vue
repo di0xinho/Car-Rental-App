@@ -3,7 +3,6 @@
 </script>
 
 <template>
-  <h3 class="text-sm text-neutral-600 my-4">ILOŚĆ MIEJSC</h3>
   <div>
     <div class="my-8">
       <input type="radio" id="capacity-two" value="2" v-model="minCapacity">

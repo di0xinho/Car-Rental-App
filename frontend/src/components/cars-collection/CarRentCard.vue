@@ -7,7 +7,6 @@
     car: {type: Object as PropType<Car>, required: true},
     backgroundClass: {type: String, default: 'bg-card-bg'},
     timeSlot: {type: Object as PropType<{from: string, to: string}>, required: true},
-    city: {type: String, required: true}
   });
 </script>
 
@@ -45,7 +44,7 @@
         <h4 class="text-xl font-semibold">{{ car.hourlyPrice }} ZŁ</h4>
         <h5 class="text-sm text-neutral-500">za godzinę</h5>
       </div>
-      <RouterLink :to="{name: 'booking', query: {car_id: car._id, from: timeSlot.from, to: timeSlot.to, city: city} }" class="btn text-light-txt">
+      <RouterLink :to="{name: 'booking', query: {car_id: car._id, from: timeSlot.from, to: timeSlot.to} }" class="btn text-light-txt">
         Wynajmij
       </RouterLink>
     </div>

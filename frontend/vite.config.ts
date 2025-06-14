@@ -25,7 +25,10 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('/views/user/')) {
-            return 'user-group';
+            return 'user';
+          }
+          if (id.includes('/views/admin/')) {
+            return 'admin';
           }
           return null;
         },

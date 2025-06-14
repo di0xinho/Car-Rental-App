@@ -70,7 +70,7 @@
     <h2 class="text-2xl sm:text-4xl lg:text-5xl text-neutral-500 mb-2">
       Odpowiedz na kilka pytań.
     </h2>
-    <h3 class="text-xl sm:text-3xl text-4xl text-neutral-500">
+    <h3 class="text-xl sm:text-3xl lg:text-4xl text-neutral-500">
       Pozwól nam wybrać auto najlepiej dopasowane do Twoich potrzeb.
     </h3>
     <button @click="openPreferencesWizard" class="btn mt-10 text-light-txt block ml-auto">

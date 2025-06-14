@@ -7,9 +7,17 @@ import LoginView from '@/views/LoginView.vue';
   // ( https://router.vuejs.org/guide/advanced/lazy-loading.html )
 import UserMainView from '@/views/user/UserMainView.vue';
 import UserBookingsView from '@/views/user/UserBookingsView.vue';
-import UserAnaliticsView from '@/views/user/UserAnaliticsView.vue';
+import UserHistoryView from '@/views/user/UserHistoryView.vue';
 import UserSettingsView from '@/views/user/UserSettingsView.vue';
 import UserRentCarView from '@/views/user/UserRentCarView.vue';
+
+import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
+import AdminCarsView from '@/views/admin/AdminCarsView.vue';
+import AdminBookingsView from '@/views/admin/AdminBookingsView.vue';
+import AdminRentsView from '@/views/admin/AdminRentsView.vue';
+import AdminHistoryView from '@/views/admin/AdminHistoryView.vue';
+import AdminAddCar from '@/views/admin/AdminAddCar.vue';
+import AdminUpdateCar from '@/views/admin/AdminUpdateCar.vue';
 
 import useUser from '@/composables/useUser';
 
@@ -57,7 +65,7 @@ const router = createRouter({
       component: () => import('../views/BookingView.vue'),
       beforeEnter: (to, from) => {
         console.log(to.query);
-        if (!to.query.car_id || !to.query.from || !to.query.to || !to.query.city) {
+        if (!to.query.car_id || !to.query.from || !to.query.to) {
           return {name: 'not-found'};
         }
         const { user } = useUser();
@@ -75,7 +83,7 @@ const router = createRouter({
       name: 'booking-success',
       component: () => import('../views/BookingSuccessView.vue'),
       beforeEnter: (to, from) => {
-        if (!to.query.car_id || !to.query.from || !to.query.to || !to.query.city || !to.query.payment || !to.query.total_price) {
+        if (!to.query.car_id || !to.query.from || !to.query.to || !to.query.payment || !to.query.total_price) {
           return {name: 'not-found'};
         }
         return true;
@@ -134,7 +142,7 @@ const router = createRouter({
       children: [
         { path: '', name: 'user-main', component: UserMainView },
         { path: 'zamowienia', name: 'user-bookings', component: UserBookingsView },
-        { path: 'analityka', name: 'user-analitics', component: UserAnaliticsView },
+        { path: 'historia', name: 'user-history', component: UserHistoryView },
         { path: 'wynajem', name: 'user-rent', component: UserRentCarView },
         { path: 'ustawienia', name: 'user-settings', component: UserSettingsView },
       ],
@@ -148,9 +156,19 @@ const router = createRouter({
       },
     },
     {
-      path: '/admin/dashboard',
-      name: 'admin-dashboard',
-      component: () => import('../views/admin/AdminDashboardView.vue'),
+      path: '/admin',
+      children: [
+        {path: '', name: 'admin-dashboard', component: AdminDashboardView},
+        {path: 'samochody', name: 'admin-cars', component: AdminCarsView},
+        {path: 'samochody/nowy', name: 'admin-add-car', component: AdminAddCar},
+        {path: 'samochody/edytuj/:id', name: 'admin-edit-car', component: AdminUpdateCar},
+        {path: 'rezerwacje', name: 'admin-bookings', component: AdminBookingsView},
+        {path: 'historia', name: 'admin-history', component: AdminHistoryView},
+        {path: 'wynajem', name: 'admin-rents', component: AdminRentsView},
+      ],
+      beforeEnter: (to, from) => {
+        console.log('entering ADMIN ROUTES');
+      },
       meta: {
         layout: 'AdminLayout'
       }
