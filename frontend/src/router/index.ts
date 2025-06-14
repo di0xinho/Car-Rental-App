@@ -15,6 +15,7 @@ import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
 import AdminCarsView from '@/views/admin/AdminCarsView.vue';
 import AdminBookingsView from '@/views/admin/AdminBookingsView.vue';
 import AdminRentsView from '@/views/admin/AdminRentsView.vue';
+import AdminHistoryView from '@/views/admin/AdminHistoryView.vue';
 import AdminAddCar from '@/views/admin/AdminAddCar.vue';
 import AdminUpdateCar from '@/views/admin/AdminUpdateCar.vue';
 
@@ -162,6 +163,7 @@ const router = createRouter({
         {path: 'samochody/nowy', name: 'admin-add-car', component: AdminAddCar},
         {path: 'samochody/edytuj/:id', name: 'admin-edit-car', component: AdminUpdateCar},
         {path: 'rezerwacje', name: 'admin-bookings', component: AdminBookingsView},
+        {path: 'historia', name: 'admin-history', component: AdminHistoryView},
         {path: 'wynajem', name: 'admin-rents', component: AdminRentsView},
       ],
       beforeEnter: (to, from) => {
