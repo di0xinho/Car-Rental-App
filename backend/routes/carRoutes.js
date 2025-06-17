@@ -442,25 +442,26 @@ router.get("/get-favorites", authMiddleware, asyncWrapper(async (req, res) => {
   // Pobranie userId z ciasteczek
   const userId = req.user.userId;
 
-  // Pobranie użytkownika z bazy danych
-  const user = await User.findById(userId);
+  // Pobieramy użytkownika i jednocześnie populujemy dane samochodów z pola favorites
+  const user = await User.findById(userId).populate("favorites");
 
   // Jeśli użytkownik nie został znaleziony w bazie danych, to zwracany jest odpowiedni komunikat
   if (!user) {
     throw new NotFoundError("Nie znaleziono użytkownika");
   }
 
-  // Treść komunikatu dodawanego do odpowiedzi serwera jest różna w zależności od tego czy cokolwiek znajduje się na liście ulubionych
-  let message =
-    Array.isArray(user.favorites) && user.favorites.length
-      ? "Lista ulubionych została zwrócona"
-      : "Lista ulubionych jest pusta";
+  const favorites = user.favorites || [];
 
-  // W odpowiedzi zwracamy listę ulubionych; komunikat różni się w zależności od tego, czy lista jest pusta czy znajduje się w niej przynajmniej jeden element
+  // Treść komunikatu dodawanego do odpowiedzi serwera jest różna w zależności od tego czy cokolwiek znajduje się na liście ulubionych
+  const message = favorites.length
+    ? "Lista ulubionych została zwrócona"
+    : "Lista ulubionych jest pusta";
+
+    // W odpowiedzi zwracamy listę ulubionych; komunikat różni się w zależności od tego, czy lista jest pusta czy znajduje się w niej przynajmniej jeden element
   res.status(StatusCodes.OK).json({
-    message: message,
+    message,
     success: true,
-    favoriteCars: user.favorites,
+    favoriteCars: favorites, // pełne dane samochodów
   });
 }));
 
