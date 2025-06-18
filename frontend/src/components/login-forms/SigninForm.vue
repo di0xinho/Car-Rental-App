@@ -56,7 +56,7 @@
         Zgadzam się z regulaminem i polityką firmy
       </label>
     </div>
-    <button type="submit" class="my-5 w-full btn">
+    <button type="submit" class="my-8 w-full btn">
       Zarejestruj się
     </button>
   </form>

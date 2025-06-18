@@ -9,7 +9,6 @@ import UserMainView from '@/views/user/UserMainView.vue';
 import UserBookingsView from '@/views/user/UserBookingsView.vue';
 import UserHistoryView from '@/views/user/UserHistoryView.vue';
 import UserSettingsView from '@/views/user/UserSettingsView.vue';
-import UserRentCarView from '@/views/user/UserRentCarView.vue';
 
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
 import AdminCarsView from '@/views/admin/AdminCarsView.vue';
@@ -143,7 +142,6 @@ const router = createRouter({
         { path: '', name: 'user-main', component: UserMainView },
         { path: 'zamowienia', name: 'user-bookings', component: UserBookingsView },
         { path: 'historia', name: 'user-history', component: UserHistoryView },
-        { path: 'wynajem', name: 'user-rent', component: UserRentCarView },
         { path: 'ustawienia', name: 'user-settings', component: UserSettingsView },
       ],
       beforeEnter: (to, from) => {

@@ -28,17 +28,19 @@ export class Booking {
     public transactionId: string,
     public driver: boolean,
     public isPaid: boolean,
-    public rent: {
-      from: string,
-      to: string,
-      carMileageAtStart: number,
-      carMileageAtEnd: number
-    },
+    public rent: Rent,
     public status: BookingStatus
   ) {}
 }
 
 export type BookingStatus = 'awaiting'|'active'|'canceled'|'missing'|'complete';
+
+export type Rent = {
+  from: string,
+  to: string,
+  carMileageAtStart: number,
+  carMileageAtEnd: number
+}
 
 export type CreateBookingDetails = {
   carId: string,
