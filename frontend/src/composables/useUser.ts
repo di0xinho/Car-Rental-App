@@ -150,6 +150,14 @@ async function updateUser (firstName: string, surname: string, phoneNumber: stri
   }
 }
 
+function setUserFavorites (favorites: string[]) {
+  if (user.value) {
+    user.value.favorites = favorites;
+  } else {
+    throw new Error('Nie udało się zaktualizowac listy ulubionych samochodów. Użytkownik nie istnieje.');
+  }
+}
+
 function fetchUserData (userId: string) {
   console.log('Fetching User Data.');
 }
@@ -164,6 +172,7 @@ export default function useUser() {
     logInUser,
     logOutUser,
     updateUser,
-    fetchUserData
+    fetchUserData,
+    setUserFavorites
   };
 }

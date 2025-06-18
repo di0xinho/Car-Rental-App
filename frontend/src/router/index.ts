@@ -109,9 +109,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/samochody/:model',
-      name: 'cars-model',
-      component: () => import('../views/CarModelView.vue'),
+      path: '/samochody/:id',
+      name: 'car-details',
+      component: () => import('../views/CarDetailsView.vue'),
       meta: {
         layout: 'DefaultLayout'
       },

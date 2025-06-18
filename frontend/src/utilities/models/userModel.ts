@@ -1,5 +1,3 @@
-import { Car } from "./carModel";
-
 export class User {
   constructor (
     public _id: string,
@@ -12,7 +10,7 @@ export class User {
     public dateOfBirth: string,
     public gender: string,
     public isAdmin: boolean,
-    public favorites: Car[],
+    public favorites: string[],
     public avatar: string,
     public recommended_cluster: number
   ) {}
