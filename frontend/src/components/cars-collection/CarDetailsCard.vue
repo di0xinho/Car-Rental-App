@@ -16,7 +16,7 @@
 </script>
 
 <template>
-  <div class="relative bg-light-secondary-bg rounded-lg overflow-hidden p-2">
+  <div class="relative bg-light-tertiary shadow-[6px_4px_20px_#00000050] rounded-lg overflow-hidden p-2">
     <div class="flex gap-2">
       <!-- Image to be expanded after clicking a button -->
       <div class="basis-2/5 h-24">

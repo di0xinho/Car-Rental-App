@@ -22,7 +22,6 @@ export async function getCarsByPreferences (
   if (limit) params.append('limit', limit.toString());
 
   const url = import.meta.env.VITE_API_GET_CARS + '?' + params;
-  console.log('New request to: ', url);
   const response = await fetch(url);
   const responseData = await response.json();
   if (!responseData.success) {
@@ -44,7 +43,6 @@ export async function getCarById (id: string) {
 export async function getRecommendedCars (clusterId?: number) {
   if (!clusterId) clusterId = 0;
   const url = import.meta.env.VITE_API_GET_RECOMMENDED_CARS + clusterId.toString();
-  console.log('fetching recommended cars from: ', url);
   const response = await fetch(url);
   const responseData = await response.json();
   if (!responseData.success) {
@@ -97,4 +95,31 @@ export async function deleteCar (carId: string) {
     throw new Error(responseData.error);
   }
   return responseData as {success: boolean, message: string, data: Car};
+}
+
+export async function getFavoriteCars () {
+  const url = import.meta.env.VITE_API_GET_FAVORITE_CARS;
+  const response = await fetch(url, { 
+    method: 'GET',
+    credentials: 'include'
+  });
+  const responseData = await response.json();
+  if (!responseData.success) {
+    throw new Error(responseData.error);
+  }
+  return responseData as {success: boolean, message: string, favoriteCars: Car[]};
+}
+
+export async function toggleCarFavorite (carId: string) {
+  //  Important!!! Anylysis of endpoint "car/add-to-favorites/:carId" shows that this endpoint also removes car from favorites array if car is already present in the array. So I name this function toggleCarFavorite !!!
+  const url = import.meta.env.VITE_API_TOGGLE_CAR_FAVORITE + carId;
+  const response = await fetch(url, { 
+    method: 'PATCH',
+    credentials: 'include'
+  });
+  const responseData = await response.json();
+  if (!responseData.success) {
+    throw new Error(responseData.error);
+  }
+  return responseData as {success: boolean, message: string, favoriteCars: string[]};
 }

@@ -19,7 +19,7 @@
       Podaj maksymalny przebieg auta.
     </h3>
     <div class="flex flex-col md:flex-row lg:mx-8 my-4 xs:my-6 md:my-8 gap-y-1 gap-x-8 lg:gap-x-12">
-      <input type="range" v-model="mileage" id="mileage" min="50000" max="250000" step="10000" class="basis-1/2">
+      <input type="range" v-model="mileage" id="mileage" min="50000" max="300000" step="10000" class="basis-1/2">
       <label for="mileage">Maks. przebieg: {{ mileage }} km</label>
     </div>
     <h3 class="pref-wiz-header">

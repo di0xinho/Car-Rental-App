@@ -40,21 +40,13 @@
             <line y1="1" x2="100" y2="1" stroke="#EEEEEE" stroke-width="2" vector-effect="non-scaling-stroke"/>
           </svg>
         </div>
-        <div class="flex justify-between my-6">
-          <button type="button" class="cursor-pointer">
-            Sign in with Google
-          </button>
-          <button type="button" class="cursor-pointer">
-            Sign in with Apple
-          </button>
-        </div>
-        <p v-if="$route.query.mode === 'login'" class="text-center">
+        <p v-if="$route.query.mode === 'login'" class="my-6 text-center">
           Nie masz konta?
           <button @click="$router.replace({name: 'login', query: {mode: 'signin'}})" class="ml-2 cursor-pointer text-sky-800">
             Zarejestruj się
           </button>
         </p>
-        <p v-if="$route.query.mode === 'signin'" class="text-center">
+        <p v-if="$route.query.mode === 'signin'" class="my-6 text-center">
           Masz konto?
           <button @click="$router.replace({name: 'login', query: {mode: 'login'}})" class="ml-2 cursor-pointer text-sky-800">
             Zaloguj się

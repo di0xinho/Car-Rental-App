@@ -2,7 +2,6 @@
   import HomeSvg from '@/components/icons/HomeSvg.vue';
   import CallendarSvg from '@/components/icons/CallendarSvg.vue';
   import ChartSvg from '@/components/icons/ChartSvg.vue';
-  import CarSvg from '@/components/icons/CarSvg.vue';
   import GearSvg from '@/components/icons/GearSvg.vue';
 
   defineProps({
@@ -30,12 +29,6 @@
         <RouterLink :to="{name: 'user-history'}" class="flex gap-3 items-center p-3 lg:px-8 rounded-l-full">
           <ChartSvg />
           <span :class="linkTextClass">Historia wynajmu</span>
-        </RouterLink>
-      </li>
-      <li>
-        <RouterLink :to="{name: 'user-rent'}" class="flex gap-3 items-center p-3 lg:px-8 rounded-l-full">
-          <CarSvg />
-          <span :class="linkTextClass">Wynajem</span>
         </RouterLink>
       </li>
       <li>

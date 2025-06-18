@@ -4,6 +4,7 @@
   import { Booking, type BookingStatus } from '@/utilities/models/bookingModel';
   import BookingDetails from '@/components/user/bookings/BookingDetails.vue';
   import BookingsTable from '@/components/user/bookings/BookingsTable.vue';
+  import BookingsStatusLegend from '@/components/user/bookings/BookingsStatusLegend.vue';
 
   const bookings = ref<Booking[]>([]);
 
@@ -35,6 +36,10 @@
     </h2>
     <!-- Tabela Rezerwacji -->
     <BookingsTable :bookings="bookings" :selected-booking-index="selectedBookingIndex" @select-booking="selectedBookingIndex = $event"/>
+    <div>
+      <h3 class="text-neutral-500 mb-2">Status rezerwacji:</h3>
+      <BookingsStatusLegend />
+    </div>
     <!-- Szczegóły wybranej rezerwacji -->
     <section class="p-4 xl:p-8 bg-light-bg rounded-lg grow">
       <h3 class="text-xl xs:text-2xl my-4 mx-8">Szczegóły rezerwacji</h3>

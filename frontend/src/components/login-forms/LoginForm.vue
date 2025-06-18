@@ -12,7 +12,6 @@
 
   const email = ref('');
   const password = ref('');
-  const rememberMe = ref(false);
 
   async function handleLogIn() {
     try {
@@ -39,15 +38,13 @@
     <div class="my-5">
       <div class="flex justify-between items-center">
         <label for="password">Hasło</label>
-        <button type="button" class="text-xs cursor-pointer">Zapomniałem hasła</button>
+        <button type="button" class="text-xs cursor-pointer" disabled>
+          Zapomniałem hasła
+        </button>
       </div>
       <input id="password" type="password" v-model="password" placeholder="Wpisz hasło" class="input">
     </div>
-    <div class="my-5">
-      <input id="remember" type="checkbox" v-model="rememberMe" class="align-middle">
-      <label for="remember" class="text-xs ml-2">Zapamiętaj na 30 dni</label>
-    </div>
-    <button type="submit" class="my-5 w-full btn">
+    <button type="submit" class="my-8 w-full btn">
       Zaloguj się
     </button>
   </form>

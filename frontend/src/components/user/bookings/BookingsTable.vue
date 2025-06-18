@@ -27,7 +27,7 @@
           <col class="w-20 xs:w-26"/>
           <col class="w-16 hidden sm:table-column"/>
           <col class="w-8 lg:w-20 hidden xs:table-column" />
-          <col class="w-8 lg:w-16" />
+          <col class="w-8 lg:w-16"/>
         </colgroup>
         <thead>
           <tr class="bg-gray-100">
