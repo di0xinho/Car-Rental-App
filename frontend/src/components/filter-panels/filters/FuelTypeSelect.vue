@@ -16,7 +16,7 @@
 </script>
 
 <template>
- <div class="relative bg-light-bg group">
+ <div class="relative bg-light-bg group text-black">
     <button @click="openOptions = !openOptions" class="w-full flex gap-4 items-center justify-between p-4">
       <span class="max-w-[calc(100%_-_36px)] truncate">
         {{ label }}

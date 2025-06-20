@@ -28,51 +28,55 @@
 </script>
 
 <template>
-  <div>
-    <h3>ID rezerwacji: {{ bookingId }}</h3>
-    <form id="cancel-booking-form" @submit.prevent="handleSetBookingStatus">
-      <fieldset class="my-8">
-        <legend class="block text-sm text-neutral-600 my-8">ZMIEŃ STATUS REZERWACJI <span>(wybierz opcję z listy)</span></legend>
+  <div class="p-4 sm:p-8 border rounded-lg border-gray-300">
+    <h3 class="text-neutral-600">ID rezerwacji: {{ bookingId }}</h3>
+    <form id="cancel-booking-form" @submit.prevent="handleSetBookingStatus" class="my-12">
+      <fieldset>
+        <legend class="block text-sm text-neutral-600">
+          ZMIEŃ STATUS REZERWACJI <span class="inline-block">(wybierz opcję z listy)</span>
+        </legend>
         <!-- canceled -->
-        <div class="my-4">
+        <div class="my-4 mx-4">
           <input id="canceled" value="canceled" type="radio" required v-model="status">
           <label for="canceled" class="ml-3">
             Rezerwacja anulowana przez użytkownika
           </label>
         </div>
         <!-- missing -->
-        <div class="my-4">
+        <div class="my-4 mx-4">
           <input id="missing" value="missing" type="radio" required v-model="status">
           <label for="missing" class="ml-3">
-            Użytkownik nie odebrał samochodu <span>(rezerwacja nie została anulowana)</span>
+            Brak wynajmu (rezerwacja nie została anulowana)
           </label>
         </div>
         <!-- awaiting -->
-        <div class="my-4">
+        <div class="my-4 mx-4">
           <input id="awaiting" value="awaiting" type="radio" required v-model="status">
           <label for="awaiting" class="ml-3">
             Rezerwacja (oczekuje na wynajem)
           </label>
         </div>
         <!-- active -->
-        <div class="my-4">
+        <div class="my-4 mx-4">
           <input id="active" value="active" type="radio" required v-model="status">
           <label for="active" class="ml-3">
-            Wynajem (trwające wypożyczenie samochodu)
+            Wynajem (trwający wynajem samochodu)
           </label>
         </div>
         <!-- complete -->
-        <div class="my-4">
+        <div class="my-4 mx-4">
           <input id="complete" value="complete" type="radio" required v-model="status">
           <label for="complete" class="ml-3">
-            Zakończona (zakończony proces rezerwacji i wynajmu)
+            Zakończona (zakończony wynajem samochodu)
           </label>
         </div>
       </fieldset>
     </form>
-    <div class="flex gap-8">
-      <button type="button" @click="$emit('close')">Anuluj</button>
-      <button type="submit" form="cancel-booking-form">
+    <div class="flex gap-8 justify-end">
+      <button type="button" @click="$emit('close')" class="px-4 py-1 border rounded-full">
+        Anuluj
+      </button>
+      <button type="submit" form="cancel-booking-form" class="btn-secondary">
         Zmień status rezerwacji
       </button>
     </div>

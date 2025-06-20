@@ -52,5 +52,5 @@
 </script>
 
 <template>
-  <div id="map" class="h-full w-full"></div>
+  <div id="map" class="h-full w-full min-h-80"></div>
 </template>

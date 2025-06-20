@@ -3,8 +3,8 @@
 </script>
 
 <template>
-  <div class="h-screen flex flex-col gap-8">
-    <header class="py-8 px-6 lg:px-16 flex justify-between items-center gap-16 bg-light-secondary-bg dark:bg-dark-secondary-bg">
+  <div class="h-screen flex flex-col gap-8 dark:text-light-txt">
+    <header class="py-8 px-4 sm:px-8 lg:px-16 flex justify-between items-center gap-12 bg-light-secondary-bg dark:bg-dark-secondary-bg">
       <RouterLink :to="{name: 'home'}" class="text-dominant-primary text-2xl sm:text-3xl">
         CARENT
       </RouterLink>

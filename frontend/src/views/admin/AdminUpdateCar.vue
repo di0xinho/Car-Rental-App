@@ -86,7 +86,7 @@
 </script>
 
 <template>
-  <div class="mx-8 lg:mx-16 my-16 flex justify-between">
+  <div class="mx-4 sm:mx-8 lg:mx-16 my-16 flex justify-between">
     <h1 class="text-xl xs:text-2xl">Edytuj samochód</h1>
     <button @click="$router.back">
       <span class="text-xl mx-2">&#10229;</span>
@@ -94,7 +94,7 @@
     </button>
   </div>
   <!-- Edit form -->
-  <section v-if="status === 'edit'" class="mx-8 my-16 border border-gray-300 bg-gray-100 p-8 rounded-lg">
+  <section v-if="status === 'edit'" class="mx-4 sm:mx-8 my-16 border border-gray-300 bg-gray-100 p-4 sm:p-8 rounded-lg">
     <CarForm 
       v-model:make="make"
       v-model:model="model"
@@ -111,9 +111,9 @@
       id="car-form"
       @submit.prevent="handleUpdateCar"
     />
-    <div class="mt-8 w-max ml-auto">
-      <button type="submit" form="car-form" class="btn">ZAKTUALIZUJ PARAMETRY SAMOCHODU</button>
-    </div>
+    <button type="submit" form="car-form" class="block ml-auto mt-8 mb-4 btn">
+      ZAKTUALIZUJ PARAMETRY SAMOCHODU
+    </button>
   </section>
   <!-- Car doesn't exist -->
   <div v-if="status === 'missing'" class="max-w-2xl p-8 mx-auto my-32">

@@ -10,7 +10,6 @@ import UserBookingsView from '@/views/user/UserBookingsView.vue';
 import UserHistoryView from '@/views/user/UserHistoryView.vue';
 import UserSettingsView from '@/views/user/UserSettingsView.vue';
 
-import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
 import AdminCarsView from '@/views/admin/AdminCarsView.vue';
 import AdminBookingsView from '@/views/admin/AdminBookingsView.vue';
 import AdminRentsView from '@/views/admin/AdminRentsView.vue';
@@ -156,7 +155,7 @@ const router = createRouter({
     {
       path: '/admin',
       children: [
-        {path: '', name: 'admin-dashboard', component: AdminDashboardView},
+        {path: '', name: 'admin-dashboard', redirect: { name: 'admin-rents' }},
         {path: 'samochody', name: 'admin-cars', component: AdminCarsView},
         {path: 'samochody/nowy', name: 'admin-add-car', component: AdminAddCar},
         {path: 'samochody/edytuj/:id', name: 'admin-edit-car', component: AdminUpdateCar},
@@ -165,7 +164,10 @@ const router = createRouter({
         {path: 'wynajem', name: 'admin-rents', component: AdminRentsView},
       ],
       beforeEnter: (to, from) => {
-        console.log('entering ADMIN ROUTES');
+        const { user } = useUser();
+        if (!user.value) return {name: 'login'};
+        if (!user.value?.isAdmin) return {name: 'not-found'};
+        return true;
       },
       meta: {
         layout: 'AdminLayout'

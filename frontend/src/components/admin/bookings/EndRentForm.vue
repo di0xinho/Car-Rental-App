@@ -34,23 +34,25 @@
 </script>
 
 <template>
-  <div>
-    <h3>ID rezerwacji: {{ bookingId }}</h3>
-    <form id="end-rent-form" @submit.prevent="handleEndRent">
+  <div class="p-4 sm:p-8 border rounded-lg border-gray-300">
+    <h3 class="text-neutral-600">ID rezerwacji: {{ bookingId }}</h3>
+    <form id="end-rent-form" @submit.prevent="handleEndRent" class="my-12">
       <div>
-        <label for="rent-start-date" class="block text-sm text-neutral-600 my-8">
-          DATA ROZPOCZĘCIA WYNAJMU
+        <label for="rent-end-date" class="block text-sm text-neutral-600 my-4">
+          DATA ZAKOŃCZENIA WYNAJMU
         </label>
-        <input id="rent-start-date" type="datetime-local" required v-model="dateTo" class="block w-full px-4 py-2 my-8 outline-none bg-light-bg">
+        <input id="rent-end-date" type="datetime-local" required v-model="dateTo" class="block w-full px-4 py-2 my-4 outline-none bg-light-bg">
       </div>
       <div>
         <label for="mileage" class="block text-sm text-neutral-600 my-4">PRZEBIEG (KM)</label>
-        <input type="number" id="mileage" v-model="mileage" :min="carMileage" max="500000" placeholder="--Podaj przebieg samochodu--" required class="w-full px-4 py-2 outline-none bg-light-bg">
+        <input type="number" id="mileage" v-model="mileage" :min="carMileage" max="500000" placeholder="--Podaj przebieg samochodu--" required class="block w-full px-4 py-2 my-4 outline-none bg-light-bg">
       </div>
     </form>
-    <div class="flex gap-8">
-      <button type="button" @click="$emit('close')">Anuluj</button>
-      <button type="submit" form="end-rent-form">
+    <div class="flex gap-8 justify-end">
+      <button type="button" @click="$emit('close')" class="px-4 py-1 border rounded-full">
+        Anuluj
+      </button>
+      <button type="submit" form="end-rent-form" class="btn-secondary">
         Zakończ wynajem
       </button>
     </div>

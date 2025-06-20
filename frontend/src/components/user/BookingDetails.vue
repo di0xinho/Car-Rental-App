@@ -2,8 +2,8 @@
   import { Booking, type BookingStatus } from '@/utilities/models/bookingModel';
   import { computed, type PropType } from 'vue';
   import CarDetailsCard from '@/components/cars-collection/CarDetailsCard.vue';
-  import BookingDetailsTable from './BookingDetailsTable.vue';
-  import RentDetailsTable from './RentDetailsTable.vue';
+  import BookingDetailsTable from '@/components/bookings/BookingDetailsTable.vue';
+  import RentDetailsTable from '@/components/bookings/RentDetailsTable.vue';
 
   const { booking } = defineProps({
     booking: {type: Object as PropType<Booking>, required: true}

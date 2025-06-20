@@ -11,12 +11,12 @@
 </script>
 
 <template>
-  <table class="table-fixed w-full text-sm md:text-base">
+  <table class="table-fixed w-full text-sm md:text-base text-black">
         <colgroup>
-          <col class="w-26 xs:w-32"/>
+          <col class="w-22 xs:w-32"/>
+          <col class="w-24 xs:w-24"/>
           <col class="w-20 xs:w-24"/>
-          <col class="w-20 xs:w-24"/>
-          <col class="w-12 xs:w-16"/>
+          <col class="w-16 xs:w-16"/>
           <col class="w-12 xs:w-16 hidden md:table-column"/>
           <col class="w-16 xs:w-20 hidden md:table-column"/>
           <col class="w-12 sm:w-16 hidden md:table-column" />

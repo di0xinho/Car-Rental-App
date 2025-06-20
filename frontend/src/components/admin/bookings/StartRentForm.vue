@@ -29,17 +29,19 @@
 </script>
 
 <template>
-  <div>
-    <h3>ID rezerwacji: {{ bookingId }}</h3>
-    <form id="start-rent-form" @submit.prevent="handleStartRent">
-      <label for="rent-start-date" class="block text-sm text-neutral-600 my-8">
+  <div class="p-4 sm:p-8 border rounded-lg border-gray-300">
+    <h3 class="text-neutral-600">ID rezerwacji: {{ bookingId }}</h3>
+    <form id="start-rent-form" @submit.prevent="handleStartRent" class="my-12">
+      <label for="rent-start-date" class="block text-sm text-neutral-600 my-4">
         DATA ROZPOCZĘCIA WYNAJMU
       </label>
-      <input id="rent-start-date" type="datetime-local" required v-model="dateFrom" class="block w-full px-4 py-2 my-8 outline-none bg-light-bg">
+      <input id="rent-start-date" type="datetime-local" required v-model="dateFrom" class="block w-full px-4 py-2 my-4 outline-none bg-light-bg">
     </form>
-    <div class="flex gap-8">
-      <button type="button" @click="$emit('close')">Anuluj</button>
-      <button type="submit" form="start-rent-form">
+    <div class="flex gap-8 justify-end">
+      <button type="button" @click="$emit('close')" class="px-4 py-1 border rounded-full">
+        Anuluj
+      </button>
+      <button type="submit" form="start-rent-form" class="btn-secondary">
         Rozpocznij wynajem
       </button>
     </div>

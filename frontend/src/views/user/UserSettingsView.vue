@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue';
+  import { RouterLink } from 'vue-router';
   import useUser from '@/composables/useUser';
 
   const message = ref<{success: boolean, message: string}|null>(null);
@@ -43,11 +44,11 @@
       {{ message.message }}
     </div>
     <div class="max-w-md mx-auto my-10 p-6">
-      <div class="flex justify-between">
-          <h3 class="font-medium text-neutral-500">{{ user?.username }}</h3>
-          <h3 class="font-medium text-neutral-500">{{ user?.email }}</h3>
+      <div class="flex justify-between text-neutral-500 dark:text-neutral-300">
+          <h3 class="font-medium">{{ user?.username }}</h3>
+          <h3 class="font-medium">{{ user?.email }}</h3>
       </div>
-      <hr class="border-neutral-500 my-5">
+      <hr class="border-neutral-500 dark:border-neutral-300 my-5">
       <form @submit.prevent="handleUpdateUser">
         <div class="my-5">
           <label for="avatar" class="text-neutral-500">TO DO: avatar image input</label>
@@ -86,12 +87,12 @@
             </div>
           </fieldset>
         </div>
-        <div class="my-5 text-right">
-          <button type="submit" class="btn ml-auto">
-            Zapisz zmiany
-          </button>
-          <button type="button" @click="handleCancel" class="ml-8 px-6 py-3 border rounded-xl">
+        <div class="flex justify-between mt-8">
+          <RouterLink :to="{name: 'user-main'}" @click="handleCancel" class="px-4 py-1 border rounded-full">
             Anuluj
+          </RouterLink>
+          <button type="submit" class="btn-secondary">
+            Zapisz zmiany
           </button>
         </div>
       </form>

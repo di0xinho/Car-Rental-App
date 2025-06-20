@@ -2,7 +2,7 @@
   import { Booking, type BookingStatus } from '@/utilities/models/bookingModel';
   import { onMounted, ref, computed, type PropType } from 'vue';
   import { getCarTelemetryData } from '@/utilities/carTelemetryUtils';
-  import BookingCarLocation from '@/components/user/bookings/BookingCarLocation.vue';
+  import BookingCarLocation from '@/components/bookings/BookingCarLocation.vue';
 
   const { booking } = defineProps({
     booking: {type: Object as PropType<Booking>, required: true}
@@ -54,7 +54,7 @@
     <div class="basis-3xs shrink-0 grow bg-light-bg text-dark-txt rounded-3xl p-4">
       <!-- Refresh button -->
       <div class="my-4">
-        <button @click="refreshCarTelemetryData" class="flex gap-3 ml-auto bg-light-tertiary border border-dominant-secondary px-4 py-1 rounded-full">
+        <button @click="refreshCarTelemetryData" class="flex gap-3 ml-auto btn-secondary">
           <span class="text-sm/[22px]">Odśwież</span>
           <svg width="24" height="22" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g stroke="black" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">

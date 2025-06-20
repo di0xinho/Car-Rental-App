@@ -17,8 +17,10 @@
   <div class="flex justify-center items-center gap-16">
     <button @click="handleClickPage(activePage - 1)" class="hidden sm:block" :disabled="activePage <= 1">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M22 2L12 12L22 22" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M11 2L1 12L11 22" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <g stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="stroke-black dark:stroke-white">
+        <path d="M22 2L12 12L22 22"/>
+        <path d="M11 2L1 12L11 22"/>
+      </g>
     </svg>
     </button>
     <ul class="sm:w-sm md:w-lg flex justify-center gap-4 md:gap-8">
@@ -60,8 +62,10 @@
     </ul>
     <button @click="handleClickPage(activePage + 1)" class="hidden sm:block" :disabled="activePage >= totalPages">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2 2L12 12L2 22" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M13 2L23 12L13 22" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <g stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="stroke-black dark:stroke-white">
+          <path d="M2 2L12 12L2 22"/>
+          <path d="M13 2L23 12L13 22"/>
+        </g>
       </svg>
     </button>
   </div>

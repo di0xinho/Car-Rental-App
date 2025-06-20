@@ -34,9 +34,10 @@ export async function bookCar (
 }
 
 // API query params: carId, isPaid, startDate, endDate, page, limit, status
-export async function getUserBookings (status?: BookingStatus[]) {
+export async function getUserBookings (status?: BookingStatus[], page?: number) {
   const params = new URLSearchParams();
   if (status) status.forEach(value => params.append('status', value));
+  if (page) params.append('page', page.toString());
 
   const url = import.meta.env.VITE_API_GET_USER_BOOKINGS + '?' + params;
   const response = await fetch(url, {

@@ -2,10 +2,10 @@
   import { ref, computed, onMounted } from 'vue';
   import { getUserBookings } from '@/utilities/bookingUtils';
   import { Booking, type BookingStatus } from '@/utilities/models/bookingModel';
-  import BookingDetails from '@/components/user/bookings/BookingDetails.vue';
-  import BookingsTable from '@/components/user/bookings/BookingsTable.vue';
-  import BookingsStatusLegend from '@/components/user/bookings/BookingsStatusLegend.vue';
-
+  import BookingDetails from '@/components/user/BookingDetails.vue';
+  import BookingsTable from '@/components/user/BookingsTable.vue';
+  import BookingsStatusLegend from '@/components/bookings/BookingsStatusLegend.vue';
+  import ListPaginator from '@/components/paginator/ListPaginator.vue';
   const bookings = ref<Booking[]>([]);
 
   const selectedBookingIndex = ref<number|null>(null);
@@ -15,18 +15,32 @@
     } else {
       return null;
     }
-  })
+  });
 
-  onMounted(async() => {
-  try {
+  const page = ref(1);
+  const totalPages = ref(1);
+
+  async function getBookingsData() {
+    try {
       const bookingStatus: BookingStatus[] = ['complete', 'canceled', 'missing'];
-      const result = await getUserBookings(bookingStatus);
+      const result = await getUserBookings(bookingStatus, page.value);
       console.log(result);
       bookings.value = result.bookings;
+      totalPages.value = result.numOfPages;
     } catch (error) {
       console.error(error);
     }
+  }
+
+  onMounted(() => {
+    getBookingsData()
   });
+  
+  async function handleChangePage (event: number) {
+    page.value = event;
+    selectedBookingIndex.value = null;
+    getBookingsData();
+  }
 </script>
 
 <template>
@@ -37,11 +51,14 @@
     <!-- Tabela Rezerwacji -->
     <BookingsTable :bookings="bookings" :selected-booking-index="selectedBookingIndex" @select-booking="selectedBookingIndex = $event"/>
     <div>
-      <h3 class="text-neutral-500 mb-2">Status rezerwacji:</h3>
+      <h3 class="text-neutral-500 dark:text-neutral-300 mb-2">Status rezerwacji:</h3>
       <BookingsStatusLegend />
     </div>
+    <div class="mx-8">
+      <ListPaginator :active-page="page" :total-pages="totalPages" @change-page="handleChangePage"/>
+    </div>
     <!-- Szczegóły wybranej rezerwacji -->
-    <section class="p-4 xl:p-8 bg-light-bg rounded-lg grow">
+    <section class="p-4 xl:p-8 bg-light-bg rounded-lg grow text-black">
       <h3 class="text-xl xs:text-2xl my-4 mx-8">Szczegóły rezerwacji</h3>
       <div v-if="selectedBooking">
         <BookingDetails :booking="selectedBooking" />
