@@ -437,6 +437,16 @@ router.patch("/start-a-rental/:bookingId",
     booking.rent.from = rentFromMoment.toDate(); // Data faktycznego wypożyczenia (Date)
     booking.rent.carMileageAtStart = booking.car.mileage; // Obecny stan przebiegu
 
+    // Opcjonalna aktualizacja statusu płatności
+    const isPaid = req.body.isPaid;
+
+    if (isPaid !== undefined) {
+      if (typeof isPaid !== "boolean") {
+        throw new BadRequestError("Pole 'isPaid' musi być wartością typu boolean");
+      }
+      booking.isPaid = isPaid;
+    }
+
     // Zapisujemy zmieniony rekord
     await booking.save();
 
@@ -510,5 +520,30 @@ router.patch("/end-the-rental/:bookingId",
     });
   })
 );
+
+// Endpoint odpowiedzialny za usunięcie wybranego wypożyczenia z bazy danych
+router.delete("/delete-booking/:bookingId", authMiddleware, asyncWrapper(async (req, res) => {
+
+  // Sprawdzenie, czy uprawnienia użytkownika są wystarczające (czy jest adminem)
+  checkPermissions(req.user);
+
+  // Pobranie ID wypożyczenia z parametru ścieżki
+  const bookingId = req.params.bookingId;
+
+  // Wyszukiwanie wypożyczenia po numerze id
+  const deletedBooking = await Booking.findOneAndDelete({ _id: bookingId });
+
+  // Jeśli wypożyczenie nie zostało znalezione w bazie danych, to zwracany jest odpowiedni komunikat
+  if (!deletedBooking) {
+    throw new NotFoundError("Nie znaleziono wypożyczenia o takim numerze id");
+  }
+
+  // W przypadku pomyślnego usunięcia zasobu z bazy danych, wyświetlamy następujący komunikat
+  res.status(StatusCodes.OK).json({
+    message: "Wybrany zasób został usunięty z bazy danych",
+    data: deletedBooking,
+    success: true,
+  });
+}));
 
 export default router;
