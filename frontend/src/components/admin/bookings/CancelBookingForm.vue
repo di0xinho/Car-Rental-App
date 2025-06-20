@@ -49,7 +49,7 @@
     <div class="flex gap-8">
       <button type="button" @click="$emit('close')">Anuluj</button>
       <button type="submit" form="cancel-booking-form">
-        Zmień status rezerwacji
+        Anuluj rezerwację
       </button>
     </div>
   </div>

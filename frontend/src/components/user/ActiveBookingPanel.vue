@@ -2,7 +2,7 @@
   import { Booking, type BookingStatus } from '@/utilities/models/bookingModel';
   import { onMounted, ref, computed, type PropType } from 'vue';
   import { getCarTelemetryData } from '@/utilities/carTelemetryUtils';
-  import BookingCarLocation from '@/components/user/bookings/BookingCarLocation.vue';
+  import BookingCarLocation from '@/components/bookings/BookingCarLocation.vue';
 
   const { booking } = defineProps({
     booking: {type: Object as PropType<Booking>, required: true}

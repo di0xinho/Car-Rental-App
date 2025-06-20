@@ -4,7 +4,7 @@
   import { getUserBookings } from '@/utilities/bookingUtils';
   import { RouterLink } from 'vue-router';
   import { onMounted, ref, watch } from 'vue';
-  import ActiveBookingPanel from '@/components/user/bookings/ActiveBookingPanel.vue';
+  import ActiveBookingPanel from '@/components/user/ActiveBookingPanel.vue';
   import HorizontalList from '@/components/ui-common/HorizontalList.vue';
   import CarViewCard from '@/components/cars-collection/CarViewCard.vue';
   import { getFavoriteCars } from '@/utilities/carUtils';

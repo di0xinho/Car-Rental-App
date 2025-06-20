@@ -3,10 +3,10 @@
   import { getAllBookings } from '@/utilities/bookingUtils';
   import { Booking, type BookingStatus } from '@/utilities/models/bookingModel';
   import BookingsAdminTable from '@/components/admin/bookings/BookingsAdminTable.vue';
-  import BookingAdminDetails from '@/components/admin/bookings/BookingAdminDetails.vue';
-  import CarDetailsCard from '@/components/cars-collection/CarDetailsCard.vue';
-  import EndRentForm from '@/components/admin/bookings/EndRentForm.vue';
   import ListPaginator from '@/components/paginator/ListPaginator.vue';
+  import BookingsStatusLegend from '@/components/bookings/BookingsStatusLegend.vue';
+  import BookingAdminDetails from '@/components/admin/bookings/BookingAdminDetails.vue';
+  import EndRentForm from '@/components/admin/bookings/EndRentForm.vue';
 
   const bookings = ref<Booking[]>([]);
   const selectedBookingIndex = ref<number|null>(null);
@@ -22,14 +22,6 @@
   const totalPages = ref(1);
 
   const action = ref<'end-rent'|null>(null);
-
-  const status = {
-    awaiting: 'oczekująca',
-    active: 'aktywna',
-    canceled: 'anulowana',
-    missing: 'brak wypożyczenia',
-    complete: 'zakończona',
-  };
 
   async function getBookingsData() {
     try {
@@ -64,11 +56,20 @@
 </script>
 
 <template>
-  <h1 class="text-xl xs:text-2xl mx-8 lg:mx-16 my-16">Rezerwacje</h1>
+  <header class="mx-8 lg:mx-16 my-16">
+    <h1 class="text-xl xs:text-2xl">Wynajem</h1>
+    <h2 class="text-sm xs:text-base text-neutral-600">
+      Lista aktualnie wypożyczonych samochodów
+    </h2>
+  </header>
   <!-- Tabela Rezerwacji -->
   <section class="mx-8 my-16">
     <div class="min-h-40">
       <BookingsAdminTable :bookings="bookings" :selected-booking-index="selectedBookingIndex" @select-booking="handleSelectBooking"/>
+    </div>
+    <div class="my-8">
+      <h3 class="text-neutral-500 mb-2">Status rezerwacji:</h3>
+      <BookingsStatusLegend />
     </div>
     <div class="mx-8 my-16">
       <ListPaginator :active-page="page" :total-pages="totalPages" @change-page="handleChangePage"/>
@@ -76,32 +77,14 @@
   </section>
   <!-- Szczegóły wybranej rezerwacji -->
   <section class="mx-8 my-16 relative p-4 xl:p-8 bg-light-bg rounded-lg grow">
-    <h3 class="text-xl xs:text-2xl my-4 mx-8">Szczegóły rezerwacji</h3>
+    <div class="flex justify-between items-center my-4 mx-8">
+      <h3 class="text-xl xs:text-2xl">Szczegóły rezerwacji</h3>
+      <div v-if="selectedBooking">
+        <button type="button" @click="action = 'end-rent'">Zakończ wynajem</button>
+      </div>
+    </div>
     <div v-if="selectedBooking">
-      <!-- Booking ID and status-->
-      <div class="flex justify-between my-8 mx-8">
-        <dl class="text-neutral-600">
-          <div class="flex gap-4">
-            <dt>Id:</dt>
-            <dd>{{ selectedBooking._id }}</dd>
-          </div>
-          <div class="flex gap-8">
-            <dt>Status:</dt>
-            <dd>{{ status[selectedBooking.status] }}</dd>
-          </div>
-        </dl>
-        <div class="flex gap-8">
-          <button type="button" @click="action = 'end-rent'">Zakończ wynajem</button>
-        </div>
-      </div>
-      <div class="flex flex-col lg:flex-row max-w-xl lg:max-w-full justify-around gap-8 xl:gap-16 mx-auto">
-        <div class="lg:basis-xs grow">
-          <CarDetailsCard :car="selectedBooking.car"/>
-        </div>
-        <div class="lg:basis-xs grow">
-          <BookingAdminDetails :booking="selectedBooking"/>
-        </div>
-      </div>
+      <BookingAdminDetails :booking="selectedBooking"/>
     </div>
     <div v-else>
       <h4 class="text-center my-12">

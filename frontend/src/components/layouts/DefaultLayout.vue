@@ -86,7 +86,12 @@
               </ul>
             </nav>
           </div>
-          <SocialMediaLinks />
+          <div>
+            <SocialMediaLinks />
+            <RouterLink v-if="user?.isAdmin" :to="{name: 'admin-dashboard'}" class="block text-sm mt-4 text-sky-200">
+              panel administratora <span class="ml-3">&#8594;</span>
+            </RouterLink>
+          </div>
         </div>
       </div>
       <h5 class="text-center text-sm mt-16">

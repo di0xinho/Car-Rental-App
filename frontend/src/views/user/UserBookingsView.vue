@@ -2,9 +2,9 @@
   import { ref, onMounted, computed } from 'vue';
   import { getUserBookings } from '@/utilities/bookingUtils';
   import { Booking, type BookingStatus } from '@/utilities/models/bookingModel';
-  import BookingDetails from '@/components/user/bookings/BookingDetails.vue';
-  import BookingsTable from '@/components/user/bookings/BookingsTable.vue';
-  import BookingsStatusLegend from '@/components/user/bookings/BookingsStatusLegend.vue';
+  import BookingDetails from '@/components/user/BookingDetails.vue';
+  import BookingsTable from '@/components/user/BookingsTable.vue';
+  import BookingsStatusLegend from '@/components/bookings/BookingsStatusLegend.vue';
 
   const bookings = ref<Booking[]>([]);
   const selectedBookingIndex = ref<number|null>(null);
