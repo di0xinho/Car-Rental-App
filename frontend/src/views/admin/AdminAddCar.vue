@@ -46,14 +46,14 @@
 </script>
 
 <template>
-  <div class="mx-8 lg:mx-16 my-16 flex justify-between">
+  <div class="mx-4 sm:mx-8 lg:mx-16 my-16 flex justify-between">
     <h1 class="text-xl xs:text-2xl">Dodaj samochód</h1>
     <button @click="$router.back">
       <span class="text-xl mx-2">&#10229;</span>
       <span>Powrót</span>
     </button>
   </div>
-  <section class="mx-8 my-16 border border-gray-300 bg-gray-100 p-8 rounded-lg">
+  <section class="mx-4 sm:mx-8 my-16 border border-gray-300 bg-gray-100 p-4 sm:p-8 rounded-lg">
     <CarForm 
       v-model:make="make"
       v-model:model="model"
@@ -70,8 +70,8 @@
       id="car-form"
       @submit.prevent="handleCreateCar"
     />
-    <div class="mt-8 w-max ml-auto">
-      <button type="submit" form="car-form" class="btn">DODAJ NOWY SAMOCHÓD</button>
-    </div>
+    <button type="submit" form="car-form" class="block ml-auto mt-8 mb-4 btn">
+      DODAJ NOWY SAMOCHÓD
+    </button>
   </section>
 </template>

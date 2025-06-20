@@ -41,7 +41,7 @@
 </script>
 
 <template>
-  <button type="button" @click="openModal" class="flex gap-2">
+  <button type="button" @click="openModal" class="flex gap-3 btn-secondary">
     <BinSvg />
     <span>Usuń</span>
   </button>
@@ -74,12 +74,11 @@
               </label>
               <input type="text" id="confirm-id" v-model="confirmId" placeholder="Podaj 4 ostanie cyfry ID" class="bg-light-secondary-bg w-full outline-none rounded-lg p-4">
             </form>
-            <div class="mt-4 flex gap-8 justify-between">
-              <button type="button" @click="open = false">
-                <span class="text-xl mx-2">&#10229;</span>
-                <span>Anuluj</span>
+            <div class="mt-8 flex gap-8 justify-between">
+              <button type="button" @click="open = false" class="px-4 py-1 border rounded-full">
+                Anuluj
               </button>
-              <button type="submit" form="confirmation" :disabled="!confirmed" class="btn">
+              <button type="submit" form="confirmation" :disabled="!confirmed" class="btn-secondary">
                 Usuń
               </button>
             </div>

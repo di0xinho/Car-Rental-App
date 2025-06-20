@@ -19,7 +19,7 @@
 
 <template>
   <div class="border border-gray-300 rounded-lg overflow-hidden">
-      <table class="table-fixed w-full text-sm xs:text-base">
+      <table class="table-fixed w-full text-sm xs:text-base text-black">
         <colgroup>
           <col class="w-32 hidden lg:table-column"/>
           <col class="w-30 xs:w-40"/>

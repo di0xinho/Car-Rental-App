@@ -88,7 +88,7 @@
           </div>
           <div>
             <SocialMediaLinks />
-            <RouterLink v-if="user?.isAdmin" :to="{name: 'admin-dashboard'}" class="block text-sm mt-4 text-sky-200">
+            <RouterLink v-if="user?.isAdmin" :to="{name: 'admin-dashboard'}" class="block text-sm mt-4 text-sky-200 dark:text-orange-100">
               panel administratora <span class="ml-3">&#8594;</span>
             </RouterLink>
           </div>

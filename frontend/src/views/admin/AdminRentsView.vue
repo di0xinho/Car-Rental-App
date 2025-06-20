@@ -7,6 +7,7 @@
   import BookingsStatusLegend from '@/components/bookings/BookingsStatusLegend.vue';
   import BookingAdminDetails from '@/components/admin/bookings/BookingAdminDetails.vue';
   import EndRentForm from '@/components/admin/bookings/EndRentForm.vue';
+  import BlackBoxSvg from '@/components/icons/BlackBoxSvg.vue';
 
   const bookings = ref<Booking[]>([]);
   const selectedBookingIndex = ref<number|null>(null);
@@ -56,19 +57,19 @@
 </script>
 
 <template>
-  <header class="mx-8 lg:mx-16 my-16">
+  <header class="mx-4 sm:mx-8 lg:mx-16 my-16">
     <h1 class="text-xl xs:text-2xl">Wynajem</h1>
-    <h2 class="text-sm xs:text-base text-neutral-600">
+    <h2 class="text-sm xs:text-base text-neutral-600 dark:text-neutral-300">
       Lista aktualnie wypożyczonych samochodów
     </h2>
   </header>
   <!-- Tabela Rezerwacji -->
-  <section class="mx-8 my-16">
+  <section class="mx-4 sm:mx-8 my-16">
     <div class="min-h-40">
       <BookingsAdminTable :bookings="bookings" :selected-booking-index="selectedBookingIndex" @select-booking="handleSelectBooking"/>
     </div>
     <div class="my-8">
-      <h3 class="text-neutral-500 mb-2">Status rezerwacji:</h3>
+      <h3 class="text-neutral-500 dark:text-neutral-300 mb-2">Status rezerwacji:</h3>
       <BookingsStatusLegend />
     </div>
     <div class="mx-8 my-16">
@@ -76,11 +77,14 @@
     </div>
   </section>
   <!-- Szczegóły wybranej rezerwacji -->
-  <section class="mx-8 my-16 relative p-4 xl:p-8 bg-light-bg rounded-lg grow">
-    <div class="flex justify-between items-center my-4 mx-8">
+  <section class="mx-4 sm:mx-8 my-16 relative p-4 xl:p-8 bg-light-bg rounded-lg grow text-black">
+    <div class="flex gap-x-8 gap-y-4 flex-wrap justify-between items-center my-4 mx-4 sm:mx-8">
       <h3 class="text-xl xs:text-2xl">Szczegóły rezerwacji</h3>
       <div v-if="selectedBooking">
-        <button type="button" @click="action = 'end-rent'">Zakończ wynajem</button>
+        <button type="button" @click="action = 'end-rent'" class="flex gap-3 items-center btn-secondary">
+          <BlackBoxSvg />
+          <span>Zakończ wynajem</span>
+        </button>
       </div>
     </div>
     <div v-if="selectedBooking">
@@ -92,8 +96,13 @@
       </h4>
     </div>
     <div v-if="selectedBooking && action" class="absolute top-0 left-0 z-30 bg-neutral-100/75 w-full h-full flex items-center">
-      <div class="bg-light-bg mx-auto w-4/5 max-w-2xl p-16 shadow-[12px_8px_28px_#00000050]">
-        <EndRentForm :booking-id="selectedBooking._id" :car-mileage="selectedBooking.car.mileage" @close="action = null" @update-booking="updateSelectedBookingData"/>
+      <div class="bg-light-tertiary mx-auto min-w-xs w-4/5 max-w-2xl p-4 sm:p-8 rounded-lg shadow-[12px_8px_28px_#00000050]">
+        <EndRentForm
+          :booking-id="selectedBooking._id"
+          :car-mileage="selectedBooking.car.mileage"
+          @close="action = null"
+          @update-booking="updateSelectedBookingData"
+        />
       </div>
     </div>
   </section>

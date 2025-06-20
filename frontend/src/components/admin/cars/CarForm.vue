@@ -18,7 +18,7 @@
 </script>
 
 <template>
-  <form class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+  <form class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-black">
     <div>
       <label for="make" class="block text-sm text-neutral-600 my-4">MARKA</label>
       <select id="make" v-model="make" required class="w-full px-4 py-2 outline-none bg-light-bg">

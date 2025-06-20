@@ -25,7 +25,7 @@
 
 <template>
   <!-- Booking ID and status-->
-  <div class="flex justify-between my-8 mx-8">
+  <div class="flex justify-between my-8 mx-4 sm:mx-8">
     <dl class="text-neutral-600">
       <div class="flex gap-4">
         <dt>Id:</dt>

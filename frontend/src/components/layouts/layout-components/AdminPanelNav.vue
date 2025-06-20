@@ -7,7 +7,7 @@
 </script>
 
 <template>
-  <nav class="flex gap-24 justify-between">
+  <nav class="flex gap-8 xs:gap-16 justify-between">
     <div class="flex gap-6 lg:gap-8">
       <RouterLink :to="{name: 'admin-rents'}" class="flex gap-3 items-center">
         <KeySvg />

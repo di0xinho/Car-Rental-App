@@ -7,6 +7,7 @@
   import BookingAdminDetails from '@/components/admin/bookings/BookingAdminDetails.vue';
   import SetBookingStatusForm from '@/components/admin/bookings/SetBookingStatusForm.vue';
   import ListPaginator from '@/components/paginator/ListPaginator.vue';
+  import PenSvg from '@/components/icons/PenSvg.vue';
 
   const bookings = ref<Booking[]>([]);
   const selectedBookingIndex = ref<number|null>(null);
@@ -56,19 +57,19 @@
 </script>
 
 <template>
-  <header class="mx-8 lg:mx-16 my-16">
+  <header class="mx-4 sm:mx-8 lg:mx-16 my-16">
     <h1 class="text-xl xs:text-2xl">Historia rezerwacji</h1>
-    <h2 class="text-sm xs:text-base text-neutral-600">
+    <h2 class="text-sm xs:text-base text-neutral-600 dark:text-neutral-300">
       Lista zakończonych i anulowanych rezerwacji
     </h2>
   </header>  
   <!-- Tabela Rezerwacji -->
-  <section class="mx-8 my-16">
+  <section class="mx-4 sm:mx-8 my-16">
     <div class="min-h-40">
       <BookingsAdminTable :bookings="bookings" :selected-booking-index="selectedBookingIndex" @select-booking="handleSelectBooking"/>
     </div>
     <div class="my-8">
-      <h3 class="text-neutral-500 mb-2">Status rezerwacji:</h3>
+      <h3 class="text-neutral-500 dark:text-neutral-300 mb-2">Status rezerwacji:</h3>
       <BookingsStatusLegend />
     </div>
     <div class="mx-8 my-16">
@@ -76,11 +77,14 @@
     </div>
   </section>
   <!-- Szczegóły wybranej rezerwacji -->
-  <section class="mx-8 my-16 relative p-4 xl:p-8 bg-light-bg rounded-lg grow">
-     <div class="flex justify-between items-center my-4 mx-8">
+  <section class="mx-4 sm:mx-8 my-16 relative p-4 xl:p-8 bg-light-bg rounded-lg grow text-black">
+     <div class="flex gap-x-8 gap-y-4 flex-wrap justify-between items-center my-4 mx-4 sm:mx-8">
       <h3 class="text-xl xs:text-2xl">Szczegóły rezerwacji</h3>
       <div v-if="selectedBooking">
-        <button type="button" @click="action = 'status'">Zmień status</button>
+        <button type="button" @click="action = 'status'" class="flex gap-3 items-center btn-secondary">
+          <PenSvg />
+          <span>Zmień status</span>
+        </button>
       </div>
     </div>
     <div v-if="selectedBooking">
@@ -92,7 +96,7 @@
       </h4>
     </div>
     <div v-if="selectedBooking && action" class="absolute top-0 left-0 z-30 bg-neutral-100/75 w-full h-full flex items-center">
-      <div class="bg-light-bg mx-auto w-4/5 max-w-2xl p-16 shadow-[12px_8px_28px_#00000050]">
+      <div class="bg-light-tertiary mx-auto min-w-xs w-4/5 max-w-2xl p-4 sm:p-8 rounded-lg shadow-[12px_8px_28px_#00000050]">
         <SetBookingStatusForm v-if="action === 'status'" :booking-id="selectedBooking._id" :booking-status="selectedBooking.status" @close="action = null" @update-booking="updateSelectedBookingData"/>
       </div>
     </div>

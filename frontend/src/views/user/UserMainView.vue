@@ -66,7 +66,7 @@
           </RouterLink>
         </li>
         <li class="ml-auto">
-          <RouterLink :to="{name: 'rent'}" class="flex gap-3 bg-light-tertiary border border-dominant-secondary px-4 py-1 rounded-full">
+          <RouterLink :to="{name: 'rent'}" class="flex gap-3 btn-secondary">
             <CarSvg />
             <span class="text-sm xs:text-base">
               Wynajmij <span class="hidden xs:inline-block">samochód</span>
