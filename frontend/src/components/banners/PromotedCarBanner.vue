@@ -19,7 +19,7 @@
       <p class="text-sm sm:text-base">
         Mercedes z modelem CLS zapoczątkował modę na auta w stylu coupe, które łączyły wymiar estetyczny z praktycznym. W oferowanym przez nas CLS&nbsp;63&nbsp;AMG&nbsp;S ...
       </p>
-      <RouterLink to="https://play.google.com" class="btn inline-block text-dark-txt bg-dominant-secondary text-sm sm:text-base">
+      <RouterLink :to="{name: 'cars-collection'}" class="btn inline-block text-dark-txt bg-dominant-secondary text-sm sm:text-base">
         Zobacz szczegóły
       </RouterLink>
     </div>

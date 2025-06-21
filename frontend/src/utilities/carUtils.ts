@@ -4,13 +4,15 @@ import type { CarPreferences, CarData } from "./models/carModel";
 export async function getCarsByPreferences (
   preferences: Partial<CarPreferences>,
   page: number,
-  limit: number
+  limit: number,
+  startDate?: string,
+  endDate?: string,
 ) {
   const {carMaker, bodyType, minCapacity, maxPrice, fuelType, gearboxType, minYear, maxMileage} = preferences;
   
   const params = new URLSearchParams();
 
-  if (carMaker) carMaker.forEach((maker) => params.append('make', maker));
+  if (carMaker) params.append('make', carMaker);
   if (bodyType) bodyType.forEach((type) => params.append('bodyType', type));
   if (minCapacity) params.append('minCapacity', minCapacity.toString());
   if (maxPrice) params.append('maxPrice', maxPrice.toString());
@@ -20,8 +22,11 @@ export async function getCarsByPreferences (
   if (maxMileage) params.append('maxMileage', maxMileage.toString());
   if (page) params.append('page', page.toString());
   if (limit) params.append('limit', limit.toString());
+  if (startDate) params.append('startDate', startDate);
+  if (endDate) params.append('endDate', endDate);
 
   const url = import.meta.env.VITE_API_GET_CARS + '?' + params;
+  console.log('URL: ', url);
   const response = await fetch(url);
   const responseData = await response.json();
   if (!responseData.success) {

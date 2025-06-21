@@ -26,7 +26,7 @@
   });
 
   // filters refs
-  const maker = ref<string[]>([]);
+  const maker = ref<string|undefined>();
   const fuel = ref<string>('Benzyna');
   const maxPrice = ref<string>('120');
 
