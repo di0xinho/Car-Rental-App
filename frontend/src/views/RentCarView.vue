@@ -13,9 +13,15 @@
   const { preferences } = useCarPreferences();
   
   // date/time format accepted by API "YYYY-MM-DD HH:mm"
-  const currentDateString = dateToNormalizedString(new Date(), "T");
-  const dateFrom = ref(currentDateString);
-  const dateTo = ref(currentDateString);
+  const today = new Date;
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const todayDateString = dateToNormalizedString(today, "T");
+  const tomorrowDateString = dateToNormalizedString(tomorrow, "T");
+  
+  const dateFrom = ref(todayDateString);
+  const dateTo = ref(tomorrowDateString);
 
   const cars = ref<Car[]>([]);
   const page = ref(1);
@@ -24,12 +30,12 @@
   const openFilterPanel = ref(false);
 
   // Car preferrences is a global state (useCarPreferences.ts) controlled from different components preserved through navigation (we want to preserve that to enhence user experience by remembering his choices)
-  watch( preferences, async (newPreferences) => {
+  watch( [preferences, dateFrom, dateTo], async ([newPreferences, newDateFrom, newDateTo]) => {
     // Every time we chnge filtering params we shoud fetch new cars starting from page 1
     page.value = 1;
     totalPages.value = 1;
     try {
-      const carsData = await getCarsByPreferences(newPreferences, page.value, 12);
+      const carsData = await getCarsByPreferences(newPreferences, page.value, 12, newDateFrom.replace('T', ' '), newDateTo.replace('T', ' '));
       cars.value = carsData.cars;
       totalPages.value = carsData.numOfPages;
     } catch (error) {

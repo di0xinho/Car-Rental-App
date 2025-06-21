@@ -7,6 +7,7 @@
   import BookingAdminDetails from '@/components/admin/bookings/BookingAdminDetails.vue';
   import SetBookingStatusForm from '@/components/admin/bookings/SetBookingStatusForm.vue';
   import ListPaginator from '@/components/paginator/ListPaginator.vue';
+  import DeleteBookingModal from '@/components/admin/bookings/DeleteBookingModal.vue';
   import PenSvg from '@/components/icons/PenSvg.vue';
 
   const bookings = ref<Booking[]>([]);
@@ -24,7 +25,7 @@
 
   const action = ref<'status'| null>(null);
 
-  async function getBookingsData() {
+  async function getBookings() {
     try {
       const bookingStatus: BookingStatus[] = ['canceled', 'missing', 'complete'];
       const result = await getAllBookings(bookingStatus, page.value);
@@ -37,12 +38,12 @@
   }
 
   onMounted(async() => {
-    getBookingsData();
+    getBookings();
   });
 
   async function handleChangePage (event: number) {
       page.value = event;
-      getBookingsData();
+      getBookings();
   }
 
   function handleSelectBooking(bookingIndex: number) {
@@ -51,7 +52,12 @@
   }
 
   function updateSelectedBookingData(booking: Booking) {
-    if (selectedBookingIndex.value !== null) bookings.value[selectedBookingIndex.value] = booking;
+    // API returns updated booking data, but without user field populated with user data
+    if (selectedBookingIndex.value !== null) {
+      // Preserve user data from booking and add to new booking data
+      const user = bookings.value[selectedBookingIndex.value].user;
+      bookings.value[selectedBookingIndex.value] = { ... booking, user: user };
+    } 
     action.value = null;
   }
 </script>
@@ -80,11 +86,12 @@
   <section class="mx-4 sm:mx-8 my-16 relative p-4 xl:p-8 bg-light-bg rounded-lg grow text-black">
      <div class="flex gap-x-8 gap-y-4 flex-wrap justify-between items-center my-4 mx-4 sm:mx-8">
       <h3 class="text-xl xs:text-2xl">Szczegóły rezerwacji</h3>
-      <div v-if="selectedBooking">
-        <button type="button" @click="action = 'status'" class="flex gap-3 items-center btn-secondary">
+      <div v-if="selectedBooking" class="flex flex-wrap gap-x-8 gap-y-4">
+        <button type="button" @click="action = 'status'" class="w-53 flex gap-3 justify-center items-center btn-secondary">
           <PenSvg />
           <span>Zmień status</span>
         </button>
+        <DeleteBookingModal :booking="selectedBooking" @deleted="getBookings" btn-class="w-53 justify-center"/>
       </div>
     </div>
     <div v-if="selectedBooking">

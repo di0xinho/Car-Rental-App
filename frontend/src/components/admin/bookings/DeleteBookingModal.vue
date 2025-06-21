@@ -1,18 +1,21 @@
 <script setup lang="ts">
   import { ref, type PropType, computed } from 'vue';
-  import { Car } from '@/utilities/models/carModel';
+  import { Booking } from '@/utilities/models/bookingModel';
   import BinSvg from '@/components/icons/BinSvg.vue';
-  import CarDetailsCard from '@/components/cars-collection/CarDetailsCard.vue';
-  import { deleteCar } from '@/utilities/carUtils';
+  import BookingInfoShortcut from './BookingInfoShortcut.vue';
+  import { deleteBooking } from '@/utilities/bookingUtils';
 
-  const { car } = defineProps({ car: {type: Object as PropType<Car>, required: true} });
+  const { booking, btnClass } = defineProps({ 
+    booking: {type: Object as PropType<Booking>, required: true},
+    btnClass: {type: String} 
+    });
   const emit = defineEmits(['deleted']);
 
   const open = ref(false);
   const status = ref<'pending'|'delete'|'success'|'error'>('delete');
   
   const confirmId = ref('');
-  const confirmed = computed(() => (confirmId.value ===  car._id.slice(-4)));
+  const confirmed = computed(() => (confirmId.value ===  booking._id.slice(-4)));
 
   function openModal () {
     open.value = true;
@@ -27,10 +30,10 @@
     }
   }
 
-  async function handleDeleteCar () {
+  async function handleDeleteBooking () {
     try {
       status.value = 'pending';
-      const result = await deleteCar(car._id);
+      const result = await deleteBooking(booking._id);
       console.log(result.message);
       status.value = 'success';
     } catch (error) {
@@ -41,9 +44,9 @@
 </script>
 
 <template>
-  <button type="button" @click="openModal" class="flex gap-3 btn-secondary">
+  <button type="button" @click="openModal" class="flex gap-3 btn-secondary" :class="btnClass">
     <BinSvg />
-    <span>Usuń</span>
+    <span>Usuń rezerwację</span>
   </button>
   <Teleport to="body">
     <div id="modal-container" v-if="open" class="fixed top-0 w-full h-screen bg-neutral-100/75 dark:bg-neutral-900/75 z-30">
@@ -57,20 +60,20 @@
         <section v-if="status === 'delete'" class="h-full flex flex-col justify-between gap-4">
           <header>
             <h2 class="text-lg xs:text-2xl">
-              Czy napewno chcesz usunąć ten samochód z&nbsp;listy samochodów ?
+              Czy napewno chcesz usunąć tą rezerwację ?
             </h2>
             <h4 class="text-sm xs:text-base text-neutral-500 font-light">
               ( Operacja nie może zostać cofnięta )
             </h4>
           </header>
           <div>
-            <CarDetailsCard :car="car"/>
-            <h3 class="mt-4">ID samochodu: {{ car._id }}</h3>
+            <h3 class="mb-4">ID rezerwacji: {{ booking._id }}</h3>
+            <BookingInfoShortcut :booking="booking"/>
           </div>
           <div>
-            <form id="confirmation" @submit.prevent="handleDeleteCar">
+            <form id="confirmation" @submit.prevent="handleDeleteBooking">
               <label for="confirm-id" class="block mb-2">
-                Wpisz 4 ostatnie znaki ID samochodu aby usunąć samochód z listy
+                Wpisz 4 ostatnie znaki ID rezerwacji aby usunąć rezerwację z listy
               </label>
               <input type="text" id="confirm-id" v-model="confirmId" placeholder="Podaj 4 ostanie cyfry ID" class="bg-light-secondary-bg w-full outline-none rounded-lg p-4">
             </form>
@@ -86,20 +89,18 @@
         </section>
         <!-- Delete success message-->
         <section v-if="status === 'success'" class="my-auto">
-          <h2 class="text-lg xs:text-2xl">
-            <span>Usunięto samochód </span>
-            <span class="font-medium inline-block"> {{ car.make + " " + car.model }} </span>
-            <span class="font-medium inline-block"> ID: {{ car._id }} </span>
-            <span> z&nbsp;listy samochodów</span>
+          <h2 class="text-lg xs:text-2xl text-center">
+            <span>Usunięto rezerwację </span>
+            <span class="font-medium inline-block"> ID: {{ booking._id }} </span>
+            <span class="inline-block"> z listy rezerwacji</span>
           </h2>
         </section>
         <!-- Delete error message -->
         <section v-if="status === 'error'" class="my-auto">
-          <h2 class="text-lg xs:text-2xl text-center">
-            <span>Nie udało się usunąć samochodu </span>
-            <span class="font-medium inline-block"> {{ car.make + " " + car.model }} </span>
-            <span class="font-medium inline-block"> (id: {{ car._id }}) </span>
-            <span class="inline-block"> z&nbsp;listy samochodów</span>
+          <h2 class="text-lg xs:text-2xl">
+            <span>Nie udało się usunąć rezerwacji</span>
+            <span class="font-medium inline-block"> (id: {{ booking._id }}) </span>
+            <span> z&nbsp;listy rezerwacji</span>
           </h2>
         </section>
       </div>

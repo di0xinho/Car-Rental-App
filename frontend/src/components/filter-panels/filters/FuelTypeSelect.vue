@@ -6,7 +6,7 @@
 
   const label = computed(() => {
     if (fuel.value.length > 0) {
-      return fuel.value.toString();
+      return fuel.value;
     } else {
       return 'Wybierz rodzaj paliwa';
     }
