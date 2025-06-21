@@ -28,7 +28,7 @@
     return totalHours.value * car.value!.hourlyPrice;
   });
 
-  const step = ref<'details'|'payment'>('details');
+  const status = ref<'details'|'payment'|'pending'>('details');
   const payment = ref<'stripe'|'on-the-spot'>('stripe');
   const policyAccepted = ref(false);
   let detailsAccepted = false;
@@ -49,13 +49,15 @@
 
   function handleAcceptDetails () {
     detailsAccepted = true;
-    step.value = 'payment';
+    status.value = 'payment';
   }
 
   async function handleBooking () {
     if (!detailsAccepted || !policyAccepted) {
       return console.error('Accept booking details and company policy to proceede!');
     }
+    
+    status.value = 'pending';
 
     const details: CreateBookingDetails = {
       carId: car.value!._id,
@@ -108,38 +110,38 @@
         </div>
       </div>
       <!-- Booking Details -->
-      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[step === 'details' ? 'scale-105 shadow-lg' : '']">
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[status === 'details' ? 'scale-105 shadow-lg' : '']">
         <h3 class="text-xl font-semibold">Rezerwacja</h3>
         <h4 class="text-sm text-neutral-500">
           Uzupełnij dane dotyczące rezerwacji.
         </h4>
         <div class="my-8">
-          <BookingDetailsForm v-model:from="from" v-model:to="to" v-model:driver="driver" :disabled="step !== 'details'" />
+          <BookingDetailsForm v-model:from="from" v-model:to="to" v-model:driver="driver" :disabled="status !== 'details'" />
         </div>
-        <button type="button" @click="handleAcceptDetails" class="btn block ml-auto" :disabled="step !== 'details'">
+        <button type="button" @click="handleAcceptDetails" class="btn block ml-auto" :disabled="status !== 'details'">
           Potwierdzam i przechodzę do wyboru płatności
         </button>
       </div>
       <!-- Pyment Method -->
-      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[step === 'payment' ? 'scale-105 shadow-lg' : '']">
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[status === 'payment' ? 'scale-105 shadow-lg' : '']">
         <h3 class="text-xl font-semibold">Płatność</h3>
         <h4 class="text-sm text-neutral-500">
           Wybierz formę płatności.
         </h4>
         <div class="my-8">
-          <PickPayment v-model:payment="payment" :disabled="step !== 'payment'"/>
+          <PickPayment v-model:payment="payment" :disabled="status !== 'payment'"/>
           <form class="flex my-8 gap-8">
-            <input type="checkbox" name="accept-policy" id="accept-policy" v-model="policyAccepted" :disabled="step !== 'payment'">
+            <input type="checkbox" name="accept-policy" id="accept-policy" v-model="policyAccepted" :disabled="status !== 'payment'">
             <label for="accept-policy">
               Zgadzam się z regulaminem i polityką prywatności
             </label>
           </form>
         </div>
         <div class="flex justify-between gap-8">
-          <button type="button" @click="step='details'; detailsAccepted=false" class="lg:px-6 py-3">
+          <button type="button" @click="status='details'; detailsAccepted=false" class="lg:px-6 py-3">
             <span class="mr-4">&#10229;</span>Cofnij
           </button>
-          <button type="button" class="btn" :disabled="step !== 'payment'" @click="handleBooking">
+          <button type="button" class="btn" :disabled="status !== 'payment'" @click="handleBooking">
             {{ payment === 'stripe' ? 'Zarezerwuj i zapłać online' : 'Zarezerwuj i zapłać na miejscu' }}
           </button>
         </div>
