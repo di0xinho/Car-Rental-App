@@ -8,6 +8,7 @@
   import StartRentForm from '@/components/admin/bookings/StartRentForm.vue';
   import CancelBookingForm from '@/components/admin/bookings/CancelBookingForm.vue';
   import ListPaginator from '@/components/paginator/ListPaginator.vue';
+  import DeleteBookingModal from '@/components/admin/bookings/DeleteBookingModal.vue';
   import PalySvg from '@/components/icons/PalySvg.vue';
   import XSvg from '@/components/icons/XSvg.vue';
 
@@ -26,7 +27,7 @@
 
   const action = ref<'start-rent'|'cancel'|null>(null);
 
-  async function getBookingsData() {
+  async function getBookings () {
     try {
       const bookingStatus: BookingStatus[] = ['awaiting', 'active'];
       const result = await getAllBookings(bookingStatus, page.value);
@@ -38,22 +39,28 @@
     }
   }
 
-  onMounted(async() => {
-    getBookingsData();
+  onMounted (async() => {
+    getBookings();
   });
 
   async function handleChangePage (event: number) {
     page.value = event;
-    getBookingsData();
+    getBookings();
   }
 
-  function handleSelectBooking(bookingIndex: number) {
+  function handleSelectBooking (bookingIndex: number) {
     selectedBookingIndex.value = bookingIndex;
     action.value = null;
   }
 
-  function updateSelectedBookingData(booking: Booking) {
-    if (selectedBookingIndex.value !== null) bookings.value[selectedBookingIndex.value] = booking;
+  function updateSelectedBookingData (booking: Booking) {
+    console.log('Updated booking', booking);
+    // API returns updated booking data, but without user field populated with user data
+    if (selectedBookingIndex.value !== null) {
+      // Preserve user data from booking and add to new booking data
+      const user = bookings.value[selectedBookingIndex.value].user;
+      bookings.value[selectedBookingIndex.value] = { ... booking, user: user };
+    } 
     action.value = null;
   }
 </script>
@@ -91,6 +98,7 @@
           <XSvg />
           <span>Anuluj rezerwację</span>
         </button>
+        <DeleteBookingModal :booking="selectedBooking" @deleted="getBookings" btn-class="w-53 justify-center"/>
       </div>
     </div>
     <div v-if="selectedBooking">

@@ -88,6 +88,13 @@ html, body {
     padding-block: calc(var(--spacing) * 1);
     border-radius: calc(infinity * 1px);
   }
+
+  .btn-secondary:disabled {
+    background-color: var(--color-neutral-200);
+    color: var(--color-neutral-500);
+    border-color: var(--color-neutral-500);
+  }
+
   
   .input {
     display: block;

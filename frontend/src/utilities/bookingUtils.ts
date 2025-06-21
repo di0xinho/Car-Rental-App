@@ -1,6 +1,5 @@
 import { Booking, type BookingStatus, type CreateBookingDetails, type GetBookingsSuccess } from "@/utilities/models/bookingModel";
 
-
 export async function bookCar (
   details: CreateBookingDetails,
   success_url: string,
@@ -14,7 +13,6 @@ export async function bookCar (
     success_url = import.meta.env.VITE_DOMAIN_NAME + success_url;
     cancel_url = import.meta.env.VITE_DOMAIN_NAME + cancel_url;
   }
-  console.log('success_url: ', success_url);
   const response = await fetch(url, { 
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -26,7 +24,6 @@ export async function bookCar (
     credentials: 'include'
   });
   const responseData = await response.json();
-  console.log('bookCar response data: ', responseData);
   if (!responseData.success) {
     throw new Error(responseData.error);
   }
@@ -45,7 +42,6 @@ export async function getUserBookings (status?: BookingStatus[], page?: number) 
     credentials: 'include'
   });
   const responseData = await response.json();
-  console.log('getUserBookings response data: ', responseData);
   if (!responseData.success) {
     throw new Error(responseData.error);
   }
@@ -63,7 +59,6 @@ export async function getAllBookings (status?: BookingStatus[], page?: number) {
     credentials: 'include'
   });
   const responseData = await response.json();
-  console.log('getAllBookings response data: ', responseData);
   if (!responseData.success) {
     throw new Error(responseData.error);
   }
@@ -79,7 +74,6 @@ export async function startRent (bookingId: string, dateFrom: string) {
     credentials: 'include'
   });
   const responseData = await response.json();
-  console.log('startRent response data: ', responseData);
   if (!responseData.success) {
     throw new Error(responseData.error);
   }
@@ -98,7 +92,6 @@ export async function endRent (bookingId: string, dateTo: string, currentCarMile
     credentials: 'include'
   });
   const responseData = await response.json();
-  console.log('startRent response data: ', responseData);
   if (!responseData.success) {
     throw new Error(responseData.error);
   }
@@ -116,7 +109,19 @@ export async function setBookingStatus (bookingId: string, status: BookingStatus
     credentials: 'include'
   });
   const responseData = await response.json();
-  console.log('startRent response data: ', responseData);
+  if (!responseData.success) {
+    throw new Error(responseData.error);
+  }
+  return responseData as {message: string, data: Booking, success: boolean};
+}
+
+export async function deleteBooking (bookingId: string) {
+  const url = import.meta.env.VITE_API_DELETE_BOOKING + bookingId;
+  const response = await fetch(url, {
+    method: 'DELETE',
+    credentials: 'include'
+  });
+  const responseData = await response.json();
   if (!responseData.success) {
     throw new Error(responseData.error);
   }
