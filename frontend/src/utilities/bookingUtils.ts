@@ -65,12 +65,12 @@ export async function getAllBookings (status?: BookingStatus[], page?: number) {
   return responseData as GetBookingsSuccess;
 }
 
-export async function startRent (bookingId: string, dateFrom: string) {
+export async function startRent (bookingId: string, dateFrom: string, isPaid: boolean) {
   const url = import.meta.env.VITE_API_RENT_START + bookingId;
   const response = await fetch(url, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({from: dateFrom}),
+    body: JSON.stringify({from: dateFrom, isPaid: isPaid}),
     credentials: 'include'
   });
   const responseData = await response.json();

@@ -52,7 +52,12 @@
   }
 
   function updateSelectedBookingData(booking: Booking) {
-    if (selectedBookingIndex.value !== null) bookings.value[selectedBookingIndex.value] = booking;
+    // API returns updated booking data, but without user field populated with user data
+    if (selectedBookingIndex.value !== null) {
+      // Preserve user data from booking and add to new booking data
+      const user = bookings.value[selectedBookingIndex.value].user;
+      bookings.value[selectedBookingIndex.value] = { ... booking, user: user };
+    } 
     action.value = null;
   }
 </script>

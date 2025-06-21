@@ -54,7 +54,6 @@
   }
 
   function updateSelectedBookingData (booking: Booking) {
-    console.log('Updated booking', booking);
     // API returns updated booking data, but without user field populated with user data
     if (selectedBookingIndex.value !== null) {
       // Preserve user data from booking and add to new booking data
@@ -111,7 +110,7 @@
     </div>
     <div v-if="selectedBooking && action" class="absolute top-0 left-0 z-30 bg-neutral-100/75 w-full h-full flex items-center">
       <div class="bg-light-tertiary mx-auto min-w-xs w-4/5 max-w-2xl p-4 sm:p-8 rounded-lg shadow-[12px_8px_28px_#00000050]">
-        <StartRentForm v-if="action === 'start-rent'" :booking-id="selectedBooking._id" @close="action = null" @update-booking="updateSelectedBookingData"/>
+        <StartRentForm v-if="action === 'start-rent'" :booking-id="selectedBooking._id" :booking-is-paid="selectedBooking.isPaid " @close="action = null" @update-booking="updateSelectedBookingData"/>
         <CancelBookingForm v-if="action === 'cancel'" :booking-id="selectedBooking._id" @close="action = null" @update-booking="updateSelectedBookingData"/>
       </div>
     </div>
