@@ -18,6 +18,12 @@
   const driver = ref<boolean>(false);
   const car = ref<Car|null>(null);
 
+  const rentPeriodIsValid = computed(() => {
+    const dateFrom = new Date(from.value).valueOf();
+    const dateTo = new Date(to.value).valueOf();
+    return ( dateFrom < dateTo );
+  });
+
   const totalHours = computed(() => {
     const fromTimestamp =  Date.parse(from.value);
     const toTimestamp =  Date.parse(to.value);
@@ -53,7 +59,7 @@
   }
 
   async function handleBooking () {
-    if (!detailsAccepted || !policyAccepted) {
+    if (!detailsAccepted || !policyAccepted.value) {
       return console.error('Accept booking details and company policy to proceede!');
     }
     
@@ -116,9 +122,15 @@
           Uzupełnij dane dotyczące rezerwacji.
         </h4>
         <div class="my-8">
-          <BookingDetailsForm v-model:from="from" v-model:to="to" v-model:driver="driver" :disabled="status !== 'details'" />
+          <BookingDetailsForm
+            v-model:from="from"
+            v-model:to="to"
+            v-model:driver="driver"
+            :disabled="status !== 'details'"
+            :rent-period-is-valid="rentPeriodIsValid"
+          />
         </div>
-        <button type="button" @click="handleAcceptDetails" class="btn block ml-auto" :disabled="status !== 'details'">
+        <button type="button" @click="handleAcceptDetails" class="btn block ml-auto" :disabled="(status !== 'details') || !rentPeriodIsValid">
           Potwierdzam i przechodzę do wyboru płatności
         </button>
       </div>
@@ -141,7 +153,7 @@
           <button type="button" @click="status='details'; detailsAccepted=false" class="lg:px-6 py-3">
             <span class="mr-4">&#10229;</span>Cofnij
           </button>
-          <button type="button" class="btn" :disabled="status !== 'payment'" @click="handleBooking">
+          <button type="button" class="btn" :disabled="(status !== 'payment') || !policyAccepted" @click="handleBooking">
             {{ payment === 'stripe' ? 'Zarezerwuj i zapłać online' : 'Zarezerwuj i zapłać na miejscu' }}
           </button>
         </div>

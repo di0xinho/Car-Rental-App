@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import CarPreferencesFilterPanel from '@/components/filter-panels/CarPreferencesFilterPanel.vue';
   import DateFilterPanel from '@/components/filter-panels/DateFilterPanel.vue';
   import CarRentCard from '@/components/cars-collection/CarRentCard.vue';
@@ -23,6 +23,12 @@
   const dateFrom = ref(todayDateString);
   const dateTo = ref(tomorrowDateString);
 
+  const rentPeriodIsValid = computed(() => {
+    const from = new Date(dateFrom.value).valueOf();
+    const to = new Date(dateTo.value).valueOf();
+    return ( from < to );
+  });
+
   const cars = ref<Car[]>([]);
   const page = ref(1);
   const totalPages = ref(1);
@@ -31,6 +37,8 @@
 
   // Car preferrences is a global state (useCarPreferences.ts) controlled from different components preserved through navigation (we want to preserve that to enhence user experience by remembering his choices)
   watch( [preferences, dateFrom, dateTo], async ([newPreferences, newDateFrom, newDateTo]) => {
+    // If rent period is invalid do nothing
+    if (!rentPeriodIsValid.value) return;
     // Every time we chnge filtering params we shoud fetch new cars starting from page 1
     page.value = 1;
     totalPages.value = 1;
@@ -80,6 +88,9 @@
       </div>
       <div class="col-start-2 mx-2 xs:mx-6 xl:mx-8 px-6 sm:px-8 py-8 xs:justify-self-start bg-card-bg text-dark-txt">
         <DateFilterPanel v-model:date-from="dateFrom" v-model:date-to="dateTo" />
+        <p v-if="!rentPeriodIsValid" class="text-amber-800 text-sm mt-4">
+          Data zakończenia wynajmu powinna być późniejsza niż rozpoczęcia !
+        </p>
       </div>
       <div class="mx-2 xs:mx-6 my-6 xl:m-8">
         <ul class="grid grid-cols-[repeat(auto-fill,_minmax(20rem,_max-content))] gap-6 xl:gap-8 justify-center">
