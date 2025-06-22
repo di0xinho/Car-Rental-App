@@ -184,7 +184,9 @@ const router = createRouter({
   ],
   scrollBehavior(to, from, savedPosition) {
     // always scroll to top
-    return { top: 0 }
+    if (to.name !== from.name) {
+      return { top: 0 }
+    }
   }
 })
 

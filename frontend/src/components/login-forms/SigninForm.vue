@@ -3,15 +3,9 @@
   import { useRouter } from 'vue-router';
   import useUser from '@/composables/useUser';
 
-  const emit = defineEmits({
-    showMessage: (message: {success: boolean, message: string}) => {}
-  });
-  // TODO: validation of fields
-  const validationErrors = reactive({
-    username: null,
-    email: null,
-    password: null
-  });
+  const emit = defineEmits<{
+    showMessage: [{success: boolean, message: string}]
+  }>();
 
   const router = useRouter();
   const { signInNewUser } = useUser();
@@ -40,15 +34,15 @@
   <form @submit.prevent="handleSignIn" class="min-w-xs">
     <div class="my-5">
       <label for="name">Nazwa użytkownika</label>
-      <input id="text" type="text" v-model="username" placeholder="Wpisz nazwę użytkownika" class="input">
+      <input id="text" type="text" v-model="username" placeholder="Wpisz nazwę użytkownika" class="input" required>
     </div>
     <div class="my-5">
       <label for="email">Adres e-mail</label>
-      <input id="email" type="text" v-model="email" placeholder="Wpisz swój adres e-mail" class="input">
+      <input id="email" type="email" v-model="email" placeholder="Wpisz swój adres e-mail" class="input" required>
     </div>
     <div class="my-5">
       <label for="password">Hasło</label>
-      <input id="password" type="password" v-model="password" placeholder="Wpisz hasło" class="input">
+      <input id="password" type="password" v-model="password" placeholder="Wpisz hasło" class="input" required>
     </div>
     <div class="my-5">
       <input id="accept-policy" type="checkbox" v-model="acceptPolicy" required class="align-middle">
