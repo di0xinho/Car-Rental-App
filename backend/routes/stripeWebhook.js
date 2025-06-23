@@ -10,17 +10,11 @@ import Booking from "../models/bookingModel.js";
 import moment from "moment";
 
 const router = express.Router();
-
-// Wczytujemy zmienne środowiskowe z pliku .env
 dotenv.config();
 
-// Wczytujemy ze zmiennych środowiskowych klucz prywatny do API platformy Stripe
 const stripe_secret_key = process.env.STRIPE_SECRET_KEY;
-
-const stripe = new Stripe(stripe_secret_key);
-
-// Klucz prywatny do testowania webhooka Stripe CLI na środowisku lokalnym
 const stripe_endpoint_secret = process.env.STRIPE_ENDPOINT_SECRET;
+const stripe = new Stripe(stripe_secret_key);
 
 router.post(
   "/webhook",
@@ -29,7 +23,6 @@ router.post(
     const sig = request.headers["stripe-signature"];
 
     let event;
-
     try {
       event = stripe.webhooks.constructEvent(
         request.body,
@@ -40,44 +33,40 @@ router.post(
       throw new BadRequestError(`Webhook Error: ${err.message}`);
     }
 
-    // Obsługa zdarzeń
+    // Obsługa zdarzeń Stripe
     switch (event.type) {
-      // Przypadek, w którym sesja rozliczeniowa zakończyła się powodzeniem (udało się opłacić usługę)
-      case "checkout.session.completed":
+      case "checkout.session.completed": {
         const session = event.data.object;
 
-        // Znajdź użytkownika i samochód na podstawie danych w sesji
         const user = await User.findById(session.client_reference_id);
         const bookingCar = await Car.findById(session.metadata.carId);
 
         if (user && bookingCar) {
-          // Aktualizacja danych samochodu (data użytkowania samochodu przez innego użytkownika, dostępność samochodu)
           bookingCar.bookedTimeSlots.push({
             from: moment(session.metadata.from, "YYYY-MM-DD HH:mm", true),
-            to: moment(session.metadata.to, "YYYY-MM-DD HH:mm", true)
+            to: moment(session.metadata.to, "YYYY-MM-DD HH:mm", true),
           });
-          
           await bookingCar.save();
 
-          // Tworzymy nową rezerwację i uzupełniamy ją o wartości pól, które zdefiniowane zostały w schemacie Mongoose
           const newBooking = new Booking({
             user: user._id,
             car: bookingCar._id,
             totalHours: session.metadata.totalHours,
             bookedTimeSlots: {
               from: moment(session.metadata.from, "YYYY-MM-DD HH:mm", true),
-              to: moment(session.metadata.to, "YYYY-MM-DD HH:mm", true)
+              to: moment(session.metadata.to, "YYYY-MM-DD HH:mm", true),
             },
             driver: session.metadata.driver,
             totalPrice: session.amount_total / 100,
             isPaid: true,
-            status: "awaiting"
+            status: "awaiting",
           });
 
-          // Zapisujemy rekord w bazie danych
           await newBooking.save();
 
-          // Wysyłanie emaila przez Azure
+          user.bookings.push(newBooking._id);
+          await user.save();
+
           try {
             const emailSent = await emailService.sendBookingDetails(
               user.email,
@@ -93,17 +82,13 @@ router.post(
           }
         }
 
-        // Dodanie id zamówienia do tablicy zamówień użytkownika
-        user.bookings.push(newBooking._id);
-        await user.save();
-
-        // Poniżej możemy obsłużyć inne typy zdarzeń...
         break;
+      }
+
       default:
         console.log(`Nieobsłużony typ zdarzenia ${event.type}`);
     }
 
-    // W przypadku powodzenia zwracamy status code równy 200 - czyli OK
     response.send();
   })
 );
