@@ -16,9 +16,7 @@
 
   async function handleSetBookingStatus() {
     try {
-      console.log("status: ", status.value);
       const result = await setBookingStatus(bookingId, status.value);
-      console.log(result.message);
       emit('updateBooking', result.data);
     } catch (error) {
       console.error(error);

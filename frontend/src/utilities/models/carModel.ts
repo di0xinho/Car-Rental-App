@@ -20,7 +20,7 @@ export class Car {
 }
 
 export type CarPreferences = {
-  carMaker?: string[];
+  carMaker?: string;
   bodyType: string[];
   minCapacity: number;
   maxPrice: number;

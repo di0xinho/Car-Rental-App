@@ -24,7 +24,7 @@
 
   const action = ref<'end-rent'|null>(null);
 
-  async function getBookingsData() {
+  async function getBookings() {
     try {
       const bookingStatus: BookingStatus[] = ['active'];
       const result = await getAllBookings(bookingStatus, page.value);
@@ -37,12 +37,12 @@
   }
 
   onMounted(async() => {
-    getBookingsData();
+    getBookings();
   });
 
   async function handleChangePage (event: number) {
     page.value = event;
-    getBookingsData();
+    getBookings();
   }
 
   function handleSelectBooking(bookingIndex: number) {
@@ -51,7 +51,12 @@
   }
 
   function updateSelectedBookingData(booking: Booking) {
-    if (selectedBookingIndex.value !== null) bookings.value[selectedBookingIndex.value] = booking;
+    // API returns updated booking data, but without user field populated with user data
+    if (selectedBookingIndex.value !== null) {
+      // Preserve user data from booking and add to new booking data
+      const user = bookings.value[selectedBookingIndex.value].user;
+      bookings.value[selectedBookingIndex.value] = { ... booking, user: user };
+    } 
     action.value = null;
   }
 </script>

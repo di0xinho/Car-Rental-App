@@ -182,6 +182,12 @@ const router = createRouter({
       },
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    // always scroll to top
+    if (to.name !== from.name) {
+      return { top: 0 }
+    }
+  }
 })
 
 export default router

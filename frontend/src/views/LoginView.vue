@@ -13,8 +13,10 @@
 <template>
   <section class="my-8">
     <!-- Message block -->
-    <div v-if="message" class="text-center mx-8 p-2 border rounded-lg" :class="[message.success ? 'text-lime-500' : 'text-red-400']">
-      {{ message.message }}
+    <div v-if="message" class="mx-5 sm:mx-8 my-8 p-4 bg-light-secondary-bg rounded-lg">
+      <p class="text-center" :class="[message.success ? 'text-lime-800' : 'text-amber-800']">
+        {{ message.message }}
+      </p>
     </div>
     <!-- Login form -->
     <div class="flex flex-col sm:flex-row items-center">

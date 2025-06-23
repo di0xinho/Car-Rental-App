@@ -2,7 +2,6 @@ import { reactive, ref } from "vue";
 import type { CarPreferences } from "@/utilities/models/carModel";
 
 const preferences: CarPreferences = reactive({
-  carMaker: [],
   bodyType: [],
   minCapacity: 4,
   maxPrice: 100,
