@@ -106,7 +106,7 @@
 <template>
   <section class="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-x-8 gap-y-16 xl:gap-16 mx-5 xs:mx-6 lg:mx-8 my-8">
       <!-- User Details -->
-      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl">
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl text-dark-txt">
         <h3 class="text-xl font-semibold">Dane użytkownika</h3>
         <h4 class="text-sm text-neutral-500">
           Dane użytkownika możesz zmienić w panelu użytkownika w zakładce ustawienia.
@@ -116,7 +116,7 @@
         </div>
       </div>
       <!-- Booking Details -->
-      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[status === 'details' ? 'scale-105 shadow-lg' : '']">
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl text-dark-txt" :class="[status === 'details' ? 'scale-105 shadow-lg' : '']">
         <h3 class="text-xl font-semibold">Rezerwacja</h3>
         <h4 class="text-sm text-neutral-500">
           Uzupełnij dane dotyczące rezerwacji.
@@ -135,7 +135,7 @@
         </button>
       </div>
       <!-- Pyment Method -->
-      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl" :class="[status === 'payment' ? 'scale-105 shadow-lg' : '']">
+      <div class="col-start-1 min-w-xs px-4 lg:px-6 py-6 bg-light-secondary-bg rounded-3xl text-dark-txt" :class="[status === 'payment' ? 'scale-105 shadow-lg' : '']">
         <h3 class="text-xl font-semibold">Płatność</h3>
         <h4 class="text-sm text-neutral-500">
           Wybierz formę płatności.
